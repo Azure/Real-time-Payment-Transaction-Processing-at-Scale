@@ -1,4 +1,3 @@
-using cosmos_payments_demo.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
@@ -6,7 +5,9 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using payments_model;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace cosmos_payments_demo.APIs
             [CosmosDB(
                 databaseName: "%paymentsDatabase%",
                 containerName: "%transactionsContainer%",
+                PreferredLocations = "%preferredRegions%",
                 Connection = "CosmosDBConnection")] CosmosClient client,
             ILogger log)
         {
@@ -84,7 +86,17 @@ namespace cosmos_payments_demo.APIs
 
             var batch = container.CreateTransactionalBatch(pk);
 
-            batch.UpsertItem<AccountSummary>(account, new TransactionalBatchItemRequestOptions() { IfMatchEtag = responseRead.ETag });
+            batch.PatchItem(account.id, 
+                new List<PatchOperation>() 
+                { 
+                    PatchOperation.Increment("/balance", transaction.type.ToLowerInvariant() == "debit" ? -transaction.amount : transaction.amount) 
+                }, 
+                new TransactionalBatchPatchItemRequestOptions()
+                { 
+                    IfMatchEtag = responseRead.ETag 
+                }
+            );
+            //batch.UpsertItem<AccountSummary>(account, new TransactionalBatchItemRequestOptions() { IfMatchEtag = responseRead.ETag });
             batch.CreateItem<Transaction>(transaction);
 
             var responseBatch = await batch.ExecuteAsync();

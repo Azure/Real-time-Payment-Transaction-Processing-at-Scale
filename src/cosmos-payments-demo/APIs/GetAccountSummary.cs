@@ -1,9 +1,9 @@
-using cosmos_payments_demo.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using payments_model;
 using System.Threading.Tasks;
 
 namespace cosmos_payments_demo.APIs
@@ -18,6 +18,7 @@ namespace cosmos_payments_demo.APIs
                 containerName: "%customerContainer%",
                 PartitionKey = "{accountId}",
                 Id = "{accountId}",
+                PreferredLocations = "%preferredRegions%",
                 Connection = "CosmosDBConnection")] AccountSummary account,
             ILogger log)
         {

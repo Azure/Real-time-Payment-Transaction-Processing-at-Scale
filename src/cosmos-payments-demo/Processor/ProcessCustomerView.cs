@@ -1,4 +1,3 @@
-using cosmos_payments_demo.Model;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
@@ -15,10 +14,11 @@ namespace cosmos_payments_demo.Processor
             databaseName: "%paymentsDatabase%",
             containerName: "%transactionsContainer%",
             Connection = "CosmosDBConnection",
-            CreateLeaseContainerIfNotExists = true,
+            CreateLeaseContainerIfNotExists = false,
             StartFromBeginning = true,
             FeedPollDelay = 1000,
             MaxItemsPerInvocation = 50,
+            PreferredLocations = "%preferredRegions%",
             LeaseContainerName = "leases")]IReadOnlyList<JObject> input,
             [CosmosDB(
                 databaseName: "%paymentsDatabase%",

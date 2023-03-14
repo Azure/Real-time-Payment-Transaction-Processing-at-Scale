@@ -11,7 +11,7 @@
   "extensions": {
     "cosmosDB": {
       "connectionMode": "Direct",
-      "protocol": "Tcp"
+      "userAgentSuffix": "Payments-Demo"
     }
   }
 }
