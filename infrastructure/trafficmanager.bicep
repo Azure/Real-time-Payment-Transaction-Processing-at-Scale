@@ -9,7 +9,7 @@ resource traffic 'Microsoft.Network/trafficmanagerprofiles@2022-04-01-preview' =
   location: 'global'
   properties: {
     profileStatus: 'Enabled'
-    trafficRoutingMethod: enableGeographicRouting ? 'Geographic' : 'Priority'
+    trafficRoutingMethod: enableGeographicRouting ? 'Performance' : 'Priority'
     dnsConfig: {
       relativeName: trafficManagerName
       ttl: 30

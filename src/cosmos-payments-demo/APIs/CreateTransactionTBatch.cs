@@ -70,7 +70,7 @@ namespace cosmos_payments_demo.APIs
 
             if (transaction.type.ToLowerInvariant() == "debit")
             {
-                if ((account.balance + account.limit) < transaction.amount)
+                if ((account.balance + account.overdraftLimit) < transaction.amount)
                 {
                     return new BadRequestObjectResult("Insufficient balance/limit!");
                 }

@@ -49,6 +49,10 @@ resource account 'Microsoft.DocumentDB/databaseAccounts@2022-05-15' = {
     enableAutomaticFailover: !enableCosmosMultiMaster
     consistencyPolicy: {
       defaultConsistencyLevel: enableCosmosMultiMaster ? 'BoundedStaleness' : 'Strong'
+#disable-next-line BCP040
+      '${enableCosmosMultiMaster ? 'maxIntervalInSeconds' : any(null)}': any(enableCosmosMultiMaster ? 300 : null)
+#disable-next-line BCP040
+      '${enableCosmosMultiMaster ? 'maxStalenessPrefix' : any(null)}': any(enableCosmosMultiMaster ? 100000 : null)
     }
     databaseAccountOfferType: 'Standard'
     enableAnalyticalStorage: true

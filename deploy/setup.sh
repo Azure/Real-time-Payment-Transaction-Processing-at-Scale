@@ -1,11 +1,13 @@
 SUBSCRIPTION_ID=$1
 RESOURCE_GROUP=$2
 LOCATIONS=$3
-SUFFIX=$4
+MULTIMASTER=$4
+SUFFIX=$5
 
 echo 'Subscription Id     :' $SUBSCRIPTION_ID
 echo 'Resource Group      :' $RESOURCE_GROUP
 echo 'Locations           :' $LOCATIONS
+echo 'Enable Multi Master :' $MULTIMASTER
 echo 'Deploy Suffix       :' $SUFFIX
 
 echo 'Validate variables above and press any key to continue setup...'
@@ -39,7 +41,7 @@ INFRADEPLOYED=$(az deployment group create \
                     --name CosmosDemoDeployment \
                     --resource-group $RESOURCE_GROUP \
                     --template-file ./main.bicep \
-                    --parameters suffix=$SUFFIX locations="$LOCATIONS" \
+                    --parameters suffix=$SUFFIX locations="$LOCATIONS" enableCosmosMultiMaster=$MULTIMASTER \
                     --query "properties.provisioningState" \
                     -o tsv)
 
