@@ -30,6 +30,17 @@ var containers = [
   }
 ]
 
+var consistencyPolicy = {
+  BoundedStaleness: {
+    defaultConsistencyLevel: 'BoundedStaleness'
+    maxStalenessPrefix: 100000
+    maxIntervalInSeconds: 300
+  }
+  Strong: {
+    defaultConsistencyLevel: 'Strong'
+  }
+}
+
 @description('Maximum autoscale throughput for the container')
 @minValue(1000)
 @maxValue(1000000)
@@ -47,13 +58,7 @@ resource account 'Microsoft.DocumentDB/databaseAccounts@2022-05-15' = {
     }]
     enableMultipleWriteLocations: enableCosmosMultiMaster
     enableAutomaticFailover: !enableCosmosMultiMaster
-    consistencyPolicy: {
-      defaultConsistencyLevel: enableCosmosMultiMaster ? 'BoundedStaleness' : 'Strong'
-#disable-next-line BCP040
-      '${enableCosmosMultiMaster ? 'maxIntervalInSeconds' : any(null)}': any(enableCosmosMultiMaster ? 300 : null)
-#disable-next-line BCP040
-      '${enableCosmosMultiMaster ? 'maxStalenessPrefix' : any(null)}': any(enableCosmosMultiMaster ? 100000 : null)
-    }
+    consistencyPolicy: consistencyPolicy[enableCosmosMultiMaster ? 'BoundedStaleness' : 'Strong']
     databaseAccountOfferType: 'Standard'
     enableAnalyticalStorage: true
     analyticalStorageConfiguration: {
