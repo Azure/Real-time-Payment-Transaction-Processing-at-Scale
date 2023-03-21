@@ -16,6 +16,9 @@ param transactionsContainer string
 @description('Cosmos DB customer container name')
 param customerContainer string
 
+@description('Cosmos DB member container name')
+param memberContainer string
+
 @description('Cosmos DB preferred regions name')
 param preferredRegions string
 
@@ -113,6 +116,10 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'customerContainer'
           value: customerContainer
+        }
+        {
+          name: 'memberContainer'
+          value: memberContainer
         }
         {
           name: 'preferredRegions'

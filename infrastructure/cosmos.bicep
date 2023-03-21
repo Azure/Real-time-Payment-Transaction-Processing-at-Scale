@@ -23,6 +23,12 @@ var containers = [
     enableAnalyticalStore: true
   }
   {
+    name: 'members'
+    partitionKeys: ['/memberId']
+    enableIndex: false
+    enableAnalyticalStore: true
+  }
+  {
     name: 'leases'
     partitionKeys: ['/id' ]
     enableIndex: true
@@ -107,3 +113,4 @@ output cosmosAccountName string = account.name
 output cosmosDatabaseName string = database.name
 output cosmosTransactionsContainerName string = container[0].name
 output cosmosCustomerContainerName string = container[1].name
+output cosmosMemberContainerName string = container[2].name

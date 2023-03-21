@@ -59,6 +59,7 @@ module function 'functions.bicep' = [for (location, i) in locArray: {
     paymentsDatabase: cosmosdb.outputs.cosmosDatabaseName
     transactionsContainer: cosmosdb.outputs.cosmosTransactionsContainerName
     customerContainer: cosmosdb.outputs.cosmosCustomerContainerName
+    memberContainer: cosmosdb.outputs.cosmosMemberContainerName
     preferredRegions: join(concat(array(location), filter(locArray, l => l != location)), ',')
     location: location
   }
