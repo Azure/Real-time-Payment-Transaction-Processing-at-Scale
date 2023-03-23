@@ -22,11 +22,8 @@ param memberContainer string
 @description('Cosmos DB preferred regions name')
 param preferredRegions string
 
-@description('Traffic manager name, lowercase')
-param trafficManagerName string
-
-@description('Traffic manager endpoint priority')
-param endPointPriority int
+@description('Is master region')
+param isMasterRegion bool
 
 @description('Resource location')
 param location string = resourceGroup().location
@@ -57,7 +54,7 @@ resource plan 'Microsoft.Web/serverfarms@2020-12-01' = {
   location: location
   kind: 'functionapp'
   sku: {
-    name: 'Y1'
+    name: 'B1'
   }
 }
 
@@ -125,6 +122,10 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
           name: 'preferredRegions'
           value: preferredRegions
         }
+        {
+          name: 'isMasterRegion'
+          value: '${isMasterRegion}'
+        }
       ]
     }
     httpsOnly: true
@@ -145,16 +146,4 @@ resource roleAssignmentCosmos 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssi
   }
 }
 
-resource trafficManager 'Microsoft.Network/trafficmanagerprofiles@2022-04-01-preview' existing = {
-  name: trafficManagerName
-}
-
-resource tmEndpoint 'Microsoft.Network/trafficmanagerprofiles/AzureEndpoints@2022-04-01-preview' = {
-  name: functionAppName
-  parent: trafficManager
-  properties: {
-    priority: endPointPriority
-    targetResourceId: functionApp.id
-    endpointStatus: 'Enabled'
-  }
-}
+output functionName string = functionApp.name

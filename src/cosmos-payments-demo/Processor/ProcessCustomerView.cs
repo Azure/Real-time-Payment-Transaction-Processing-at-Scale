@@ -9,6 +9,13 @@ namespace cosmos_payments_demo.Processor
 {
     public static class ProcessCustomerView
     {
+        static ProcessCustomerView()
+        {
+            isMasterRegion = Convert.ToBoolean(Environment.GetEnvironmentVariable("isMasterRegion"));
+        }
+
+        static bool isMasterRegion;
+
         [FunctionName("ProcessCustomerView")]
         public static async Task RunAsync([CosmosDBTrigger(
             databaseName: "%paymentsDatabase%",
@@ -26,6 +33,9 @@ namespace cosmos_payments_demo.Processor
                 Connection = "CosmosDBConnection")] IAsyncCollector<JObject> eventCollector,
             ILogger log)
         {
+            if (!isMasterRegion)
+                return;
+
             await Parallel.ForEachAsync(input, async (record, token) =>
             {
                 try

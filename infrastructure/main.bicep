@@ -7,8 +7,8 @@ param functionAppName string = 'functionpay${suffix}'
 @description('Storage account name, max length 24 characters, lowercase')
 param storageAccountName string = 'blobpay${suffix}'
 
-@description('Traffic manager name, lowercase')
-param trafficManagerName string = 'apipayments${suffix}'
+@description('Front Door name')
+param frontDoorName string = 'apipaymentsfd${suffix}'
 
 @description('Enable Cosmos Multi Master')
 param enableCosmosMultiMaster bool = false
@@ -39,21 +39,11 @@ module blob 'blob.bicep' = [for (location, i) in locArray: {
   }
 }]
 
-module trafficManager 'trafficmanager.bicep' = {
-  name: 'trafficManagerDeploy'
-  params: {
-    enableGeographicRouting: enableCosmosMultiMaster
-    trafficManagerName: trafficManagerName
-  }
-}
-
 @batchSize(1)
 module function 'functions.bicep' = [for (location, i) in locArray: {
   name: 'functionDeploy-${location}'
   params: {
     cosmosAccountName: cosmosdb.outputs.cosmosAccountName
-    trafficManagerName: trafficManagerName
-    endPointPriority: (i + 1)
     functionAppName: '${functionAppName}${i}'
     storageAccountName: '${storageAccountName}${i}'
     paymentsDatabase: cosmosdb.outputs.cosmosDatabaseName
@@ -61,10 +51,19 @@ module function 'functions.bicep' = [for (location, i) in locArray: {
     customerContainer: cosmosdb.outputs.cosmosCustomerContainerName
     memberContainer: cosmosdb.outputs.cosmosMemberContainerName
     preferredRegions: join(concat(array(location), filter(locArray, l => l != location)), ',')
+    isMasterRegion: i == 0 || enableCosmosMultiMaster ? true : false
     location: location
   }
   dependsOn: [
     blob
-    trafficManager
   ]
 }]
+
+module frontdoor 'frontdoor.bicep' = {
+  name: 'frontdoorDeploy'
+  params: {
+    enableMultiMaster: enableCosmosMultiMaster
+    frontDoorName: frontDoorName
+    functionNames: [for i in range(0, length(locArray)): function[i].outputs.functionName]
+  }
+}

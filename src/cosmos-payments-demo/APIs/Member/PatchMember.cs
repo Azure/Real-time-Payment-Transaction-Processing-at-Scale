@@ -36,6 +36,10 @@ namespace cosmos_payments_demo.APIs
                 //Read request body
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var member = JsonConvert.DeserializeObject<Member>(requestBody);
+
+                if (member == null || string.IsNullOrEmpty(member.id) || string.IsNullOrEmpty(member.memberId))
+                    return new BadRequestObjectResult("id and memberId required!");
+
                 JObject obj = JObject.FromObject(member);
 
                 var ops = new List<PatchOperation>();
@@ -47,6 +51,9 @@ namespace cosmos_payments_demo.APIs
 
                     ops.Add(PatchOperation.Add($"/{item.Path}", item.ToString()));
                 }
+
+                if (ops.Count == 0)
+                    return new BadRequestObjectResult("No attributes provided.");
 
                 await container.PatchItemAsync<Member>(member.id, new PartitionKey(member.memberId), ops);
 
