@@ -19,7 +19,7 @@ namespace cosmos_payments_demo.APIs
     {
         [FunctionName("CreateTransactionTBatch")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "transaction/createtbatch")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "transaction/createtbatch")] HttpRequest req,
             [CosmosDB(
                 databaseName: "%paymentsDatabase%",
                 containerName: "%transactionsContainer%",
@@ -74,15 +74,15 @@ namespace cosmos_payments_demo.APIs
                 {
                     return new BadRequestObjectResult("Insufficient balance/limit!");
                 }
-                else
-                {
-                    account.balance -= transaction.amount;
-                }
+                //else
+                //{
+                //    account.balance -= transaction.amount;
+                //}
             }
-            else if (transaction.type.ToLowerInvariant() == "deposit")
-            {
-                account.balance += transaction.amount;
-            }
+            //else if (transaction.type.ToLowerInvariant() == "deposit")
+            //{
+            //    account.balance += transaction.amount;
+            //}
 
             var batch = container.CreateTransactionalBatch(pk);
 

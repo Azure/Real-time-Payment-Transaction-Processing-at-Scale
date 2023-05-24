@@ -14,7 +14,7 @@ namespace cosmos_payments_demo.APIs
     {
         [FunctionName("GetTransactionStatement")]
         public static async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "statement/{accountId}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "statement/{accountId}")] HttpRequest req,
             string accountId,
             [CosmosDB(
                 databaseName: "%paymentsDatabase%",

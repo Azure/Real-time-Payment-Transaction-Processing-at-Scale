@@ -17,7 +17,7 @@ namespace cosmos_payments_demo.APIs
     {
         //[FunctionName("CreateTransactionSProc")]
         public static async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "transaction/createsproc")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "transaction/createsproc")] HttpRequest req,
             [CosmosDB(
                 databaseName: "%paymentsDatabase%",
                 containerName: "%transactionsContainer%",

@@ -18,7 +18,7 @@ namespace cosmos_payments_demo.APIs
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "account")] HttpRequest req,
             [CosmosDB(
                 databaseName: "%paymentsDatabase%",
-                containerName: "%customerContainer%",
+                containerName: "%transactionsContainer%",
                 PreferredLocations = "%preferredRegions%",
                 Connection = "CosmosDBConnection")] IAsyncCollector<AccountSummary> collector,
             ILogger log)
