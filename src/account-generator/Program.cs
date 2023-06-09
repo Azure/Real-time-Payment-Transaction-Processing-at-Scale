@@ -68,7 +68,7 @@ public partial class Program
                         .RuleFor(u => u.balance, (f, u) => Convert.ToDouble(f.Finance.Amount(-1000, 50000, 2)))
                         .RuleFor(u => u.accountType, (f, u) => f.PickRandom(accountType))
                         .RuleFor(u => u.type, (f, u) => "accountSummary")
-                        .RuleFor(u => u.limit, (f, u) => 5000)
+                        .RuleFor(u => u.overdraftLimit, (f, u) => 5000)
                         .RuleFor(u => u.memberSince, (f, u) => f.Date.Past(20));
 
                     tasks.Add(container.UpsertItemAsync(orderFaker.Generate(), new PartitionKey(accountId)));
