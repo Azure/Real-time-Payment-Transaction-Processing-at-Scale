@@ -21,7 +21,7 @@ namespace cosmos_payments_demo.Processor
             databaseName: "%paymentsDatabase%",
             containerName: "%transactionsContainer%",
             Connection = "CosmosDBConnection",
-            CreateLeaseContainerIfNotExists = false,
+            CreateLeaseContainerIfNotExists = true,
             StartFromBeginning = true,
             FeedPollDelay = 1000,
             MaxItemsPerInvocation = 50,

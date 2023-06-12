@@ -24,7 +24,13 @@ namespace account_generator
                 },
                 onRetryAsync: (e, ts, i, ctx) => Task.CompletedTask
             );
-        static async Task Main(string[] args)
+
+        public static void Main(string[] args)
+        {
+            MainAsync(args).Wait();
+        }
+        
+        public static async Task MainAsync(string[] args)
         {
             var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("local.settings.json").Build();
@@ -71,6 +77,7 @@ namespace account_generator
             {
                 while (!cancel)
                 {
+                    var totalTasks = 0;
                     for (int i = (1 + ((batchNum - 1) * 10000000)); i <= (batchNum * 10000000); i++)
                     //for (int i = (1 + ((batchNum - 1) * 1)); i <= (batchNum * 1); i++)
                     {
@@ -99,6 +106,8 @@ namespace account_generator
                         if (tasks.Count == 100)
                         {
                             await Task.WhenAll(tasks);
+                            totalTasks += tasks.Count;
+                            Console.WriteLine($"{totalTasks} account summary items written in batch #{batchNum}");
                             tasks.Clear();
                         }
                     }
