@@ -5,7 +5,7 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import { Capitalize, USDollar } from '~/helpers';
 import FormModal from '~/components/modals/form';
 import NewTransactionForm from '~/components/forms/new-transaction';
-import TransactionsStatementTable from '~/components/tables/transactions-statement-table';
+import TransactionsStatementTable from '~/components/tables/transactions-statement';
 import useAccountSummary from '~/hooks/account-summary';
 
 const TransactionsSection = ({ account }) => {
@@ -17,7 +17,7 @@ const TransactionsSection = ({ account }) => {
   const modalHeader = <h3 className="text-xl p-4">New Transaction</h3>;
 
   return (
-    <div>
+    <div className="w-full">
       <h1 className="my-6">Transactions for Account Id {account}</h1>
       {isLoading ? (
         <div className="text-center p-6">
