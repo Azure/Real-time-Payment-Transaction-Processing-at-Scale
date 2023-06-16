@@ -1,12 +1,21 @@
+import { useState } from 'react';
 import { Button, Spinner } from 'flowbite-react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 
-import TransactionsStatementTable from '~/components/tables/transactions-statement-table';
 import { Capitalize, USDollar } from '~/helpers';
+import FormModal from '~/components/modals/form';
+import NewTransactionForm from '~/components/forms/new-transaction';
+import TransactionsStatementTable from '~/components/tables/transactions-statement-table';
 import useAccountSummary from '~/hooks/account-summary';
 
 const TransactionsSection = ({ account }) => {
   const { data, isLoading } = useAccountSummary(account);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
+  const onClickAdd = () => setIsOpenModal(true);
+
+  const modalHeader = <h3 className="text-xl p-4">New Transaction</h3>;
+
   return (
     <div>
       <h1 className="my-6">Transactions for Account Id {account}</h1>
@@ -39,7 +48,7 @@ const TransactionsSection = ({ account }) => {
             </div>
           </div>
           <div className="justify-end">
-            <Button color="dark" className="p-0">
+            <Button color="dark" className="p-0" onClick={onClickAdd}>
               <PlusIcon className="h-6 w-6 text-gray-500 mr-3 text-white" />
               <h4>New Transaction</h4>
             </Button>
@@ -47,6 +56,9 @@ const TransactionsSection = ({ account }) => {
         </div>
       )}
       <TransactionsStatementTable accountId={account} />
+      <FormModal header={modalHeader} openModal={isOpenModal} setOpenModal={setIsOpenModal}>
+        <NewTransactionForm />
+      </FormModal>
     </div>
   );
 };
