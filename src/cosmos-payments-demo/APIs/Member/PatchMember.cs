@@ -1,3 +1,4 @@
+using cosmos_payments_demo.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
@@ -35,7 +36,7 @@ namespace cosmos_payments_demo.APIs
 
                 //Read request body
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                var member = JsonConvert.DeserializeObject<Member>(requestBody);
+                var member = JsonSerializationHelper.DeserializeItem<Member>(requestBody);
 
                 if (member == null || string.IsNullOrEmpty(member.id) || string.IsNullOrEmpty(member.memberId))
                     return new BadRequestObjectResult("id and memberId required!");

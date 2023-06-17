@@ -7,18 +7,18 @@ using Microsoft.Extensions.Logging;
 using payments_model;
 using System;
 using System.Threading.Tasks;
+using payments_model.Model;
 
 namespace cosmos_payments_demo.APIs
 {
-    public static class GetTransactionStatement
+    public static class GetMembers
     {
-        [FunctionName("GetTransactionStatement")]
+        [FunctionName("GetMembers")]
         public static async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "statement/{accountId}")] HttpRequest req,
-            string accountId,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "members")] HttpRequest req,
             [CosmosDB(
                 databaseName: "%paymentsDatabase%",
-                containerName: "%customerContainer%",
+                containerName: "%memberContainer%",
                 PreferredLocations = "%preferredRegions%",
                 Connection = "CosmosDBConnection")] CosmosClient client,
             ILogger log)
@@ -33,18 +33,15 @@ namespace cosmos_payments_demo.APIs
 
             if (container == null)
                 container = client.GetContainer(Environment.GetEnvironmentVariable("paymentsDatabase"),
-                    Environment.GetEnvironmentVariable("customerContainer"));
+                    Environment.GetEnvironmentVariable("memberContainer"));
 
-            QueryDefinition query = new QueryDefinition("select * from c where c.accountId = @accountId and c.type != @docType order by c._ts desc")
-                .WithParameter("@accountId", accountId)
-                .WithParameter("@docType", Constants.DocumentTypes.AccountSummary);
+            QueryDefinition query = new QueryDefinition("select * from c order by c.lastName desc");
 
-            using (FeedIterator<Transaction> resultSet = container.GetItemQueryIterator<Transaction>(
+            using (FeedIterator<Member> resultSet = container.GetItemQueryIterator<Member>(
                 query,
                 continuationToken,
                 new QueryRequestOptions()
                 {
-                    PartitionKey = new PartitionKey(accountId),
                     MaxItemCount = pageSize,
                     ResponseContinuationTokenLimitInKb = 1
                 }))
@@ -53,7 +50,7 @@ namespace cosmos_payments_demo.APIs
 
                 if (resultSet.HasMoreResults)
                 {
-                    FeedResponse<Transaction> response = await resultSet.ReadNextAsync();
+                    FeedResponse<Member> response = await resultSet.ReadNextAsync();
 
                     if (response.Count > 0)
                         continuationToken = response.ContinuationToken;

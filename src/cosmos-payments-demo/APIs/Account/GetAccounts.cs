@@ -10,12 +10,11 @@ using System.Threading.Tasks;
 
 namespace cosmos_payments_demo.APIs
 {
-    public static class GetTransactionStatement
+    public static class GetAccounts
     {
-        [FunctionName("GetTransactionStatement")]
+        [FunctionName("GetAccounts")]
         public static async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "statement/{accountId}")] HttpRequest req,
-            string accountId,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "accounts")] HttpRequest req,
             [CosmosDB(
                 databaseName: "%paymentsDatabase%",
                 containerName: "%customerContainer%",
@@ -35,16 +34,14 @@ namespace cosmos_payments_demo.APIs
                 container = client.GetContainer(Environment.GetEnvironmentVariable("paymentsDatabase"),
                     Environment.GetEnvironmentVariable("customerContainer"));
 
-            QueryDefinition query = new QueryDefinition("select * from c where c.accountId = @accountId and c.type != @docType order by c._ts desc")
-                .WithParameter("@accountId", accountId)
+            QueryDefinition query = new QueryDefinition("select * from c where c.type = @docType order by c.accountId")
                 .WithParameter("@docType", Constants.DocumentTypes.AccountSummary);
 
-            using (FeedIterator<Transaction> resultSet = container.GetItemQueryIterator<Transaction>(
+            using (FeedIterator<AccountSummary> resultSet = container.GetItemQueryIterator<AccountSummary>(
                 query,
                 continuationToken,
                 new QueryRequestOptions()
                 {
-                    PartitionKey = new PartitionKey(accountId),
                     MaxItemCount = pageSize,
                     ResponseContinuationTokenLimitInKb = 1
                 }))
@@ -53,7 +50,7 @@ namespace cosmos_payments_demo.APIs
 
                 if (resultSet.HasMoreResults)
                 {
-                    FeedResponse<Transaction> response = await resultSet.ReadNextAsync();
+                    FeedResponse<AccountSummary> response = await resultSet.ReadNextAsync();
 
                     if (response.Count > 0)
                         continuationToken = response.ContinuationToken;
