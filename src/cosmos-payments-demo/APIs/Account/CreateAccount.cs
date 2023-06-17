@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using payments_model;
+using cosmos_payments_demo.Helpers;
+using payments_model.Model;
 
 namespace cosmos_payments_demo.APIs
 {
@@ -27,7 +29,7 @@ namespace cosmos_payments_demo.APIs
             {
                 //Read request body
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                var account = JsonConvert.DeserializeObject<AccountSummary>(requestBody);
+                var account = JsonSerializationHelper.DeserializeItem<AccountSummary>(requestBody);
 
                 //Post account to Cosmos DB using output binding
                 await collector.AddAsync(account);

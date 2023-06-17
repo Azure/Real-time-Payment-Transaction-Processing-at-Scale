@@ -10,7 +10,7 @@ namespace payments_model
     public class AccountSummary
     {
         public string id { get; set; }
-        public string accountId { get { return this.id; } }
+        public string accountId => id;
         public string customerGreetingName { get; set; }
         public double balance { get; set; }
         public string accountType { get; set; }
