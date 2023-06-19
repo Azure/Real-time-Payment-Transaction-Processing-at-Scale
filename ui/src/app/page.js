@@ -2,15 +2,15 @@
 
 import { useState } from 'react';
 
-import ManageAccountsSection from '~/components/sections/manage-accounts';
-import TransactionsSection from '~/components/sections/transactions';
+import MemberDetailsSection from '~/components/sections/members/details';
+import MembersSection from '~/components/sections/members/members';
 
 export default function Home() {
-  const [accountId, setAccountId] = useState();
+  const [member, setMember] = useState();
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24 overflow-hidden p-6">
-      <ManageAccountsSection setAccountId={setAccountId} />
-      {accountId && <TransactionsSection accountId={accountId} />}
+      <MembersSection setMember={setMember} />
+      {member && <MemberDetailsSection member={member} />}
     </main>
   );
 }
