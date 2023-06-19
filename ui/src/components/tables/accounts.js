@@ -2,8 +2,9 @@
 
 import { Card, Pagination, Spinner } from 'flowbite-react';
 import { useCallback, useState } from 'react';
-import AccountDetailModal from '~/components/modals/account-detail';
 
+import { Capitalize, USDollar } from '~/helpers';
+import AccountDetailModal from '~/components/modals/account-detail';
 import Datatable from '~/components/tables/datatable';
 import useAccounts from '~/hooks/accounts';
 
@@ -58,6 +59,9 @@ const AccountsTable = ({ setAccountId }) => {
   const formattedData = data?.page.map((row) => {
     return {
       ...row,
+      accountType: Capitalize(row.accountType),
+      balance: USDollar.format(row.balance),
+      overdraftLimit: USDollar.format(row.overdraftLimit),
       viewDetails: (
         <p className="underline cursor-pointer" onClick={() => onClickDetails(row.id)}>
           View Details
