@@ -29,3 +29,7 @@
   @apply gap-0;
   @apply w-full;
 }
+
+.sidebar-margin {
+  margin-left: 16rem;
+}
