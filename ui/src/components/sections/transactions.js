@@ -17,7 +17,7 @@ const TransactionsSection = ({ accountId }) => {
   const modalHeader = <h3 className="text-xl p-4">New Transaction</h3>;
 
   return (
-    <div className="w-full">
+    <div className="w-full mt-6">
       <h1 className="my-6">Transactions for Account Id {accountId}</h1>
       {isLoading ? (
         <div className="text-center p-6">

@@ -41,13 +41,15 @@ const headers = [
 const AccountsTable = ({ setAccountId }) => {
   const [continuationToken, setContinuationToken] = useState('');
   const [page, setPage] = useState(1);
-  const { data, isLoading } = useAccounts(continuationToken);
   const [account, setAccount] = useState();
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const { data, isLoading } = useAccounts(continuationToken);
 
   const onClickDetails = useCallback(
     (accountId) => {
       const account = data?.page.find((account) => account.id === accountId);
       setAccount(account);
+      setShowDetailModal(true);
     },
     [data?.page]
   );
@@ -89,7 +91,11 @@ const AccountsTable = ({ setAccountId }) => {
         }}
         totalPages={100}
       />
-      <AccountDetailModal account={account} />
+      <AccountDetailModal
+        openModal={showDetailModal}
+        setOpenModal={setShowDetailModal}
+        account={account}
+      />
     </Card>
   );
 };
