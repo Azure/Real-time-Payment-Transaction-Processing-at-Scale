@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import ManageAccountsSection from '~/components/sections/accounts/manage-accounts';
-import TransactionsSection from '~/components/sections/transactions';
+import TransactionsSection from '~/components/sections/accounts/transactions';
 
 export default function Home() {
   const [accountId, setAccountId] = useState();

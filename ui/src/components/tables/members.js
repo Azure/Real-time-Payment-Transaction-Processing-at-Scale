@@ -3,10 +3,10 @@
 import { Card, Pagination, Spinner } from 'flowbite-react';
 import { useCallback, useState } from 'react';
 
+import { useRouter } from 'next/navigation';
 import Datatable from '~/components/tables/datatable';
 import FormModal from '~/components/modals/form';
 import NewMemberForm from '~/components/forms/new-member';
-// import { useRouter } from 'next/router';
 import useMembers from '~/hooks/members';
 
 const headers = [
@@ -37,7 +37,7 @@ const headers = [
 ];
 
 const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
-  // const router = useRouter();
+  const router = useRouter();
   const [continuationToken, setContinuationToken] = useState('');
   const [page, setPage] = useState(1);
 
@@ -51,7 +51,7 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
     [data?.page, setMember]
   );
   const onClickAccounts = (memberId) => {
-    // router.push(`members/${memberId}`);
+    router.push(`accounts/${memberId}`);
   };
 
   const formattedData = data?.page.map((row) => {
