@@ -1,4 +1,4 @@
-import { Button, Dropdown, Label, TextInput } from 'flowbite-react';
+import { Dropdown, Label, TextInput } from 'flowbite-react';
 import { useState } from 'react';
 
 const NewAccountForm = () => {
@@ -11,7 +11,6 @@ const NewAccountForm = () => {
   });
 
   const onChangeAccountType = (accountType) => {
-    console.log(accountType);
     setForm({ ...form, accountType });
   };
   const onChangeCustomerGreetingName = (e) =>
@@ -37,7 +36,12 @@ const NewAccountForm = () => {
         <div className="mb-2 block">
           <Label htmlFor="accountType" value="Account Type:" />
         </div>
-        <Dropdown color="light" label="Select" id="accountType" required>
+        <Dropdown
+          color="light"
+          label="Select"
+          id="accountType"
+          onSelect={onChangeAccountType}
+          required>
           <Dropdown.Item>Checking</Dropdown.Item>
           <Dropdown.Item>Savings</Dropdown.Item>
         </Dropdown>
@@ -65,10 +69,6 @@ const NewAccountForm = () => {
           value={form.balance}
           required
         />
-      </div>
-      <div className="w-full flex justify-between pt-4">
-        <Button color="light">Cancel</Button>
-        <Button color="dark">Save</Button>
       </div>
     </div>
   );

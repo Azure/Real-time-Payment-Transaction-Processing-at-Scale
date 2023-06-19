@@ -1,4 +1,4 @@
-import { Button, Dropdown, Label, Textarea, TextInput } from 'flowbite-react';
+import { Dropdown, Label, Textarea, TextInput } from 'flowbite-react';
 import { useState } from 'react';
 
 const NewTransactionForm = () => {
@@ -50,9 +50,6 @@ const NewTransactionForm = () => {
           value={form.description}
           required
         />
-      </div>
-      <div className="w-full">
-        <Button color="dark">Save</Button>
       </div>
     </div>
   );
