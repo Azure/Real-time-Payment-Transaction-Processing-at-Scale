@@ -1,10 +1,15 @@
-import { PlusIcon } from '@heroicons/react/24/outline';
+'use client';
+
+import { useState } from 'react';
 import { Button } from 'flowbite-react';
+import { PlusIcon } from '@heroicons/react/24/outline';
 
 import AccountsTable from '~/components/tables/accounts';
 
 const ManageAccountsSection = ({ setAccountId }) => {
-  const onClickAdd = () => null;
+  const [showFormModal, setShowFormModal] = useState(false);
+
+  const onClickAdd = () => setShowFormModal(true);
 
   return (
     <div className="w-full">
@@ -17,7 +22,11 @@ const ManageAccountsSection = ({ setAccountId }) => {
           </Button>
         </div>
       </div>
-      <AccountsTable setAccountId={setAccountId} />
+      <AccountsTable
+        showFormModal={showFormModal}
+        setShowFormModal={setShowFormModal}
+        setAccountId={setAccountId}
+      />
     </div>
   );
 };

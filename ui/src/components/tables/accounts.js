@@ -7,6 +7,8 @@ import { Capitalize, USDollar } from '~/helpers';
 import AccountDetailModal from '~/components/modals/account-detail';
 import Datatable from '~/components/tables/datatable';
 import useAccounts from '~/hooks/accounts';
+import FormModal from '~/components/modals/form';
+import NewAccountForm from '~/components/forms/new-account';
 
 const headers = [
   {
@@ -39,11 +41,12 @@ const headers = [
   }
 ];
 
-const AccountsTable = ({ setAccountId }) => {
+const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
   const [continuationToken, setContinuationToken] = useState('');
   const [page, setPage] = useState(1);
   const [account, setAccount] = useState();
   const [showDetailModal, setShowDetailModal] = useState(false);
+
   const { data, isLoading } = useAccounts(continuationToken);
 
   const onClickDetails = useCallback(
@@ -75,6 +78,8 @@ const AccountsTable = ({ setAccountId }) => {
     };
   });
 
+  const modalHeader = <h3 className="text-xl p-4">New Account</h3>;
+
   return (
     <Card className="card w-full justify-center items-center">
       <h3 className="p-6 font-bold">Accounts</h3>
@@ -100,6 +105,9 @@ const AccountsTable = ({ setAccountId }) => {
         setOpenModal={setShowDetailModal}
         account={account}
       />
+      <FormModal header={modalHeader} openModal={showFormModal} setOpenModal={setShowFormModal}>
+        <NewAccountForm />
+      </FormModal>
     </Card>
   );
 };

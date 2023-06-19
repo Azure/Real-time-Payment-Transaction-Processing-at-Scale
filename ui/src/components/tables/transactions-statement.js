@@ -33,7 +33,7 @@ const headers = [
 const TransactionsStatementTable = ({ accountId }) => {
   const [continuationToken, setContinuationToken] = useState('');
   const [page, setPage] = useState(1);
-  const { data, isLoading } = useTransactionsStatement(accountId, continuationToken);
+  const { data, isLoading } = useTransactionsStatement('0909090907', continuationToken);
 
   const formattedData = data?.page.map((row) => {
     const date = new Date(row.timestamp);
