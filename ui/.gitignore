@@ -39,3 +39,5 @@ jspm_packages
 
 # Environment
 .env.local
+
+.DS_Store
