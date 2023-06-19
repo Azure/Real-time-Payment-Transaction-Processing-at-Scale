@@ -1,11 +1,11 @@
 'use client';
 
 import { Card, Pagination, Spinner } from 'flowbite-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import AccountDetailModal from '~/components/modals/account-detail';
 
 import Datatable from '~/components/tables/datatable';
-import { Capitalize, USDollar } from '~/helpers';
-import useTransactionsStatement from '~/hooks/transaction-statements';
+import useAccounts from '~/hooks/accounts';
 
 const headers = [
   {
@@ -38,17 +38,23 @@ const headers = [
   }
 ];
 
-const AccountsTable = ({ accountId }) => {
+const AccountsTable = () => {
   const [continuationToken, setContinuationToken] = useState('');
   const [page, setPage] = useState(1);
-  const { data, isLoading } = useTransactionsStatement(accountId, continuationToken);
+  const { data, isLoading } = useAccounts(continuationToken);
+  const [account, setAccount] = useState(null);
+
+  const onClickDetails = (accountId) => setAccount(accountId);
 
   const formattedData = data?.page.map((row) => {
-    console.log(row);
     return {
       ...row,
-      viewDetails: <a href="">View Details</a>,
-      viewTransactions: <a href="">View Transactions</a>
+      viewDetails: (
+        <p className="underline cursor-pointer" onClick={(row) => onClickDetails(row.id)}>
+          View Details
+        </p>
+      ),
+      viewTransactions: <p className="underline cursor-pointer">View Transactions</p>
     };
   });
 
@@ -72,6 +78,7 @@ const AccountsTable = ({ accountId }) => {
         }}
         totalPages={100}
       />
+      <AccountDetailModal account={account} />
     </Card>
   );
 };
