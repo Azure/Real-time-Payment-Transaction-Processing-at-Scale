@@ -8,8 +8,8 @@ import NewTransactionForm from '~/components/forms/new-transaction';
 import TransactionsStatementTable from '~/components/tables/transactions-statement';
 import useAccountSummary from '~/hooks/account-summary';
 
-const TransactionsSection = ({ account }) => {
-  const { data, isLoading } = useAccountSummary(account);
+const TransactionsSection = ({ accountId }) => {
+  const { data, isLoading } = useAccountSummary(accountId);
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   const onClickAdd = () => setIsOpenModal(true);
@@ -18,7 +18,7 @@ const TransactionsSection = ({ account }) => {
 
   return (
     <div className="w-full">
-      <h1 className="my-6">Transactions for Account Id {account}</h1>
+      <h1 className="my-6">Transactions for Account Id {accountId}</h1>
       {isLoading ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />
@@ -55,7 +55,7 @@ const TransactionsSection = ({ account }) => {
           </div>
         </div>
       )}
-      <TransactionsStatementTable accountId={account} />
+      <TransactionsStatementTable accountId={accountId} />
       <FormModal header={modalHeader} openModal={isOpenModal} setOpenModal={setIsOpenModal}>
         <NewTransactionForm />
       </FormModal>

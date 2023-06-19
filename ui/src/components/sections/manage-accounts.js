@@ -3,7 +3,7 @@ import { Button } from 'flowbite-react';
 
 import AccountsTable from '~/components/tables/accounts';
 
-const ManageAccountsSection = () => {
+const ManageAccountsSection = ({ setAccountId }) => {
   const onClickAdd = () => null;
 
   return (
@@ -17,7 +17,7 @@ const ManageAccountsSection = () => {
           </Button>
         </div>
       </div>
-      <AccountsTable />
+      <AccountsTable setAccountId={setAccountId} />
     </div>
   );
 };

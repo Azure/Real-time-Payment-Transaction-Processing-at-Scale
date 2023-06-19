@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, Pagination, Spinner } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import AccountDetailModal from '~/components/modals/account-detail';
 
 import Datatable from '~/components/tables/datatable';
@@ -38,23 +38,34 @@ const headers = [
   }
 ];
 
-const AccountsTable = () => {
+const AccountsTable = ({ setAccountId }) => {
   const [continuationToken, setContinuationToken] = useState('');
   const [page, setPage] = useState(1);
   const { data, isLoading } = useAccounts(continuationToken);
-  const [account, setAccount] = useState(null);
+  const [account, setAccount] = useState();
 
-  const onClickDetails = (accountId) => setAccount(accountId);
+  const onClickDetails = useCallback(
+    (accountId) => {
+      const account = data?.page.find((account) => account.id === accountId);
+      setAccount(account);
+    },
+    [data?.page]
+  );
+  const onClickTransactions = (accountId) => setAccountId(accountId);
 
   const formattedData = data?.page.map((row) => {
     return {
       ...row,
       viewDetails: (
-        <p className="underline cursor-pointer" onClick={(row) => onClickDetails(row.id)}>
+        <p className="underline cursor-pointer" onClick={() => onClickDetails(row.id)}>
           View Details
         </p>
       ),
-      viewTransactions: <p className="underline cursor-pointer">View Transactions</p>
+      viewTransactions: (
+        <p className="underline cursor-pointer" onClick={() => onClickTransactions(row.id)}>
+          View Transactions
+        </p>
+      )
     };
   });
 

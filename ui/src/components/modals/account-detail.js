@@ -4,7 +4,7 @@ import { Capitalize, USDollar } from '~/helpers';
 const AccountDetailModal = ({ setOpenModal, openModal, account }) => {
   return (
     <Modal show={openModal} size="md" popup onClose={() => setOpenModal(false)}>
-      <Modal.Header className="items-center">
+      {/* <Modal.Header className="items-center">
         <h3>Account Details</h3>
       </Modal.Header>
       <Modal.Body>
@@ -27,7 +27,7 @@ const AccountDetailModal = ({ setOpenModal, openModal, account }) => {
             <p>{USDollar.format(account?.overdraftLimit)}</p>
           </div>
         </div>
-      </Modal.Body>
+      </Modal.Body> */}
     </Modal>
   );
 };
