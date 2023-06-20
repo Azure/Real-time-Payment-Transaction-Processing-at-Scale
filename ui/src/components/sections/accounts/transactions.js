@@ -7,12 +7,28 @@ import FormModal from '~/components/modals/form';
 import NewTransactionForm from '~/components/forms/new-transaction';
 import TransactionsStatementTable from '~/components/tables/transactions-statement';
 import useAccountSummary from '~/hooks/account-summary';
+import useAddTransaction from '~/hooks/add-transaction';
 
 const TransactionsSection = ({ accountId }) => {
   const { data, isLoading } = useAccountSummary(accountId);
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const { trigger } = useAddTransaction();
 
   const onClickAdd = () => setIsOpenModal(true);
+
+  const onSubmit = async () => {
+    const response = await trigger({
+      accountId: '0909090907',
+      type: 'deposit',
+      description: 'Item refund',
+      merchant: 'Tailspin Toys',
+      amount: 38.26
+    });
+
+    if (response.status === 200) {
+      setIsOpenModal(false);
+    }
+  };
 
   const modalHeader = <div className="text-xl p-4">New Transaction</div>;
 
@@ -56,7 +72,11 @@ const TransactionsSection = ({ accountId }) => {
         </div>
       )}
       <TransactionsStatementTable accountId={accountId} />
-      <FormModal header={modalHeader} openModal={isOpenModal} setOpenModal={setIsOpenModal}>
+      <FormModal
+        onSubmit={onSubmit}
+        header={modalHeader}
+        openModal={isOpenModal}
+        setOpenModal={setIsOpenModal}>
         <NewTransactionForm />
       </FormModal>
     </div>

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 const CustomSidebar = () => {
   const router = useRouter();
   return (
-    <Sidebar className="h-screen absolute z-50">
+    <Sidebar className="h-full fixed z-50">
       <Sidebar.Items>
         <Sidebar.ItemGroup>
           <Sidebar.Item>
