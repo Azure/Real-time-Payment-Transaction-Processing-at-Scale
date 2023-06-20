@@ -1,4 +1,3 @@
-using cosmos_payments_demo.Model;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
@@ -10,6 +9,13 @@ namespace cosmos_payments_demo.Processor
 {
     public static class ProcessCustomerView
     {
+        static ProcessCustomerView()
+        {
+            isMasterRegion = Convert.ToBoolean(Environment.GetEnvironmentVariable("isMasterRegion"));
+        }
+
+        static bool isMasterRegion;
+
         [FunctionName("ProcessCustomerView")]
         public static async Task RunAsync([CosmosDBTrigger(
             databaseName: "%paymentsDatabase%",
@@ -19,6 +25,7 @@ namespace cosmos_payments_demo.Processor
             StartFromBeginning = true,
             FeedPollDelay = 1000,
             MaxItemsPerInvocation = 50,
+            PreferredLocations = "%preferredRegions%",
             LeaseContainerName = "leases")]IReadOnlyList<JObject> input,
             [CosmosDB(
                 databaseName: "%paymentsDatabase%",
@@ -26,6 +33,9 @@ namespace cosmos_payments_demo.Processor
                 Connection = "CosmosDBConnection")] IAsyncCollector<JObject> eventCollector,
             ILogger log)
         {
+            if (!isMasterRegion)
+                return;
+
             await Parallel.ForEachAsync(input, async (record, token) =>
             {
                 try

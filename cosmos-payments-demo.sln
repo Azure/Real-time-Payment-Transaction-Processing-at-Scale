@@ -3,26 +3,71 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cosmos-payments-demo", "cosmos-payments-demo\cosmos-payments-demo.csproj", "{93BADCFD-1005-404C-A748-DEC1CFB9B83D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cosmos-payments-demo", "src\cosmos-payments-demo\cosmos-payments-demo.csproj", "{93BADCFD-1005-404C-A748-DEC1CFB9B83D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cosmos", "Cosmos", "{1A3148D7-982F-4947-BA71-A9FCFC387776}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "account-generator", "src\account-generator\account-generator.csproj", "{BC84D7EB-98CF-44E2-B036-81C8A2E73166}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "payments-model", "src\payments-model\payments-model.csproj", "{93A458F1-A754-4B4D-9E8E-3B930DA1688F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AC9810DD-367C-444A-9C4D-3803DF6B4AAF}"
 	ProjectSection(SolutionItems) = preProject
-		processTransaction.js = processTransaction.js
+		src\processTransaction.js = src\processTransaction.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{A9FD88B4-F194-49E6-A056-30E6B4DFEE9E}"
+	ProjectSection(SolutionItems) = preProject
+		deploy\setup.sh = deploy\setup.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastructure", "{3DC1A5BC-FCB5-4196-A148-0E58E7E90D80}"
+	ProjectSection(SolutionItems) = preProject
+		infrastructure\blob.bicep = infrastructure\blob.bicep
+		infrastructure\cosmos.bicep = infrastructure\cosmos.bicep
+		infrastructure\functions.bicep = infrastructure\functions.bicep
+		infrastructure\main.bicep = infrastructure\main.bicep
+		infrastructure\trafficmanager.bicep = infrastructure\trafficmanager.bicep
 	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Debug|x64.ActiveCfg = Debug|x64
+		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Debug|x64.Build.0 = Debug|x64
 		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Release|x64.ActiveCfg = Release|x64
+		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Release|x64.Build.0 = Release|x64
+		{BC84D7EB-98CF-44E2-B036-81C8A2E73166}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC84D7EB-98CF-44E2-B036-81C8A2E73166}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC84D7EB-98CF-44E2-B036-81C8A2E73166}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BC84D7EB-98CF-44E2-B036-81C8A2E73166}.Debug|x64.Build.0 = Debug|Any CPU
+		{BC84D7EB-98CF-44E2-B036-81C8A2E73166}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC84D7EB-98CF-44E2-B036-81C8A2E73166}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC84D7EB-98CF-44E2-B036-81C8A2E73166}.Release|x64.ActiveCfg = Release|Any CPU
+		{BC84D7EB-98CF-44E2-B036-81C8A2E73166}.Release|x64.Build.0 = Release|Any CPU
+		{93A458F1-A754-4B4D-9E8E-3B930DA1688F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93A458F1-A754-4B4D-9E8E-3B930DA1688F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93A458F1-A754-4B4D-9E8E-3B930DA1688F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{93A458F1-A754-4B4D-9E8E-3B930DA1688F}.Debug|x64.Build.0 = Debug|Any CPU
+		{93A458F1-A754-4B4D-9E8E-3B930DA1688F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93A458F1-A754-4B4D-9E8E-3B930DA1688F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93A458F1-A754-4B4D-9E8E-3B930DA1688F}.Release|x64.ActiveCfg = Release|Any CPU
+		{93A458F1-A754-4B4D-9E8E-3B930DA1688F}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{93BADCFD-1005-404C-A748-DEC1CFB9B83D} = {AC9810DD-367C-444A-9C4D-3803DF6B4AAF}
+		{BC84D7EB-98CF-44E2-B036-81C8A2E73166} = {AC9810DD-367C-444A-9C4D-3803DF6B4AAF}
+		{93A458F1-A754-4B4D-9E8E-3B930DA1688F} = {AC9810DD-367C-444A-9C4D-3803DF6B4AAF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6A7F5709-D391-4145-91FF-461D969EC33C}

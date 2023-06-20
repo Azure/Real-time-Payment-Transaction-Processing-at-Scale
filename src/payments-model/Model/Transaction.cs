@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
-namespace cosmos_payments_demo.Model
+namespace payments_model
 {
     public class Transaction
     {
@@ -14,7 +15,7 @@ namespace cosmos_payments_demo.Model
         public string description { get; set; }
         public string merchant { get; set; }
         public string type { get; set; }
-        public decimal amount { get; set; }
+        public double amount { get; set; }
         public DateTime timestamp { get; set; }
     }
 }
