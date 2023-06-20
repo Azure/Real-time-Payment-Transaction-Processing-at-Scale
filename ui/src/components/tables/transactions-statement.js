@@ -47,7 +47,7 @@ const TransactionsStatementTable = ({ accountId }) => {
 
   return (
     <Card className="card w-full justify-center items-center">
-      <h3 className="p-6 font-bold">Transactions</h3>
+      <div className="text-xl p-6 font-bold">Transactions</div>
       {isLoading ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />

@@ -14,7 +14,7 @@ const TransactionsSection = ({ accountId }) => {
 
   const onClickAdd = () => setIsOpenModal(true);
 
-  const modalHeader = <h3 className="text-xl p-4">New Transaction</h3>;
+  const modalHeader = <div className="text-xl p-4">New Transaction</div>;
 
   return (
     <div className="w-full mt-6">

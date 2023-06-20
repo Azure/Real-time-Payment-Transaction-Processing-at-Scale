@@ -9,7 +9,7 @@ export const metadata = {
   description: 'Members section'
 };
 
-export default function RootLayout({ children }) {
+export default function MembersLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>

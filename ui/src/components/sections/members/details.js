@@ -3,7 +3,7 @@ import { Card } from 'flowbite-react';
 const MemberDetailsSection = ({ member }) => {
   return (
     <Card className="w-full mt-6">
-      <h2 className="font-bold">Member Details</h2>
+      <div className="font-bold">Member Details</div>
       <div className="flex space-between items-center mb-6">
         <div className="flex flex-col text-sm w-full">
           <div className="flex flex-1 items-center mb-6">

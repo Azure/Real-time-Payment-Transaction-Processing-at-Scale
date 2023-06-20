@@ -51,7 +51,7 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
     [data?.page, setMember]
   );
   const onClickAccounts = (memberId) => {
-    router.push(`accounts/${memberId}`);
+    router.push(`accounts`);
   };
 
   const formattedData = data?.page.map((row) => {
@@ -71,11 +71,11 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
     };
   });
 
-  const modalHeader = <h3 className="text-xl p-4">New Member</h3>;
+  const modalHeader = <div className="text-xl p-4">New Member</div>;
 
   return (
     <Card className="card w-full justify-center items-center">
-      <h3 className="p-6 font-bold">Members</h3>
+      <div className="text-xl p-6 font-bold">Members</div>
       {isLoading ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />
