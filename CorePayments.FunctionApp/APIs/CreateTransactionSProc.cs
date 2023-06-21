@@ -1,57 +1,56 @@
 using CorePayments.Infrastructure.Domain.Entities;
+using CorePayments.Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
-using Container = Microsoft.Azure.Cosmos.Container;
 
-namespace cosmos_payments_demo.APIs
+namespace CorePayments.FunctionApp.APIs
 {
-    public static class CreateTransactionSProc
+    public class CreateTransactionSProc
     {
-        [FunctionName("CreateTransactionSProc")]
-        public static async Task<IActionResult> RunAsync(
+        readonly ITransactionRepository _transactionRepository;
+
+        public CreateTransactionSProc(
+            ITransactionRepository transactionRepository)
+        {
+            _transactionRepository = transactionRepository;
+        }
+
+        [Function("CreateTransactionSProc")]
+        public async Task<IActionResult> RunAsync(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "transaction/createsproc")] HttpRequest req,
-            [CosmosDB(
+            [CosmosDBInput(
                 databaseName: "%paymentsDatabase%",
                 containerName: "%transactionsContainer%",
                 Connection = "CosmosDBConnection")] CosmosClient client,
-            ILogger log)
+            FunctionContext context)
         {
+            var logger = context.GetLogger<CreateTransactionSProc>();
+
             try
             {
-                if (container == null)
-                    container = client.GetContainer(Environment.GetEnvironmentVariable("paymentsDatabase"),
-                        Environment.GetEnvironmentVariable("transactionsContainer"));
-
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var transaction = JsonConvert.DeserializeObject<Transaction>(requestBody);
 
-                var response = await container.Scripts.ExecuteStoredProcedureAsync<AccountSummary>("processTransaction", new PartitionKey(transaction.accountId), new[] { transaction });
-
-                //Should handle/retry precondition failure
-
-                return new OkObjectResult(response.Resource);
+                var result = await _transactionRepository.ProcessTransactionSProc(transaction);
+                return new OkObjectResult(result);
             }
             catch (CosmosException ex)
             {
-                log.LogError(ex.Message, ex);
+                logger.LogError(ex.Message, ex);
                 return new BadRequestObjectResult(ex.Message);
             }
             catch (Exception ex)
             {
-                log.LogError(ex.Message, ex);
+                logger.LogError(ex.Message, ex);
                 return new BadRequestObjectResult(ex.Message);
             }
         }
-
-        private static Container container;
     }
 }

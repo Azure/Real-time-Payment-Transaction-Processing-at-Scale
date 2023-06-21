@@ -1,16 +1,16 @@
 using CorePayments.Infrastructure.Domain.Entities;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace cosmos_payments_demo.Processor
+namespace CorePayments.FunctionApp.Processor
 {
     public static class ProcessCustomerView
     {
-        [FunctionName("ProcessCustomerView")]
+        [Function("ProcessCustomerView")]
         public static async Task RunAsync([CosmosDBTrigger(
             databaseName: "%paymentsDatabase%",
             containerName: "%transactionsContainer%",
@@ -19,7 +19,7 @@ namespace cosmos_payments_demo.Processor
             StartFromBeginning = true,
             FeedPollDelay = 1000,
             MaxItemsPerInvocation = 50,
-            LeaseContainerName = "leases")]IReadOnlyList<JObject> input,
+            LeaseContainerName = "leases")] IReadOnlyList<JObject> input,
             [CosmosDB(
                 databaseName: "%paymentsDatabase%",
                 containerName: "%customerContainer%",
