@@ -11,19 +11,20 @@ import useAddTransaction from '~/hooks/add-transaction';
 
 const TransactionsSection = ({ accountId }) => {
   const { data, isLoading } = useAccountSummary(accountId);
-  const [isOpenModal, setIsOpenModal] = useState(false);
   const { trigger } = useAddTransaction();
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [form, setForm] = useState({
+    accountId: '',
+    type: '',
+    description: '',
+    merchant: '',
+    amount: ''
+  });
 
   const onClickAdd = () => setIsOpenModal(true);
 
   const onSubmit = async () => {
-    const response = await trigger({
-      accountId: '0909090907',
-      type: 'deposit',
-      description: 'Item refund',
-      merchant: 'Tailspin Toys',
-      amount: 38.26
-    });
+    const response = await trigger(form);
 
     if (response.status === 200) {
       setIsOpenModal(false);
@@ -44,21 +45,21 @@ const TransactionsSection = ({ accountId }) => {
           <div className="flex flex-col space-beteween text-md flex-1">
             <div className="flex text-sm w-full mb-6">
               <div className="flex flex-1 items-center mr-3">
-                <caption className="font-bold mr-2">Customer Greeting Name:</caption>
+                <div className="font-bold mr-2">Customer Greeting Name:</div>
                 <p>{data.customerGreetingName}</p>
               </div>
               <div className="flex flex-1 items-center">
-                <caption className="font-bold mr-2">Account type:</caption>
+                <div className="font-bold mr-2">Account type:</div>
                 <p>{Capitalize(data.accountType)}</p>
               </div>
             </div>
             <div className="flex text-sm w-full">
               <div className="flex flex-1 items-center mr-3">
-                <caption className="font-bold mr-2">Balance:</caption>
+                <div className="font-bold mr-2">Balance:</div>
                 <p>{USDollar.format(data.balance)}</p>
               </div>
               <div className="flex flex-1 items-center">
-                <caption className="font-bold mr-2">Overdraft Limit:</caption>
+                <div className="font-bold mr-2">Overdraft Limit:</div>
                 <p>{USDollar.format(data.overdraftLimit)}</p>
               </div>
             </div>
@@ -73,11 +74,11 @@ const TransactionsSection = ({ accountId }) => {
       )}
       <TransactionsStatementTable accountId={accountId} />
       <FormModal
-        onSubmit={onSubmit}
         header={modalHeader}
+        onSubmit={onSubmit}
         openModal={isOpenModal}
         setOpenModal={setIsOpenModal}>
-        <NewTransactionForm />
+        <NewTransactionForm form={form} setForm={setForm} />
       </FormModal>
     </div>
   );

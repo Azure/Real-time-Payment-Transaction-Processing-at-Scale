@@ -1,15 +1,6 @@
-import { useState } from 'react';
 import { Dropdown, Label, Textarea, TextInput } from 'flowbite-react';
 
-const NewTransactionForm = () => {
-  const [form, setForm] = useState({
-    accountId: '',
-    type: '',
-    description: '',
-    merchant: '',
-    amount: ''
-  });
-
+const NewTransactionForm = ({ form, setForm }) => {
   const onChangeMerchant = (e) => setForm({ ...form, merchant: e.target.value });
   const onChangeAmount = (e) => setForm({ ...form, amount: e.target.value });
   const onChangeDescription = (e) => setForm({ ...form, description: e.target.value });
@@ -22,10 +13,10 @@ const NewTransactionForm = () => {
         </div>
         <TextInput
           id="merchant"
-          placeholder="Merchant Name"
           onChange={onChangeMerchant}
-          value={form.merchant}
+          placeholder="Merchant Name"
           required
+          value={form.merchant}
         />
       </div>
       <div className="mb-4">
@@ -38,7 +29,13 @@ const NewTransactionForm = () => {
         <div className="mb-2 block">
           <Label htmlFor="amount" value="Amount:" />
         </div>
-        <TextInput id="amount" onChange={onChangeAmount} value={form.amount} required />
+        <TextInput
+          id="amount"
+          onChange={onChangeAmount}
+          placeholder="Amount"
+          required
+          value={form.amount}
+        />
       </div>
       <div className="mb-4">
         <div className="mb-2 block">
@@ -47,8 +44,9 @@ const NewTransactionForm = () => {
         <Textarea
           id="description"
           onChange={onChangeDescription}
-          value={form.description}
+          placeholder="Description"
           required
+          value={form.description}
         />
       </div>
     </div>
