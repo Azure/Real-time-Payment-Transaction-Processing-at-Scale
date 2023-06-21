@@ -9,6 +9,10 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CorePayments.Infrastructure\CorePayments.Infrastructure.csproj" />
+    <ProjectReference Include="..\CorePayments.SemanticKernel\CorePayments.SemanticKernel.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

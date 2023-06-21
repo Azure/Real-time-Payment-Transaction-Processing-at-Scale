@@ -1,4 +1,4 @@
-using cosmos_payments_demo.Model;
+using CorePayments.Infrastructure.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;

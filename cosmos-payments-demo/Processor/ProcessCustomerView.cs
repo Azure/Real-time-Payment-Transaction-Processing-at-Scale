@@ -1,4 +1,4 @@
-using cosmos_payments_demo.Model;
+using CorePayments.Infrastructure.Domain.Entities;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;

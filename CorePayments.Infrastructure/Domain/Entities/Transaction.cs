@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace cosmos_payments_demo.Model
+namespace CorePayments.Infrastructure.Domain.Entities
 {
     public class Transaction
     {

@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cosmos", "Cosmos", "{1A3148
 		processTransaction.js = processTransaction.js
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePayments.SemanticKernel", "CorePayments.SemanticKernel\CorePayments.SemanticKernel.csproj", "{06739374-6C6F-4622-9251-FB0735EB9D56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePayments.Infrastructure", "CorePayments.Infrastructure\CorePayments.Infrastructure.csproj", "{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +24,14 @@ Global
 		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06739374-6C6F-4622-9251-FB0735EB9D56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06739374-6C6F-4622-9251-FB0735EB9D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06739374-6C6F-4622-9251-FB0735EB9D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06739374-6C6F-4622-9251-FB0735EB9D56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
