@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Card, Pagination, Spinner } from 'flowbite-react';
 import { useRouter } from 'next/navigation';
 
