@@ -31,6 +31,10 @@ namespace CorePayments.FunctionApp.APIs
             var logger = context.GetLogger<GetTransactionStatement>();
             int pageSize = -1;
             int.TryParse(req.Query["pageSize"], out pageSize);
+            if (pageSize <= 0)
+            {
+                pageSize = 50;
+            }
 
             string continuationToken = req.Query["continuationToken"];
 

@@ -19,6 +19,13 @@ namespace CorePayments.Infrastructure.Repository
                 .WithParameter("@accountId", accountId);
 
             return await PagedQuery<Transaction>(query, pageSize, new PartitionKey(accountId), continuationToken);
+
+            /*
+            
+            QueryDefinition query = new QueryDefinition("select * from c where c.accountId = @accountId and c.type != @docType order by c._ts desc")
+                .WithParameter("@accountId", accountId)
+                .WithParameter("@docType", Constants.DocumentTypes.AccountSummary);
+            */
         }
     }
 }

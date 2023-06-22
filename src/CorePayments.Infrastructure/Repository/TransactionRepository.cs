@@ -67,4 +67,54 @@ namespace CorePayments.Infrastructure.Repository
                 return new (null, HttpStatusCode.BadRequest, string.Empty);
         }
     }
+
+    /*
+    private static async Task<IActionResult> ProcessTransaction(Transaction transaction)
+        {
+            var pk = new PartitionKey(transaction.accountId);
+
+            var responseRead = await container.ReadItemAsync<AccountSummary>(transaction.accountId, pk);
+            var account = responseRead.Resource;
+
+            if (account == null)
+            {
+                return new NotFoundObjectResult("Account not found!");
+            }
+
+            if (transaction.type.ToLowerInvariant() == Constants.DocumentTypes.TransactionDebit)
+            {
+                if ((account.balance + account.overdraftLimit) < transaction.amount)
+                {
+                    return new BadRequestObjectResult("Insufficient balance/limit!");
+                }
+            }
+
+            var batch = container.CreateTransactionalBatch(pk);
+
+            batch.PatchItem(account.id, 
+                new List<PatchOperation>() 
+                { 
+                    PatchOperation.Increment("/balance", transaction.type.ToLowerInvariant() == Constants.DocumentTypes.TransactionDebit ? -transaction.amount : transaction.amount) 
+                }, 
+                new TransactionalBatchPatchItemRequestOptions()
+                { 
+                    IfMatchEtag = responseRead.ETag 
+                }
+            );
+            
+            batch.CreateItem<Transaction>(transaction);
+
+            var responseBatch = await batch.ExecuteAsync();
+
+            if (responseBatch.IsSuccessStatusCode)
+            {
+                account = responseBatch.GetOperationResultAtIndex<AccountSummary>(0).Resource;
+                return new OkObjectResult(account);
+            }
+            else if (responseBatch.StatusCode == HttpStatusCode.PreconditionFailed)
+                return new StatusCodeResult((int)HttpStatusCode.PreconditionFailed);
+            else
+                return new BadRequestResult();
+        }
+    */
 }
