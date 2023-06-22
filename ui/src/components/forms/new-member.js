@@ -71,6 +71,10 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
   const onChangeZipcode = (e) => setForm({ ...form, zipcode: e.target.value });
 
   useEffect(() => {
+    if (member) setForm(member);
+  }, [member]);
+
+  useEffect(() => {
     if (member) {
       const diffFields = DiffObjects(form, member);
       setIsDisabled(Object.keys(diffFields).length === 0);
