@@ -1,4 +1,4 @@
-using CorePayments.Infrastructure.Domain.Entities;
+using Model = CorePayments.Infrastructure.Domain.Entities;
 using CorePayments.Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +10,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace CorePayments.FunctionApp.APIs
+namespace CorePayments.FunctionApp.APIs.Transaction
 {
     public class CreateTransactionSProc
     {
@@ -36,7 +36,7 @@ namespace CorePayments.FunctionApp.APIs
             try
             {
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                var transaction = JsonConvert.DeserializeObject<Transaction>(requestBody);
+                var transaction = JsonConvert.DeserializeObject<Model.Transaction>(requestBody);
 
                 var result = await _transactionRepository.ProcessTransactionSProc(transaction);
                 return new OkObjectResult(result);

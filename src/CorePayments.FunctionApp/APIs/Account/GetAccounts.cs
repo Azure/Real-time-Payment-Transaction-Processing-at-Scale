@@ -1,4 +1,3 @@
-using Azure;
 using CorePayments.FunctionApp.Models.Response;
 using CorePayments.Infrastructure.Domain.Entities;
 using CorePayments.Infrastructure.Repository;
@@ -6,40 +5,40 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace CorePayments.FunctionApp.APIs
+namespace CorePayments.FunctionApp.APIs.Account
 {
-    public class GetTransactionStatement
+    public class GetAccounts
     {
         readonly ICustomerRepository _customerRepository;
 
-        public GetTransactionStatement(
+        public GetAccounts(
             ICustomerRepository customerRepository)
         {
             _customerRepository = customerRepository;
         }
 
-        [Function("GetTransactionStatement")]
+        [Function("GetAccounts")]
         public async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "statement/{accountId}")] HttpRequest req,
-            string accountId,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "accounts")] HttpRequest req,
             FunctionContext context)
         {
-            var logger = context.GetLogger<GetTransactionStatement>();
-            int pageSize = -1;
-            int.TryParse(req.Query["pageSize"], out pageSize);
+            int.TryParse(req.Query["pageSize"], out var pageSize);
+            if (pageSize <= 0)
+            {
+                pageSize = 50;
+            }
 
             string continuationToken = req.Query["continuationToken"];
 
-            var (transactions, newContinuationToken) = await _customerRepository.GetPagedTransactionStatement(accountId, pageSize, continuationToken);
-            return transactions == null
+            var (accounts, newContinuationToken) = await _customerRepository.GetPagedAccountSummary(pageSize, continuationToken);
+            return accounts == null
                 ? new NotFoundResult()
-                : new OkObjectResult(new PagedTransactionsResponse
+                : new OkObjectResult(new PagedResponse<AccountSummary>
                 {
-                    Page = transactions,
+                    Page = accounts,
                     ContinuationToken = Uri.EscapeDataString(newContinuationToken ?? String.Empty)
                 });
         }
