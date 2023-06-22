@@ -14,7 +14,7 @@ const TransactionsSection = ({ accountId }) => {
 
   const onClickAdd = () => setIsOpenModal(true);
 
-  const modalHeader = <h3 className="text-xl p-4">New Transaction</h3>;
+  const modalHeader = <div className="text-xl p-4">New Transaction</div>;
 
   return (
     <div className="w-full mt-6">
@@ -28,21 +28,21 @@ const TransactionsSection = ({ accountId }) => {
           <div className="flex flex-col space-beteween text-md flex-1">
             <div className="flex text-sm w-full mb-6">
               <div className="flex flex-1 items-center mr-3">
-                <caption className="font-bold mr-2">Customer Greeting Name:</caption>
+                <p className="font-bold mr-2">Customer Greeting Name:</p>
                 <p>{data.customerGreetingName}</p>
               </div>
               <div className="flex flex-1 items-center">
-                <caption className="font-bold mr-2">Account type:</caption>
+                <p className="font-bold mr-2">Account type:</p>
                 <p>{Capitalize(data.accountType)}</p>
               </div>
             </div>
             <div className="flex text-sm w-full">
               <div className="flex flex-1 items-center mr-3">
-                <caption className="font-bold mr-2">Balance:</caption>
+                <p className="font-bold mr-2">Balance:</p>
                 <p>{USDollar.format(data.balance)}</p>
               </div>
               <div className="flex flex-1 items-center">
-                <caption className="font-bold mr-2">Overdraft Limit:</caption>
+                <p className="font-bold mr-2">Overdraft Limit:</p>
                 <p>{USDollar.format(data.overdraftLimit)}</p>
               </div>
             </div>
@@ -56,8 +56,8 @@ const TransactionsSection = ({ accountId }) => {
         </div>
       )}
       <TransactionsStatementTable accountId={accountId} />
-      <FormModal header={modalHeader} openModal={isOpenModal} setOpenModal={setIsOpenModal}>
-        <NewTransactionForm />
+      <FormModal header={modalHeader} openModal={isOpenModal}>
+        <NewTransactionForm accountId={accountId} setOpenModal={setIsOpenModal} />
       </FormModal>
     </div>
   );

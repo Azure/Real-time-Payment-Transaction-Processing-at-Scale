@@ -6,13 +6,27 @@ import { useRouter } from 'next/navigation';
 const CustomSidebar = () => {
   const router = useRouter();
   return (
-    <Sidebar className="h-screen absolute z-50">
+    <Sidebar className="h-full fixed z-50">
       <Sidebar.Items>
         <Sidebar.ItemGroup>
           <Sidebar.Item>
-            <p className="cursor-pointer" onClick={() => router.replace('/')}>
+            <div
+              className="cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                router.push('/');
+              }}>
               Members
-            </p>
+            </div>
+          </Sidebar.Item>
+          <Sidebar.Item>
+            <div
+              className="cursor-pointer"
+              onClick={() => {
+                router.push('accounts');
+              }}>
+              Accounts
+            </div>
           </Sidebar.Item>
         </Sidebar.ItemGroup>
       </Sidebar.Items>

@@ -78,11 +78,11 @@ const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
     };
   });
 
-  const modalHeader = <h3 className="text-xl p-4">New Account</h3>;
+  const modalHeader = <div className="text-xl p-4">New Account</div>;
 
   return (
     <Card className="card w-full justify-center items-center">
-      <h3 className="p-6 font-bold">Accounts</h3>
+      <div className="text-xl p-6 font-bold">Accounts</div>
       {isLoading ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />
@@ -105,8 +105,8 @@ const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
         setOpenModal={setShowDetailModal}
         account={account}
       />
-      <FormModal header={modalHeader} openModal={showFormModal} setOpenModal={setShowFormModal}>
-        <NewAccountForm />
+      <FormModal header={modalHeader} openModal={showFormModal}>
+        <NewAccountForm setOpenModal={setShowFormModal} />
       </FormModal>
     </Card>
   );
