@@ -3,16 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.FunctionApp", "src\CorePayments.FunctionApp\CorePayments.FunctionApp.csproj", "{93BADCFD-1005-404C-A748-DEC1CFB9B83D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.FunctionApp", "CorePayments.FunctionApp\CorePayments.FunctionApp.csproj", "{93BADCFD-1005-404C-A748-DEC1CFB9B83D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cosmos", "Cosmos", "{1A3148D7-982F-4947-BA71-A9FCFC387776}"
 	ProjectSection(SolutionItems) = preProject
 		processTransaction.js = processTransaction.js
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.SemanticKernel", "src\CorePayments.SemanticKernel\CorePayments.SemanticKernel.csproj", "{06739374-6C6F-4622-9251-FB0735EB9D56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.SemanticKernel", "CorePayments.SemanticKernel\CorePayments.SemanticKernel.csproj", "{06739374-6C6F-4622-9251-FB0735EB9D56}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.Infrastructure", "src\CorePayments.Infrastructure\CorePayments.Infrastructure.csproj", "{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.Infrastructure", "CorePayments.Infrastructure\CorePayments.Infrastructure.csproj", "{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
