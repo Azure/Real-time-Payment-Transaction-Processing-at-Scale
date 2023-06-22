@@ -364,3 +364,7 @@ FodyWeavers.xsd
 
 .DS_Store
 local.settings.json
+/src/cosmos-payments-demo/Properties/ServiceDependencies/functionpayh832bx20 - Zip Deploy/profile.arm.json
+/src/cosmos-payments-demo/Properties/ServiceDependencies/functionpayh832bx20 - Zip Deploy/storage1.arm.json
+/src/cosmos-payments-demo/Properties/serviceDependencies.functionpayh832bx20 - Zip Deploy.json
+/src/cosmos-payments-demo/Properties/serviceDependencies.json
