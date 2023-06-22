@@ -1,7 +1,10 @@
-import { Dropdown, Label, Textarea, TextInput } from 'flowbite-react';
+import { Button, Label, Spinner, Textarea, TextInput } from 'flowbite-react';
 import { useState } from 'react';
 
-const NewMemberForm = () => {
+import useAddMember from '~/hooks/add-member';
+
+const NewMemberForm = ({ setOpenModal }) => {
+  const { trigger } = useAddMember();
   const [form, setForm] = useState({
     address: '',
     country: '',
@@ -13,6 +16,25 @@ const NewMemberForm = () => {
     state: '',
     zipcode: ''
   });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const onClickCancel = () => {
+    setForm({ accountId: '', type: '', description: '', merchant: '', amount: '' });
+    setIsLoading(false);
+    setOpenModal(false);
+  };
+
+  const onSubmit = async () => {
+    setIsLoading(true);
+    const response = await trigger(form);
+
+    if (response.status === 202) {
+      setOpenModal(false);
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+    }
+  };
 
   const onChangeAccountType = (country) => {
     setForm({ ...form, country });
@@ -75,7 +97,7 @@ const NewMemberForm = () => {
         <TextInput
           className="flex-1 ml-6"
           id="phone"
-          type="phone"
+          type="number"
           onChange={onChangePhone}
           placeholder="Phone"
           value={form.phone}
@@ -88,7 +110,6 @@ const NewMemberForm = () => {
         </div>
         <Textarea
           id="address"
-          type="address"
           onChange={onChangeAddress}
           placeholder="Address"
           value={form.address}
@@ -102,7 +123,6 @@ const NewMemberForm = () => {
         <TextInput
           className="flex-1 ml-6"
           id="city"
-          type="city"
           onChange={onChangeCity}
           placeholder="City"
           value={form.city}
@@ -116,7 +136,6 @@ const NewMemberForm = () => {
         <TextInput
           className="flex-1 ml-6"
           id="state"
-          type="state"
           onChange={onChangeState}
           placeholder="State/Province"
           value={form.state}
@@ -130,7 +149,7 @@ const NewMemberForm = () => {
         <TextInput
           className="flex-1 ml-6"
           id="zipcode"
-          type="zipcode"
+          type="number"
           onChange={onChangeZipcode}
           placeholder="Zipcode"
           value={form.zipcode}
@@ -141,15 +160,17 @@ const NewMemberForm = () => {
         <div className="mb-2 block mr-3">
           <Label htmlFor="country" value="Country:" />
         </div>
-        <Dropdown
-          fullSized
-          color="light"
-          label="Country"
-          id="country"
-          onSelect={onChangeAccountType}
-          required>
-          <Dropdown.Item>US</Dropdown.Item>
-        </Dropdown>
+        <select onChange={onChangeAccountType} label="Select" id="type" required>
+          <option>US</option>
+        </select>
+      </div>
+      <div className="w-full flex justify-between pt-4">
+        <Button color="light" onClick={onClickCancel}>
+          Cancel
+        </Button>
+        <Button color="dark" onClick={onSubmit}>
+          {isLoading ? <Spinner color="white" size="md" /> : 'Save'}
+        </Button>
       </div>
     </div>
   );

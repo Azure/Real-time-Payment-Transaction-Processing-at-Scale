@@ -93,8 +93,8 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
         }}
         totalPages={100}
       />
-      <FormModal header={modalHeader} openModal={showFormModal} setOpenModal={setShowFormModal}>
-        <NewMemberForm />
+      <FormModal header={modalHeader} openModal={showFormModal}>
+        <NewMemberForm setOpenModal={setShowFormModal} />
       </FormModal>
     </Card>
   );
