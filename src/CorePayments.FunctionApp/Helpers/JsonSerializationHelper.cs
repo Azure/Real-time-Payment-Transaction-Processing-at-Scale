@@ -1,13 +1,8 @@
 ﻿using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace cosmos_payments_demo.Helpers
+namespace CorePayments.FunctionApp.Helpers
 {
     public static class JsonSerializationHelper
     {

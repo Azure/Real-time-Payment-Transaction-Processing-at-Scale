@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace payments_model
+namespace CorePayments.Infrastructure
 {
     public static class Constants
     {

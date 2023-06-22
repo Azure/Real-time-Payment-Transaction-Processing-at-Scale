@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace payments_model.Model
+namespace CorePayments.Infrastructure.Domain.Entities
 {
     /// <summary>
     /// The Global Index maps different entity relationships based on the partition key and id combination,

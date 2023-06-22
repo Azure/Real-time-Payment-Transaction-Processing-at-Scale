@@ -1,48 +1,46 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using System.Web.Http;
-using cosmos_payments_demo.Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using payments_model;
-using payments_model.Model;
-using Newtonsoft.Json.Serialization;
+using Microsoft.Azure.Functions.Worker;
+using CorePayments.Infrastructure.Repository;
+using Model = CorePayments.Infrastructure.Domain.Entities;
+using CorePayments.FunctionApp.Helpers;
 
-namespace cosmos_payments_demo.APIs
+namespace CorePayments.FunctionApp.APIs.Member
 {
-    public static class CreateMember
+    public class CreateMember
     {
-        [FunctionName("CreateMember")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "member")] HttpRequest req,
-            [CosmosDB(
-                databaseName: "%paymentsDatabase%",
-                containerName: "%memberContainer%",
-                PreferredLocations = "%preferredRegions%",
-                Connection = "CosmosDBConnection")] IAsyncCollector<Member> collector,
-            ILogger log)
+        readonly IMemberRepository _memberRepository;
+
+        public CreateMember(
+            IMemberRepository memberRepository)
         {
+            _memberRepository = memberRepository;
+        }
+
+        [Function("CreateMember")]
+        public async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "member")] HttpRequest req,
+            FunctionContext context)
+        {
+            var logger = context.GetLogger<CreateMember>();
             try
             {
                 //Read request body
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                var member = JsonSerializationHelper.DeserializeItem<Member>(requestBody);
+                var member = JsonSerializationHelper.DeserializeItem<Model.Member>(requestBody);
                 if (member != null)
                 {
                     member.memberId = Guid.NewGuid().ToString();
 
-                    //Post member to Cosmos DB using output binding
-                    await collector.AddAsync(member);
+                    await _memberRepository.CreateItem(member);
                 }
                 else
                 {
-                    return new BadRequestErrorMessageResult(
+                    return new BadRequestObjectResult(
                         "Invalid member record. Please check the fields and try again.");
                 }
 
@@ -51,7 +49,7 @@ namespace cosmos_payments_demo.APIs
             }
             catch (Exception ex)
             {
-                log.LogError(ex.Message, ex);
+                logger.LogError(ex.Message, ex);
 
                 return new BadRequestResult();
             }

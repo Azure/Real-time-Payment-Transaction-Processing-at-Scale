@@ -1,45 +1,47 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using CorePayments.FunctionApp.Helpers;
+using CorePayments.Infrastructure.Domain.Entities;
+using CorePayments.Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using payments_model;
-using cosmos_payments_demo.Helpers;
-using payments_model.Model;
 
-namespace cosmos_payments_demo.APIs
+namespace CorePayments.FunctionApp.APIs.Account
 {
-    public static class CreateAccount
+    public class CreateAccount
     {
-        [FunctionName("CreateAccount")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "account")] HttpRequest req,
-            [CosmosDB(
-                databaseName: "%paymentsDatabase%",
-                containerName: "%transactionsContainer%",
-                PreferredLocations = "%preferredRegions%",
-                Connection = "CosmosDBConnection")] IAsyncCollector<AccountSummary> collector,
-            ILogger log)
+        readonly ITransactionRepository _transactionRepository;
+
+        public CreateAccount(
+            ITransactionRepository transactionRepository)
         {
+            _transactionRepository = transactionRepository;
+        }
+
+        [Function("CreateAccount")]
+        public async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "account")] HttpRequest req,
+            FunctionContext context)
+        {
+            var logger = context.GetLogger<CreateAccount>();
+
             try
             {
                 //Read request body
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var account = JsonSerializationHelper.DeserializeItem<AccountSummary>(requestBody);
 
-                //Post account to Cosmos DB using output binding
-                await collector.AddAsync(account);
+                await _transactionRepository.CreateItem(account);
 
                 //Return order to caller
                 return new AcceptedResult();
             }
             catch (Exception ex)
             {
-                log.LogError(ex.Message, ex);
+                logger.LogError(ex.Message, ex);
 
                 return new BadRequestResult();
             }

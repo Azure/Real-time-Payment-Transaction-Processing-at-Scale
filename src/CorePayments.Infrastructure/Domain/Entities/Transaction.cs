@@ -1,11 +1,5 @@
-﻿using System;
-using System.Text.Json.Serialization;
+﻿namespace CorePayments.Infrastructure.Domain.Entities
 
-<<<<<<< HEAD:src/CorePayments.Infrastructure/Domain/Entities/Transaction.cs
-namespace CorePayments.Infrastructure.Domain.Entities
-=======
-namespace payments_model
->>>>>>> f482f0adcc278b6f40833ae5755a42e4c19aa5c3:src/payments-model/Model/Transaction.cs
 {
     public class Transaction
     {

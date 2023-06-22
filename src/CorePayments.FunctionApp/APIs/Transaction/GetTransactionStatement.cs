@@ -4,13 +4,12 @@ using CorePayments.Infrastructure.Domain.Entities;
 using CorePayments.Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Cosmos;
+using Model = CorePayments.Infrastructure.Domain.Entities;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace CorePayments.FunctionApp.APIs
+namespace CorePayments.FunctionApp.APIs.Transaction
 {
     public class GetTransactionStatement
     {
@@ -41,7 +40,7 @@ namespace CorePayments.FunctionApp.APIs
             var (transactions, newContinuationToken) = await _customerRepository.GetPagedTransactionStatement(accountId, pageSize, continuationToken);
             return transactions == null
                 ? new NotFoundResult()
-                : new OkObjectResult(new PagedTransactionsResponse
+                : new OkObjectResult(new PagedResponse<Model.Transaction>
                 {
                     Page = transactions,
                     ContinuationToken = Uri.EscapeDataString(newContinuationToken ?? String.Empty)

@@ -25,17 +25,17 @@ namespace CorePayments.Infrastructure.Repository
         {
             var pk = new PartitionKey(transaction.accountId);
 
-            var response = await ReadItem<AccountSummary>(transaction.accountId, transaction.accountId);
-            var account = response.Resource;
+            var responseRead = await ReadItem<AccountSummary>(transaction.accountId, transaction.accountId);
+            var account = responseRead.Resource;
 
             if (account == null)
             {
                 return new(null, HttpStatusCode.NotFound, "Account not found!");
             }
 
-            if (transaction.type.ToLowerInvariant() == "debit")
+            if (transaction.type.ToLowerInvariant() == Constants.DocumentTypes.TransactionDebit)
             {
-                if ((account.balance + account.limit) < transaction.amount)
+                if ((account.balance + account.overdraftLimit) < transaction.amount)
                 {
                     return new(null, HttpStatusCode.BadRequest, "Insufficient balance/limit!");
                 }
@@ -44,14 +44,19 @@ namespace CorePayments.Infrastructure.Repository
                     account.balance -= transaction.amount;
                 }
             }
-            else if (transaction.type.ToLowerInvariant() == "deposit")
-            {
-                account.balance += transaction.amount;
-            }
 
             var batch = Container.CreateTransactionalBatch(pk);
 
-            batch.UpsertItem<AccountSummary>(account, new TransactionalBatchItemRequestOptions() { IfMatchEtag = response.ETag });
+            batch.PatchItem(account.id,
+                new List<PatchOperation>()
+                {
+                    PatchOperation.Increment("/balance", transaction.type.ToLowerInvariant() == Constants.DocumentTypes.TransactionDebit ? -transaction.amount : transaction.amount)
+                },
+                new TransactionalBatchPatchItemRequestOptions()
+                {
+                    IfMatchEtag = responseRead.ETag
+                }
+            );
             batch.CreateItem<Transaction>(transaction);
 
             var responseBatch = await batch.ExecuteAsync();
@@ -66,55 +71,13 @@ namespace CorePayments.Infrastructure.Repository
             else
                 return new (null, HttpStatusCode.BadRequest, string.Empty);
         }
-    }
 
-    /*
-    private static async Task<IActionResult> ProcessTransaction(Transaction transaction)
+        public async Task CreateItem<T>(T item)
         {
-            var pk = new PartitionKey(transaction.accountId);
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
 
-            var responseRead = await container.ReadItemAsync<AccountSummary>(transaction.accountId, pk);
-            var account = responseRead.Resource;
-
-            if (account == null)
-            {
-                return new NotFoundObjectResult("Account not found!");
-            }
-
-            if (transaction.type.ToLowerInvariant() == Constants.DocumentTypes.TransactionDebit)
-            {
-                if ((account.balance + account.overdraftLimit) < transaction.amount)
-                {
-                    return new BadRequestObjectResult("Insufficient balance/limit!");
-                }
-            }
-
-            var batch = container.CreateTransactionalBatch(pk);
-
-            batch.PatchItem(account.id, 
-                new List<PatchOperation>() 
-                { 
-                    PatchOperation.Increment("/balance", transaction.type.ToLowerInvariant() == Constants.DocumentTypes.TransactionDebit ? -transaction.amount : transaction.amount) 
-                }, 
-                new TransactionalBatchPatchItemRequestOptions()
-                { 
-                    IfMatchEtag = responseRead.ETag 
-                }
-            );
-            
-            batch.CreateItem<Transaction>(transaction);
-
-            var responseBatch = await batch.ExecuteAsync();
-
-            if (responseBatch.IsSuccessStatusCode)
-            {
-                account = responseBatch.GetOperationResultAtIndex<AccountSummary>(0).Resource;
-                return new OkObjectResult(account);
-            }
-            else if (responseBatch.StatusCode == HttpStatusCode.PreconditionFailed)
-                return new StatusCodeResult((int)HttpStatusCode.PreconditionFailed);
-            else
-                return new BadRequestResult();
+            await Container.CreateItemAsync(item);
         }
-    */
+    }
 }
