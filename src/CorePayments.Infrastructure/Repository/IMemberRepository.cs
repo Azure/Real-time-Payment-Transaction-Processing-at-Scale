@@ -8,6 +8,6 @@ namespace CorePayments.Infrastructure.Repository
 
         Task<(IEnumerable<Member>? members, string? continuationToken)> GetPagedMembers(int pageSize, string continuationToken);
 
-        Task<int> PatchMember(Member member);
+        Task<int> PatchMember(Member member, string memberId);
     }
 }
