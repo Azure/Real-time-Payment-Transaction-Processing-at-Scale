@@ -1,14 +1,42 @@
-import { Dropdown, Label, TextInput } from 'flowbite-react';
 import { useState } from 'react';
+import { Button, Label, Spinner, TextInput } from 'flowbite-react';
 
-const NewAccountForm = () => {
+import useAddAccount from '~/hooks/add-account';
+
+const NewAccountForm = ({ setOpenModal }) => {
+  const { trigger } = useAddAccount();
   const [form, setForm] = useState({
-    accountId: '',
+    id: '0909090908',
     accountType: '',
     balance: '',
     customerGreetingName: '',
     overdraftLimit: ''
   });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const onClickCancel = () => {
+    setForm({
+      id: '0909090908',
+      accountType: '',
+      balance: '',
+      customerGreetingName: '',
+      overdraftLimit: ''
+    });
+    setIsLoading(false);
+    setOpenModal(false);
+  };
+
+  const onSubmit = async () => {
+    setIsLoading(true);
+    const response = await trigger(form);
+
+    if (response.status === 202) {
+      setOpenModal(false);
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+    }
+  };
 
   const onChangeAccountType = (accountType) => {
     setForm({ ...form, accountType });
@@ -36,15 +64,10 @@ const NewAccountForm = () => {
         <div className="mb-2 block">
           <Label htmlFor="accountType" value="Account Type:" />
         </div>
-        <Dropdown
-          color="light"
-          label="Select"
-          id="accountType"
-          onSelect={onChangeAccountType}
-          required>
-          <Dropdown.Item>Checking</Dropdown.Item>
-          <Dropdown.Item>Savings</Dropdown.Item>
-        </Dropdown>
+        <select onChange={onChangeAccountType} label="Select" id="type" required>
+          <option>Checking</option>
+          <option>Savings</option>
+        </select>
       </div>
       <div className="mb-4">
         <div className="mb-2 block">
@@ -52,6 +75,7 @@ const NewAccountForm = () => {
         </div>
         <TextInput
           id="overdraftLimit"
+          type="number"
           onChange={onChangeOverdraftLimit}
           placeholder="Overdraft Limit"
           value={form.overdraftLimit}
@@ -64,11 +88,20 @@ const NewAccountForm = () => {
         </div>
         <TextInput
           id="balance"
+          type="number"
           onChange={onChangeBalance}
           placeholder="Balance"
           value={form.balance}
           required
         />
+      </div>
+      <div className="w-full flex justify-between pt-4">
+        <Button color="light" onClick={onClickCancel}>
+          Cancel
+        </Button>
+        <Button color="dark" onClick={onSubmit}>
+          {isLoading ? <Spinner color="white" size="md" /> : 'Save'}
+        </Button>
       </div>
     </div>
   );
