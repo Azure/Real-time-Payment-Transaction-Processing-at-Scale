@@ -361,5 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/src/account-generator/local.settings.json
-/src/account-generator/local.settings.json
+
+.DS_Store
+local.settings.json
