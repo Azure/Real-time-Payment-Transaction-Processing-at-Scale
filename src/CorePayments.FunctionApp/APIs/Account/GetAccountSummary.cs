@@ -11,7 +11,7 @@ namespace CorePayments.FunctionApp.APIs.Account
     {
         [Function("GetAccountSummary")]
         public async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "account/{accountId}")] HttpRequestData req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "account/{accountId}")] HttpRequestData req,
             [CosmosDBInput(
                 databaseName: "%paymentsDatabase%",
                 containerName: "%customerContainer%",

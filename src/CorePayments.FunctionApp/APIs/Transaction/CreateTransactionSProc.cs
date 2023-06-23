@@ -25,7 +25,7 @@ namespace CorePayments.FunctionApp.APIs.Transaction
 
         [Function("CreateTransactionSProc")]
         public async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "transaction/createsproc")] HttpRequestData req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "transaction/createsproc")] HttpRequestData req,
             [CosmosDBInput(
                 databaseName: "%paymentsDatabase%",
                 containerName: "%transactionsContainer%",

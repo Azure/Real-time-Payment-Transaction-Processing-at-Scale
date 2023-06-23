@@ -24,7 +24,7 @@ namespace CorePayments.FunctionApp.APIs.Transaction
 
         [Function("GetTransactionStatement")]
         public async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "statement/{accountId}")] HttpRequestData req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "statement/{accountId}")] HttpRequestData req,
             string accountId,
             FunctionContext context)
         {

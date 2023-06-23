@@ -27,7 +27,7 @@ namespace CorePayments.FunctionApp.APIs.Transaction
 
         [Function("CreateTransactionTBatch")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "transaction/createtbatch")] HttpRequestData req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "transaction/createtbatch")] HttpRequestData req,
             FunctionContext context)
         {
             var logger = context.GetLogger<CreateTransactionTBatch>();
