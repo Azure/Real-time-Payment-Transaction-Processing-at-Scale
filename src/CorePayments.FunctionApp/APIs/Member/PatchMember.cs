@@ -3,6 +3,7 @@ using CorePayments.Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
@@ -23,7 +24,8 @@ namespace CorePayments.FunctionApp.APIs.Member
 
         [Function("PatchMember")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "member/{memberId}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "member/{memberId}")] HttpRequestData req,
+            string memberId,
             FunctionContext context)
         {
             var logger = context.GetLogger<PatchMember>();
@@ -34,10 +36,7 @@ namespace CorePayments.FunctionApp.APIs.Member
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var member = JsonSerializationHelper.DeserializeItem<Model.Member>(requestBody);
 
-                if (member == null || string.IsNullOrEmpty(member.id) || string.IsNullOrEmpty(member.memberId))
-                    return new BadRequestObjectResult("id and memberId required!");
-
-                var patchOpsCount = await _memberRepository.PatchMember(member);
+                var patchOpsCount = await _memberRepository.PatchMember(member, memberId);
 
                 if (patchOpsCount == 0)
                     return new BadRequestObjectResult("No attributes provided.");

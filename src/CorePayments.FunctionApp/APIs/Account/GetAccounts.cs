@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using System;
 using System.Threading.Tasks;
 
@@ -22,7 +23,7 @@ namespace CorePayments.FunctionApp.APIs.Account
 
         [Function("GetAccounts")]
         public async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "accounts")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "accounts")] HttpRequestData req,
             FunctionContext context)
         {
             int.TryParse(req.Query["pageSize"], out var pageSize);

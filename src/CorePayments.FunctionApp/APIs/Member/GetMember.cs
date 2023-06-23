@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using System.Threading.Tasks;
 using Model = CorePayments.Infrastructure.Domain.Entities;
 
@@ -10,7 +11,7 @@ namespace CorePayments.FunctionApp.APIs.Member
     {
         [Function("GetMember")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "member/{memberId}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "member/{memberId}")] HttpRequestData req,
             [CosmosDBInput(
                 databaseName: "%paymentsDatabase%",
                 containerName: "%memberContainer%",

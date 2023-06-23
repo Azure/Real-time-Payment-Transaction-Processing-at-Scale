@@ -11,6 +11,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker.Http;
 
 namespace CorePayments.FunctionApp.APIs.Transaction
 {
@@ -26,7 +27,7 @@ namespace CorePayments.FunctionApp.APIs.Transaction
 
         [Function("CreateTransactionTBatch")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "transaction/createtbatch")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "transaction/createtbatch")] HttpRequestData req,
             FunctionContext context)
         {
             var logger = context.GetLogger<CreateTransactionTBatch>();

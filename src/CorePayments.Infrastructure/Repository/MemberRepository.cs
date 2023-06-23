@@ -23,7 +23,7 @@ namespace CorePayments.Infrastructure.Repository
             return await PagedQuery<Member>(query, pageSize, null, continuationToken);
         }
 
-        public async Task<int> PatchMember(Member member)
+        public async Task<int> PatchMember(Member member, string memberId)
         {
             JObject obj = JObject.FromObject(member);
 
@@ -40,7 +40,7 @@ namespace CorePayments.Infrastructure.Repository
             if (ops.Count == 0)
                 return 0;
 
-            await Container.PatchItemAsync<Member>(member.id, new PartitionKey(member.memberId), ops);
+            await Container.PatchItemAsync<Member>(memberId, new PartitionKey(memberId), ops);
 
             return ops.Count;
         }

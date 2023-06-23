@@ -3,6 +3,7 @@ using CorePayments.Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using System;
 using System.Threading.Tasks;
 using Model = CorePayments.Infrastructure.Domain.Entities;
@@ -21,7 +22,7 @@ namespace CorePayments.FunctionApp.APIs.Member
 
         [Function("GetMembers")]
         public async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "members")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "members")] HttpRequestData req,
             FunctionContext context)
         {
             var logger = context.GetLogger<GetMembers>();
