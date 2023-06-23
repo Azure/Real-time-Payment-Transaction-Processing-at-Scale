@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace CorePayments.FunctionApp.APIs.Member
         [Function("AddAccountToMember")]
         public async Task<IActionResult> AddAccountToMember(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "member/{memberId}/accounts/add/{accountId}")]
-            HttpRequest req,
+            HttpRequestData req,
             string memberId,
             string accountId,
             FunctionContext context)
@@ -51,7 +52,7 @@ namespace CorePayments.FunctionApp.APIs.Member
         [Function("RemoveAccountFromMember")]
         public async Task<IActionResult> RemoveAccountFromMember(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "member/{memberId}/accounts/remove/{accountId}")]
-            HttpRequest req,
+            HttpRequestData req,
             string memberId,
             string accountId,
             FunctionContext context)

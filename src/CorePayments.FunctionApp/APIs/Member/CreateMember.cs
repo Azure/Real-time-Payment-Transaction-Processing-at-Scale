@@ -8,6 +8,7 @@ using Microsoft.Azure.Functions.Worker;
 using CorePayments.Infrastructure.Repository;
 using Model = CorePayments.Infrastructure.Domain.Entities;
 using CorePayments.FunctionApp.Helpers;
+using Microsoft.Azure.Functions.Worker.Http;
 
 namespace CorePayments.FunctionApp.APIs.Member
 {
@@ -23,7 +24,7 @@ namespace CorePayments.FunctionApp.APIs.Member
 
         [Function("CreateMember")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "member")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "member")] HttpRequestData req,
             FunctionContext context)
         {
             var logger = context.GetLogger<CreateMember>();

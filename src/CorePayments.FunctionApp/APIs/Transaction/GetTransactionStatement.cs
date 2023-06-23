@@ -8,6 +8,7 @@ using Model = CorePayments.Infrastructure.Domain.Entities;
 using Microsoft.Azure.Functions.Worker;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker.Http;
 
 namespace CorePayments.FunctionApp.APIs.Transaction
 {
@@ -23,7 +24,7 @@ namespace CorePayments.FunctionApp.APIs.Transaction
 
         [Function("GetTransactionStatement")]
         public async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "statement/{accountId}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "statement/{accountId}")] HttpRequestData req,
             string accountId,
             FunctionContext context)
         {

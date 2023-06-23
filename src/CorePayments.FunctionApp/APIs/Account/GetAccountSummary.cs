@@ -2,6 +2,7 @@ using CorePayments.Infrastructure.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using System.Threading.Tasks;
 
 namespace CorePayments.FunctionApp.APIs.Account
@@ -10,7 +11,7 @@ namespace CorePayments.FunctionApp.APIs.Account
     {
         [Function("GetAccountSummary")]
         public async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "account/{accountId}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "account/{accountId}")] HttpRequestData req,
             [CosmosDBInput(
                 databaseName: "%paymentsDatabase%",
                 containerName: "%customerContainer%",

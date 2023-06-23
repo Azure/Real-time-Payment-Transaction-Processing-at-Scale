@@ -3,6 +3,7 @@ using CorePayments.Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
@@ -23,7 +24,7 @@ namespace CorePayments.FunctionApp.APIs.Member
 
         [Function("PatchMember")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "member/{memberId}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "member/{memberId}")] HttpRequestData req,
             string memberId,
             FunctionContext context)
         {

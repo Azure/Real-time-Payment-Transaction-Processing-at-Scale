@@ -7,6 +7,7 @@ using CorePayments.Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 
 namespace CorePayments.FunctionApp.APIs.Account
@@ -23,7 +24,7 @@ namespace CorePayments.FunctionApp.APIs.Account
 
         [Function("CreateAccount")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "account")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "account")] HttpRequestData req,
             FunctionContext context)
         {
             var logger = context.GetLogger<CreateAccount>();

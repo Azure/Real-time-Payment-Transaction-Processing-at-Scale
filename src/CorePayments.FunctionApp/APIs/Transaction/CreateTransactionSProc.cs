@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker.Http;
 
 namespace CorePayments.FunctionApp.APIs.Transaction
 {
@@ -24,7 +25,7 @@ namespace CorePayments.FunctionApp.APIs.Transaction
 
         [Function("CreateTransactionSProc")]
         public async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "transaction/createsproc")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "transaction/createsproc")] HttpRequestData req,
             [CosmosDBInput(
                 databaseName: "%paymentsDatabase%",
                 containerName: "%transactionsContainer%",
