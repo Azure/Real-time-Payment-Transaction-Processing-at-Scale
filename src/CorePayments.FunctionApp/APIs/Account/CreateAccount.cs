@@ -23,7 +23,7 @@ namespace CorePayments.FunctionApp.APIs.Account
         }
 
         [Function("CreateAccount")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "account")] HttpRequestData req,
             FunctionContext context)
         {
@@ -38,13 +38,13 @@ namespace CorePayments.FunctionApp.APIs.Account
                 await _transactionRepository.CreateItem(account);
 
                 //Return order to caller
-                return new AcceptedResult();
+                return req.CreateResponse(System.Net.HttpStatusCode.Accepted);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, ex);
 
-                return new BadRequestResult();
+                return req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
             }
         }
     }

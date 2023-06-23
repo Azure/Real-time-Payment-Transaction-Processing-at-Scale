@@ -10,7 +10,7 @@ namespace CorePayments.FunctionApp.APIs.Member
     public class GetMember
     {
         [Function("GetMember")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "member/{memberId}")] HttpRequestData req,
             [CosmosDBInput(
                 databaseName: "%paymentsDatabase%",
@@ -22,11 +22,14 @@ namespace CorePayments.FunctionApp.APIs.Member
             FunctionContext context)
         {
             var logger = context.GetLogger<FunctionContext>();
-
+            
             if (member == null)
-                return new NotFoundResult();
+                return req.CreateResponse(System.Net.HttpStatusCode.NotFound);
 
-            return new OkObjectResult(member);
+            var response = req.CreateResponse(System.Net.HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(member);
+
+            return response;
         }
     }
 }

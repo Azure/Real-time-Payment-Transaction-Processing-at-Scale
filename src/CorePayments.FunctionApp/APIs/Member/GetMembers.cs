@@ -1,4 +1,5 @@
 using CorePayments.FunctionApp.Models.Response;
+using CorePayments.Infrastructure.Domain.Entities;
 using CorePayments.Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ namespace CorePayments.FunctionApp.APIs.Member
         }
 
         [Function("GetMembers")]
-        public async Task<IActionResult> RunAsync(
+        public async Task<HttpResponseData> RunAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "members")] HttpRequestData req,
             FunctionContext context)
         {
@@ -35,13 +36,17 @@ namespace CorePayments.FunctionApp.APIs.Member
             string continuationToken = req.Query["continuationToken"];
 
             var (members, newContinuationToken) = await _memberRepository.GetPagedMembers(pageSize, continuationToken);
-            return members == null
-                ? new NotFoundResult()
-                : new OkObjectResult(new PagedResponse<Model.Member>
-                {
-                    Page = members,
-                    ContinuationToken = Uri.EscapeDataString(newContinuationToken ?? String.Empty)
-                });
+            if (members == null)
+            {
+                return req.CreateResponse(System.Net.HttpStatusCode.NotFound);
+            }
+            var response = req.CreateResponse(System.Net.HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(new PagedResponse<Model.Member>
+            {
+                Page = members,
+                ContinuationToken = Uri.EscapeDataString(newContinuationToken ?? String.Empty)
+            });
+            return response;
         }
     }
 }

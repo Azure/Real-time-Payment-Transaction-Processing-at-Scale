@@ -24,7 +24,7 @@ namespace CorePayments.FunctionApp.APIs.Transaction
         }
 
         [Function("CreateTransactionSProc")]
-        public async Task<IActionResult> RunAsync(
+        public async Task<HttpResponseData> RunAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "transaction/createsproc")] HttpRequestData req,
             [CosmosDBInput(
                 databaseName: "%paymentsDatabase%",
@@ -40,17 +40,24 @@ namespace CorePayments.FunctionApp.APIs.Transaction
                 var transaction = JsonConvert.DeserializeObject<Model.Transaction>(requestBody);
 
                 var result = await _transactionRepository.ProcessTransactionSProc(transaction);
-                return new OkObjectResult(result);
+                var response = req.CreateResponse(System.Net.HttpStatusCode.OK);
+                await response.WriteAsJsonAsync(result);
+
+                return response;
             }
             catch (CosmosException ex)
             {
                 logger.LogError(ex.Message, ex);
-                return new BadRequestObjectResult(ex.Message);
+                var response = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+                await response.WriteStringAsync(ex.Message);
+                return response;
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, ex);
-                return new BadRequestObjectResult(ex.Message);
+                var response = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+                await response.WriteStringAsync(ex.Message);
+                return response;
             }
         }
     }

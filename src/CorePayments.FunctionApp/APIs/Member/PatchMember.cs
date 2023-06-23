@@ -23,7 +23,7 @@ namespace CorePayments.FunctionApp.APIs.Member
         }
 
         [Function("PatchMember")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "member/{memberId}")] HttpRequestData req,
             string memberId,
             FunctionContext context)
@@ -39,16 +39,21 @@ namespace CorePayments.FunctionApp.APIs.Member
                 var patchOpsCount = await _memberRepository.PatchMember(member, memberId);
 
                 if (patchOpsCount == 0)
-                    return new BadRequestObjectResult("No attributes provided.");
+                {
+                    var response = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+                    await response.WriteStringAsync(
+                        "No attributes provided.");
+                    return response;
+                }
 
                 //Return order to caller
-                return new AcceptedResult();
+                return req.CreateResponse(System.Net.HttpStatusCode.Accepted);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, ex);
 
-                return new BadRequestResult();
+                return req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
             }
         }
     }

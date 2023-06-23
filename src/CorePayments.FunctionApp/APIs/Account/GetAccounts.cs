@@ -22,7 +22,7 @@ namespace CorePayments.FunctionApp.APIs.Account
         }
 
         [Function("GetAccounts")]
-        public async Task<IActionResult> RunAsync(
+        public async Task<HttpResponseData> RunAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "accounts")] HttpRequestData req,
             FunctionContext context)
         {
@@ -35,13 +35,17 @@ namespace CorePayments.FunctionApp.APIs.Account
             string continuationToken = req.Query["continuationToken"];
 
             var (accounts, newContinuationToken) = await _customerRepository.GetPagedAccountSummary(pageSize, continuationToken);
-            return accounts == null
-                ? new NotFoundResult()
-                : new OkObjectResult(new PagedResponse<AccountSummary>
-                {
-                    Page = accounts,
-                    ContinuationToken = Uri.EscapeDataString(newContinuationToken ?? String.Empty)
-                });
+            if (accounts == null)
+            {
+                return req.CreateResponse(System.Net.HttpStatusCode.NotFound);
+            }
+            var response = req.CreateResponse(System.Net.HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(new PagedResponse<AccountSummary>
+            {
+                Page = accounts,
+                ContinuationToken = Uri.EscapeDataString(newContinuationToken ?? String.Empty)
+            });
+            return response;
         }
     }
 }

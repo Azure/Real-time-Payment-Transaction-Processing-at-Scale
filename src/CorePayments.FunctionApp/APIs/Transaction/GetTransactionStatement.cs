@@ -23,7 +23,7 @@ namespace CorePayments.FunctionApp.APIs.Transaction
         }
 
         [Function("GetTransactionStatement")]
-        public async Task<IActionResult> RunAsync(
+        public async Task<HttpResponseData> RunAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "statement/{accountId}")] HttpRequestData req,
             string accountId,
             FunctionContext context)
@@ -39,13 +39,17 @@ namespace CorePayments.FunctionApp.APIs.Transaction
             string continuationToken = req.Query["continuationToken"];
 
             var (transactions, newContinuationToken) = await _customerRepository.GetPagedTransactionStatement(accountId, pageSize, continuationToken);
-            return transactions == null
-                ? new NotFoundResult()
-                : new OkObjectResult(new PagedResponse<Model.Transaction>
-                {
-                    Page = transactions,
-                    ContinuationToken = Uri.EscapeDataString(newContinuationToken ?? String.Empty)
-                });
+            if (transactions == null)
+            {
+                return req.CreateResponse(System.Net.HttpStatusCode.NotFound);
+            }
+            var response = req.CreateResponse(System.Net.HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(new PagedResponse<Model.Transaction>
+            {
+                Page = transactions,
+                ContinuationToken = Uri.EscapeDataString(newContinuationToken ?? String.Empty)
+            });
+            return response;
         }
     }
 }
