@@ -23,5 +23,10 @@ namespace CorePayments.Infrastructure
             Add,
             Remove
         }
+
+        public static class EventHubs
+        {
+            public const string PaymentEvents = "paymentEvents";
+        }
     }
 }
