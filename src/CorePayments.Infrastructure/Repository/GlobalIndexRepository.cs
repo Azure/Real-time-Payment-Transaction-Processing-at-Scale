@@ -1,4 +1,5 @@
 ﻿using CorePayments.Infrastructure.Domain.Entities;
+using CorePayments.Infrastructure.Events;
 using Microsoft.Azure.Cosmos;
 using static CorePayments.Infrastructure.Constants;
 
@@ -6,8 +7,8 @@ namespace CorePayments.Infrastructure.Repository
 {
     public class GlobalIndexRepository : CosmosDbRepository, IGlobalIndexRepository
     {
-        public GlobalIndexRepository(CosmosClient client) :
-            base(client, containerName: Environment.GetEnvironmentVariable("globalIndexContainer") ?? string.Empty)
+        public GlobalIndexRepository(CosmosClient client, IEventHubService eventHub) :
+            base(client, containerName: Environment.GetEnvironmentVariable("globalIndexContainer") ?? string.Empty, eventHub)
         {
         }
 

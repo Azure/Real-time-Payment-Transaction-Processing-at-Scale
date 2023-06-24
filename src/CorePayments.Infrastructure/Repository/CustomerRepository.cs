@@ -1,5 +1,7 @@
 ﻿using CorePayments.Infrastructure.Domain.Entities;
+using CorePayments.Infrastructure.Events;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Identity.Client;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 
@@ -7,8 +9,8 @@ namespace CorePayments.Infrastructure.Repository
 {
     public class CustomerRepository : CosmosDbRepository, ICustomerRepository
     {
-        public CustomerRepository(CosmosClient client) :
-            base(client, containerName: Environment.GetEnvironmentVariable("customerContainer") ?? string.Empty)
+        public CustomerRepository(CosmosClient client, IEventHubService eventHub) :
+            base(client, containerName: Environment.GetEnvironmentVariable("customerContainer") ?? string.Empty, eventHub)
         {
         }
 
@@ -25,6 +27,8 @@ namespace CorePayments.Infrastructure.Repository
         {
             QueryDefinition query = new QueryDefinition("select * from c where c.type = @docType order by c.accountId")
                 .WithParameter("@docType", Constants.DocumentTypes.AccountSummary);
+
+            await TriggerTrackingEvent($"Retrieving paged account summary with page size {pageSize}.");
 
             return await PagedQuery<AccountSummary>(query, pageSize, null, continuationToken);
         }

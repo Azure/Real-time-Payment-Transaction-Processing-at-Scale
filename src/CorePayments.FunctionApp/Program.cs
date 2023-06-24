@@ -1,4 +1,6 @@
-﻿using CorePayments.Infrastructure.Repository;
+﻿using CorePayments.Infrastructure;
+using CorePayments.Infrastructure.Events;
+using CorePayments.Infrastructure.Repository;
 using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +29,10 @@ var host = new HostBuilder()
             return new CosmosClientBuilder(endpoint, new Azure.Identity.DefaultAzureCredential())
                 .Build();
         });
+        services.AddSingleton<IEventHubService, EventHubService>(s => new EventHubService(
+            Environment.GetEnvironmentVariable("EventHubConnection__fullyQualifiedNamespace"),
+            Constants.EventHubs.PaymentEvents));
+
         services.AddSingleton<ICustomerRepository, CustomerRepository>();
         services.AddSingleton<IGlobalIndexRepository, GlobalIndexRepository>();
         services.AddSingleton<IMemberRepository, MemberRepository>();

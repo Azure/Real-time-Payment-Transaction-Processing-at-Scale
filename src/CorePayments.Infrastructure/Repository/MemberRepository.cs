@@ -1,4 +1,5 @@
 ﻿using CorePayments.Infrastructure.Domain.Entities;
+using CorePayments.Infrastructure.Events;
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Linq;
 
@@ -6,8 +7,8 @@ namespace CorePayments.Infrastructure.Repository
 {
     public class MemberRepository : CosmosDbRepository, IMemberRepository
     {
-        public MemberRepository(CosmosClient client) :
-            base(client, containerName: Environment.GetEnvironmentVariable("memberContainer") ?? string.Empty)
+        public MemberRepository(CosmosClient client, IEventHubService eventHub) :
+            base(client, containerName: Environment.GetEnvironmentVariable("memberContainer") ?? string.Empty, eventHub)
         {
         }
 
