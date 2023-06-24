@@ -1,0 +1,7 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "CosmosDBConnection__accountEndpoint": "{{cosmosEndpoint}}",
+    "EventHubConnection__fullyQualifiedNamespace": "{{eventHubEndpoint}}"
+  }
+}

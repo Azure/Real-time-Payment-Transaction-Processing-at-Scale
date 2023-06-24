@@ -1,6 +1,9 @@
 @description('Cosmos DB account name, max length 44 characters, lowercase')
 param cosmosAccountName string = 'cosmospay${suffix}'
 
+@description('EventHub namespace, max length 44 characters, lowercase')
+param eventHubNamespace string = 'ehpay${suffix}'
+
 @description('Function App name')
 param functionAppName string = 'functionpay${suffix}'
 
@@ -20,6 +23,15 @@ param locations string = 'SouthCentralUS, NorthCentralUS'
 param suffix string = uniqueString(resourceGroup().id)
 
 var locArray = split(replace(locations, ' ', ''), ',')
+
+module eventHub 'eventhub.bicep' = {
+  scope: resourceGroup()
+  name: 'eventHubDeploy'
+  params: {
+    eventHubNamespace: eventHubNamespace
+    location: locArray[0]
+  }
+}
 
 module cosmosdb 'cosmos.bicep' = {
   scope: resourceGroup()
@@ -44,6 +56,7 @@ module function 'functions.bicep' = [for (location, i) in locArray: {
   name: 'functionDeploy-${location}'
   params: {
     cosmosAccountName: cosmosdb.outputs.cosmosAccountName
+    eventHubNamespaceName: eventHubNamespace
     functionAppName: '${functionAppName}${i}'
     storageAccountName: '${storageAccountName}${i}'
     paymentsDatabase: cosmosdb.outputs.cosmosDatabaseName
