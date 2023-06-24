@@ -9,17 +9,23 @@ using Microsoft.Azure.Functions.Worker;
 using System;
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Extensions.Logging;
+using System.Net;
+using CorePayments.SemanticKernel;
 
 namespace CorePayments.FunctionApp.APIs.Transaction
 {
     public class GetTransactionStatement
     {
         readonly ICustomerRepository _customerRepository;
+        readonly IRulesEngine _rulesEngine;
 
         public GetTransactionStatement(
-            ICustomerRepository customerRepository)
+            ICustomerRepository customerRepository,
+            IRulesEngine rulesEngine)
         {
             _customerRepository = customerRepository;
+            _rulesEngine = rulesEngine;
         }
 
         [Function("GetTransactionStatement")]
@@ -50,6 +56,52 @@ namespace CorePayments.FunctionApp.APIs.Transaction
                 ContinuationToken = Uri.EscapeDataString(newContinuationToken ?? String.Empty)
             });
             return response;
+        }
+
+
+        [Function("GetTransactionsAnalyis")]
+        public async Task<HttpResponseData> Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "statement/{accountId}/analyze")] HttpRequestData req,
+            string accountId,
+            string query,
+            FunctionContext context)
+        {
+            var log = context.GetLogger<GetTransactionStatement>();
+            using (log.BeginScope("HttpTrigger: GetTransactionsAnalyis"))
+            {
+                try
+                {
+
+                    int pageSize = -1;
+                    int.TryParse(req.Query["pageSize"], out pageSize);
+                    if (pageSize <= 0)
+                    {
+                        pageSize = 50;
+                    }
+
+                    string continuationToken = req.Query["continuationToken"];
+
+                    var (transactions, newContinuationToken) = await _customerRepository.GetPagedTransactionStatement(accountId, pageSize, continuationToken);
+                    if (transactions == null)
+                    {
+                        return req.CreateResponse(System.Net.HttpStatusCode.NotFound);
+                    }
+
+                    var analysisResult = await _rulesEngine.ReviewTransactions(transactions, query);
+
+                    log.LogInformation($"Successfully retrieved analysis for transactions in Account: {accountId}");
+
+                    var response = req.CreateResponse(HttpStatusCode.OK);
+                    await response.WriteAsJsonAsync(analysisResult);
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    var response = req.CreateResponse(HttpStatusCode.BadRequest);
+                    await response.WriteStringAsync(ex.Message);
+                    return response;
+                }
+            }
         }
     }
 }

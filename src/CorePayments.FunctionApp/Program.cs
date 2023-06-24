@@ -10,6 +10,7 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using System;
 using Azure.Core.Serialization;
+using CorePayments.SemanticKernel;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults(builder =>
@@ -35,6 +36,8 @@ var host = new HostBuilder()
         services.AddSingleton<IGlobalIndexRepository, GlobalIndexRepository>();
         services.AddSingleton<IMemberRepository, MemberRepository>();
         services.AddSingleton<ITransactionRepository, TransactionRepository>();
+
+        services.AddSingleton<IRulesEngine, RulesEngine>();
 
         services.Configure<WorkerOptions>(workerOptions =>
         {

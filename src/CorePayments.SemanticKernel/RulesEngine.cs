@@ -8,7 +8,7 @@ namespace CorePayments.SemanticKernel
 {
     public class RulesEngine : IRulesEngine
     {
-        public async Task<string> ReviewAccount(AccountSummary account)
+        public async Task<string> ReviewTransactions(IEnumerable<Transaction> transactions, string query)
         {
             var builder = new KernelBuilder();
 
@@ -20,8 +20,8 @@ namespace CorePayments.SemanticKernel
             var kernel = builder.Build();
 
             string skPrompt = @"
-            You are an analyst bot that helps staff summarize data about members by processing a members accounts and transactions. 
-            You are provided data about the member in the JSON format, as well as the query submitted by the user.
+            You are an analyst bot that helps staff summarize data about account transactions by processing a list of transactions. 
+            You are provided the list of transactions in the JSON format, as well as the query submitted by the user.
             You can return your results in JSON or the format specified by the user in the query. 
 
             For example:
@@ -29,36 +29,46 @@ namespace CorePayments.SemanticKernel
             +++
 
             [INPUT]
-            Member Data:
-            {
-                ""accounts"":[
-                    {""account_id"":""123"", ""member_id"":""abcsam123"", ""balance"":""$100""},
-                    {""account_id"":""246"", ""member_id"":""abcsam123"", ""balance"":""-$30""}
-                ],
-                ""transaction"":[
-                    {""account_id"":""123"", ""member_id"":""abcsam123"", ""transaction_id"":""1"", ""amount"":""$100""}
-                    {""account_id"":""246"", ""member_id"":""abcsam123"", ""transaction_id"":""1"", ""amount"":""$10""}
-                    {""account_id"":""246"", ""member_id"":""abcsam123"", ""transaction_id"":""2"", ""amount"":""-$40""}
-                ]
-            }
+            Transaction Data:
+            [
+              {
+                ""id"": ""9b0e2f75-6316-4d88-aa74-46ae5d4aef7b"",
+                ""accountId"": ""0909090907"",
+                ""description"": ""Item refund"",
+                ""merchant"": ""Tailspin Toys"",
+                ""type"": ""deposit"",
+                ""amount"": 38.26,
+                ""timestamp"": ""2023-06-20T23:13:00.9725896Z""
+              },
+              {
+                ""id"": ""0bb8f13f-65b1-4611-83f5-c2c028ee6545"",
+                ""accountId"": ""0909090907"",
+                ""description"": ""Online purchase"",
+                ""merchant"": ""Tailspin Toys"",
+                ""type"": ""debit"",
+                ""amount"": 38.26,
+                ""timestamp"": ""2023-06-20T22:39:45.3257116Z""
+              }
+            ]
+
             User Query:
-            How many transactions does the user ""abcsam123"" have?
+            How many transactions does the accountId ""0909090907"" have?
             [END INPUT]
 
             Provide your response by completing the following bullet:
-            - Result: 3
+            - Result: 2
 
             +++
 
             [INPUT]
-            Member Data:
-            {{$memberData}}
+            Transaction Data:
+            {{$transactionData}}
 
             User Query:
             {{$query}}
             [END INPUT]
 
-            Provide your response by completing the following bullet:
+            Provide your response by completing the following bullet on a new line:
             - Result:
             ";
 
@@ -73,9 +83,13 @@ namespace CorePayments.SemanticKernel
                 ReadCommentHandling = JsonCommentHandling.Skip,
             };
 
-            string input = JsonSerializer.Serialize(account, ser_options);
+            string transactionData = JsonSerializer.Serialize(transactions, ser_options);
 
-            string result = (await reviewer.InvokeAsync(input)).Result;
+            var context = kernel.CreateNewContext();
+            context["transactionData"] = transactionData;
+            context["query"] = query;
+
+            string result = (await reviewer.InvokeAsync(context)).Result;
 
             return result;
         }
