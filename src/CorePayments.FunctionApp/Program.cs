@@ -26,6 +26,8 @@ var host = new HostBuilder()
     })
     .ConfigureServices((hostContext, services) =>
     {
+        services.Configure<RulesEngineSettings>(hostContext.Configuration.GetSection("RulesEngine"));
+
         services.AddSingleton(s =>
         {
             //var endpoint = hostContext.Configuration["CosmosDBConnection__accountEndpoint"];

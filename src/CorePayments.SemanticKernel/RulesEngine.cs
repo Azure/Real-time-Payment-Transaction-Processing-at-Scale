@@ -1,4 +1,5 @@
 ﻿using CorePayments.Infrastructure.Domain.Entities;
+using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Orchestration;
 using Microsoft.SemanticKernel.Planning;
@@ -8,14 +9,23 @@ namespace CorePayments.SemanticKernel
 {
     public class RulesEngine : IRulesEngine
     {
+        readonly RulesEngineSettings _settings;
+
+        public RulesEngine(
+            IOptions<RulesEngineSettings> settings)
+        {
+            _settings = settings.Value;
+        }
+
+
         public async Task<string> ReviewTransactions(IEnumerable<Transaction> transactions, string query)
         {
             var builder = new KernelBuilder();
 
             builder.WithAzureTextCompletionService(
-                     "completions-003",                  // Azure OpenAI Deployment Name
-                     "https://bhm7vnpxv6irq-openai.openai.azure.com/", // Azure OpenAI Endpoint
-                     "b3990195e52c4545a6f3a085590d9d56");      // Azure OpenAI Key
+                     _settings.OpenAICompletionsDeployment,
+                     _settings.OpenAIEndpoint,
+                     _settings.OpenAIKey);
 
             var kernel = builder.Build();
 

@@ -3,5 +3,14 @@
   "Values": {
     "CosmosDBConnection__accountEndpoint": "{{cosmosEndpoint}}",
     "EventHubConnection__fullyQualifiedNamespace": "{{eventHubEndpoint}}"
+  },
+  "Host": {
+    "LocalHttpPort": 7071,
+    "CORS": "http://localhost:3000"
+  },
+  "RulesEngine": {
+    "OpenAIEndpoint": "https://<deployment>.openai.azure.com/",
+    "OpenAIKey": "...",
+    "OpenAICompletionsDeployment": "<model_deployment>"
   }
 }
