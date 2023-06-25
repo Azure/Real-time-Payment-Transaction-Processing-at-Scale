@@ -14,19 +14,19 @@ var containers = [
     name: 'transactions'
     partitionKeys: ['/accountId']
     enableIndex: true
-    enableAnalyticalStore: true
+    enableAnalyticalStore: false
   }
   {
     name: 'customerTransactions'
     partitionKeys: ['/accountId']
     enableIndex: true
-    enableAnalyticalStore: true
+    enableAnalyticalStore: false
   }
   {
     name: 'members'
     partitionKeys: ['/memberId']
     enableIndex: false
-    enableAnalyticalStore: true
+    enableAnalyticalStore: false
   }
   {
     name: 'leases'
