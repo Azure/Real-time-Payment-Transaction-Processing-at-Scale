@@ -43,8 +43,10 @@ namespace CorePayments.Infrastructure.Repository
                 return 0;
 
             var response = await Container.PatchItemAsync<Member>(memberId, new PartitionKey(memberId), ops);
+            var paths = string.Join(", ", ops.Select(x => x.Path));
+            var regions = string.Join(", ", response.Diagnostics.GetContactedRegions().Select(x => x.regionName));
 
-            await TriggerTrackingEvent($"Performing member patch operations ({ops}) within the {response.Diagnostics.GetContactedRegions().Select(x => x.regionName)} region(s).");
+            await TriggerTrackingEvent($"Performing member patch operations (paths: {paths}) within the {regions} region(s).");
 
             return ops.Count;
         }

@@ -41,20 +41,19 @@ var host = new HostBuilder()
                 ? Array.Empty<string>()
                 : preferredRegions.Split(',');
 
-            if (regions.Any())
+            if (!regions.Any())
+                return new CosmosClientBuilder(accountEndpoint: endpoint,
+                        tokenCredential: new Azure.Identity.DefaultAzureCredential())
+                    .Build();
+            if (regions.Length == 1)
             {
-                if (regions.Length == 1)
-                {
-                    return new CosmosClientBuilder(accountEndpoint: endpoint, tokenCredential: new Azure.Identity.DefaultAzureCredential())
-                        .WithApplicationRegion(regions[0])
-                        .Build();
-                }
                 return new CosmosClientBuilder(accountEndpoint: endpoint, tokenCredential: new Azure.Identity.DefaultAzureCredential())
-                        .WithApplicationPreferredRegions(regions)
-                        .Build();
+                    .WithApplicationRegion(regions[0])
+                    .Build();
             }
-
-            
+            return new CosmosClientBuilder(accountEndpoint: endpoint, tokenCredential: new Azure.Identity.DefaultAzureCredential())
+                .WithApplicationPreferredRegions(regions)
+                .Build();
         });
         services.AddSingleton<IEventHubService, EventHubService>(s => new EventHubService(
             Environment.GetEnvironmentVariable("EventHubConnection__fullyQualifiedNamespace"),
