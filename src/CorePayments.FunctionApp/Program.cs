@@ -2,12 +2,17 @@
 using CorePayments.Infrastructure.Events;
 using CorePayments.Infrastructure.Repository;
 using Microsoft.Azure.Cosmos.Fluent;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 using System;
+using Azure.Core.Serialization;
+using CorePayments.SemanticKernel;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults(builder =>
@@ -37,6 +42,17 @@ var host = new HostBuilder()
         services.AddSingleton<IGlobalIndexRepository, GlobalIndexRepository>();
         services.AddSingleton<IMemberRepository, MemberRepository>();
         services.AddSingleton<ITransactionRepository, TransactionRepository>();
+
+        services.AddSingleton<IRulesEngine, RulesEngine>();
+
+        services.Configure<WorkerOptions>(workerOptions =>
+        {
+            var settings = NewtonsoftJsonObjectSerializer.CreateJsonSerializerSettings();
+            settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+
+            workerOptions.Serializer = new NewtonsoftJsonObjectSerializer(settings);
+        });
+        //services.AddControllers().AddNewtonsoftJson();
     })
     .Build();
 

@@ -23,7 +23,7 @@ namespace CorePayments.FunctionApp.APIs.Member
         }
 
         [Function("CreateMember")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "member")] HttpRequestData req,
             FunctionContext context)
         {
@@ -41,18 +41,20 @@ namespace CorePayments.FunctionApp.APIs.Member
                 }
                 else
                 {
-                    return new BadRequestObjectResult(
+                    var response = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+                    await response.WriteStringAsync(
                         "Invalid member record. Please check the fields and try again.");
+                    return response;
                 }
 
                 //Return order to caller
-                return new AcceptedResult();
+                return req.CreateResponse(System.Net.HttpStatusCode.Accepted);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, ex);
 
-                return new BadRequestResult();
+                return req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
             }
         }
     }

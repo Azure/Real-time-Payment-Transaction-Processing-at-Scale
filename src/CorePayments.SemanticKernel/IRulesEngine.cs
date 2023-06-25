@@ -9,6 +9,6 @@ namespace CorePayments.SemanticKernel
 {
     public interface IRulesEngine
     {
-        Task<string> ReviewAccount(AccountSummary account);
+        Task<string> ReviewTransactions(IEnumerable<Transaction> transactions, string query);
     }
 }

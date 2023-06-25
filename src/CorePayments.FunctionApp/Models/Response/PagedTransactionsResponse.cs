@@ -9,7 +9,7 @@ namespace CorePayments.FunctionApp.Models.Response
         [JsonProperty("page")]
         public IEnumerable<T> Page { get; set; }
 
-        [JsonProperty("countinuationToken")]
+        [JsonProperty("continuationToken")]
         public string ContinuationToken { get; set; }
     }
 }

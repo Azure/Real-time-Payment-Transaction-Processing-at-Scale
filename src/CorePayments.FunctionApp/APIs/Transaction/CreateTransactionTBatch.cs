@@ -26,7 +26,7 @@ namespace CorePayments.FunctionApp.APIs.Transaction
         }
 
         [Function("CreateTransactionTBatch")]
-        public async Task<IActionResult> Run(
+        public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "transaction/createtbatch")] HttpRequestData req,
             FunctionContext context)
         {
@@ -40,23 +40,46 @@ namespace CorePayments.FunctionApp.APIs.Transaction
                 var (account, statusCode, message) = await _transactionRepository.ProcessTransactionTBatch(transaction);
 
                 if (new HttpResponseMessage(statusCode).IsSuccessStatusCode)
-                    return new OkObjectResult(account);
+                {
+                    var response = req.CreateResponse(System.Net.HttpStatusCode.OK);
+                    await response.WriteAsJsonAsync(account);
+
+                    return response;
+                }
                 else if (statusCode == HttpStatusCode.PreconditionFailed)
-                    return new StatusCodeResult((int)HttpStatusCode.PreconditionFailed);
+                {
+                    return req.CreateResponse(HttpStatusCode.PreconditionFailed);
+                }
                 else if (statusCode == HttpStatusCode.NotFound)
-                    return new NotFoundObjectResult(message);
+                {
+                    var response = req.CreateResponse(System.Net.HttpStatusCode.NotFound);
+                    await response.WriteStringAsync(message);
+                    return response;
+                }
                 else
-                    return string.IsNullOrWhiteSpace(message) ? new BadRequestResult() : new BadRequestObjectResult(message);
+                {
+                    if (string.IsNullOrWhiteSpace(message))
+                    {
+                        return req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+                    }
+                    var response = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+                    await response.WriteStringAsync(message);
+                    return response;
+                }
             }
             catch (CosmosException ex)
             {
                 logger.LogError(ex.Message, ex);
-                return new BadRequestObjectResult(ex.Message);
+                var response = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+                await response.WriteStringAsync(ex.Message);
+                return response;
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, ex);
-                return new BadRequestObjectResult(ex.Message);
+                var response = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+                await response.WriteStringAsync(ex.Message);
+                return response;
             }
         }
     }

@@ -10,7 +10,7 @@ namespace CorePayments.FunctionApp.APIs.Account
     public class GetAccountSummary
     {
         [Function("GetAccountSummary")]
-        public async Task<IActionResult> RunAsync(
+        public async Task<HttpResponseData> RunAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "account/{accountId}")] HttpRequestData req,
             [CosmosDBInput(
                 databaseName: "%paymentsDatabase%",
@@ -24,9 +24,12 @@ namespace CorePayments.FunctionApp.APIs.Account
             var logger = context.GetLogger<AccountSummary>();
 
             if (account == null)
-                return new NotFoundResult();
+                return req.CreateResponse(System.Net.HttpStatusCode.NotFound);
 
-            return new OkObjectResult(account);
+            var response = req.CreateResponse(System.Net.HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(account);
+
+            return response;
         }
     }
 }

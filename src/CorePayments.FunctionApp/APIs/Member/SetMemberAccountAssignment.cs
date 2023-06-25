@@ -22,7 +22,7 @@ namespace CorePayments.FunctionApp.APIs.Member
         }
 
         [Function("AddAccountToMember")]
-        public async Task<IActionResult> AddAccountToMember(
+        public async Task<HttpResponseData> AddAccountToMember(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "member/{memberId}/accounts/add/{accountId}")]
             HttpRequestData req,
             string memberId,
@@ -35,22 +35,26 @@ namespace CorePayments.FunctionApp.APIs.Member
             {
                 await _globalIndexRepository.ProcessAccountAssignment(AccountAssignmentOperations.Add, memberId, accountId);
                 
-                return new OkResult();
+                return req.CreateResponse(System.Net.HttpStatusCode.OK);
             }
             catch (CosmosException ex)
             {
                 logger.LogError(ex.Message, ex);
-                return new BadRequestObjectResult(ex.Message);
+                var response = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+                await response.WriteStringAsync(ex.Message);
+                return response;
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, ex);
-                return new BadRequestObjectResult(ex.Message);
+                var response = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+                await response.WriteStringAsync(ex.Message);
+                return response;
             }
         }
 
         [Function("RemoveAccountFromMember")]
-        public async Task<IActionResult> RemoveAccountFromMember(
+        public async Task<HttpResponseData> RemoveAccountFromMember(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "member/{memberId}/accounts/remove/{accountId}")]
             HttpRequestData req,
             string memberId,
@@ -63,17 +67,21 @@ namespace CorePayments.FunctionApp.APIs.Member
             {
                 await _globalIndexRepository.ProcessAccountAssignment(AccountAssignmentOperations.Remove, memberId, accountId);
 
-                return new OkResult();
+                return req.CreateResponse(System.Net.HttpStatusCode.OK);
             }
             catch (CosmosException ex)
             {
                 logger.LogError(ex.Message, ex);
-                return new BadRequestObjectResult(ex.Message);
+                var response = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+                await response.WriteStringAsync(ex.Message);
+                return response;
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, ex);
-                return new BadRequestObjectResult(ex.Message);
+                var response = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+                await response.WriteStringAsync(ex.Message);
+                return response;
             }
         }
     }
