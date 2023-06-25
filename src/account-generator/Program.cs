@@ -5,14 +5,16 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Polly;
 using Polly.Retry;
+using System.Threading;
 
 namespace account_generator
 {
     public partial class Program
     {
         static CosmosClient cosmosClient;
-        static Container container;
-        static volatile bool cancel = false;
+        static Container transactionsContainer;
+        private static Container membersContainer;
+        static volatile CancellationTokenSource cancellationTokenSource;
         static List<string> accountType = new List<string>() { "checking", "savings" };
         private static readonly AsyncRetryPolicy _pollyRetryPolicy = Policy
             .Handle<CosmosException>(e => e.RetryAfter > TimeSpan.Zero)
@@ -34,24 +36,42 @@ namespace account_generator
         public static async Task MainAsync(string[] args)
         {
             var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("local.settings.json").Build();
+                .AddJsonFile("local.settings.json")
+                .AddJsonFile("settings.json", optional: true, reloadOnChange: true)
+                .AddCommandLine(args, new Dictionary<string, string>
+                {
+                    {"-m", $"{nameof(GeneratorOptions)}:{nameof(GeneratorOptions.RunMode)}"},
+                    {"-s", $"{nameof(GeneratorOptions)}:{nameof(GeneratorOptions.SleepTime)}"},
+                    {"-c", $"{nameof(GeneratorOptions)}:{nameof(GeneratorOptions.BatchSize)}"},
+                    {"-v", $"{nameof(GeneratorOptions)}:{nameof(GeneratorOptions.Verbose)}"}
+                })
+                .AddEnvironmentVariables()
+                .Build();
+
+            GeneratorOptions options = new();
+            configuration.GetSection(nameof(GeneratorOptions))
+                .Bind(options);
 
             Console.WriteLine("To STOP press CTRL+C...");
 
-            Console.CancelKeyPress += Console_CancelKeyPress1;
+            Console.CancelKeyPress += Console_CancelKeyPressHandler;
 
             cosmosClient = new CosmosClient(configuration["CosmosDbConnectionString"],
                 new CosmosClientOptions() { AllowBulkExecution = true, EnableContentResponseOnWrite = false });
 
-            container = cosmosClient.GetContainer("payments", "transactions");
+            transactionsContainer = cosmosClient.GetContainer("payments", "transactions");
+            membersContainer = cosmosClient.GetContainer("payments", "members");
+            
+            // Generate Members if they don't already exist:
+            await CreateMembersAsync();
 
             var tasks = new List<Task>();
 
             try
             {
-                for (int i = 1; i <= 5; i++)
+                for (var i = 1; i <= 5; i++)
                 {
-                    tasks.Add(LoadAsync(i));
+                    tasks.Add(LoadAsync(i, options));
                 }
 
                 Task.WhenAll(tasks).GetAwaiter().GetResult();
@@ -61,29 +81,67 @@ namespace account_generator
                 Console.WriteLine(ex.Message);
             }
 
-            Console.WriteLine("Stopped!");
+            Console.WriteLine("Completed generating data.");
         }
 
-        static void Console_CancelKeyPress1(object? sender, ConsoleCancelEventArgs e)
+        static void Console_CancelKeyPressHandler(object? sender, ConsoleCancelEventArgs e)
         {
             Console.WriteLine("Stopping...");
-            cancel = e.Cancel = true;
+            cancellationTokenSource.Cancel();
+            e.Cancel = true;
         }
 
-        static async Task LoadAsync(int batchNum)
+        static async Task CreateMembersAsync()
         {
-            var tasks = new List<Task>();
+            // If there are already member records in the Members container, exit.
+            var query = "SELECT VALUE COUNT(1) FROM c";
+            var queryDefinition = new QueryDefinition(query);
+            var count = await membersContainer.GetItemQueryIterator<int>(queryDefinition).ReadNextAsync();
 
+            if (count.Resource.FirstOrDefault() > 0)
+            {
+                Console.WriteLine("Skipping Member record generation since records already exist.");
+                return;
+            }
+
+            for (var i = 0; i <= 10; i++)
+            {
+                var memberId = Guid.NewGuid().ToString();
+                var memberFaker = new Faker<Member>()
+                    .RuleFor(u => u.memberId, (f, u) => memberId)
+                    .RuleFor(u => u.firstName, (f, u) => f.Name.FirstName())
+                    .RuleFor(u => u.lastName, (f, u) => f.Name.LastName())
+                    .RuleFor(u => u.email, (f, u) => f.Internet.Email())
+                    .RuleFor(u => u.phone, (f, u) => f.Phone.PhoneNumber())
+                    .RuleFor(u => u.address, (f, u) => f.Address.FullAddress())
+                    .RuleFor(u => u.city, (f, u) => f.Address.City())
+                    .RuleFor(u => u.state, (f, u) => f.Address.State())
+                    .RuleFor(u => u.zipcode, (f, u) => f.Address.ZipCode())
+                    .RuleFor(u => u.country, (f, u) => f.Address.Country())
+                    .RuleFor(u => u.type, (f, u) => Constants.DocumentTypes.Member);
+
+                await _pollyRetryPolicy.ExecuteAsync(async () =>
+                {
+                    await membersContainer.CreateItemAsync(memberFaker.Generate(), new PartitionKey(memberId));
+                });
+            }
+            Console.WriteLine("Finished generating Members.");
+            cosmosClient.Dispose();
+        }
+
+        static async Task LoadAsync(int batchNum, GeneratorOptions options)
+        {
+            cancellationTokenSource = new CancellationTokenSource();
+            var tasks = new List<Task>();
+            
             try
             {
-                while (!cancel)
+                while (true)
                 {
                     var totalTasks = 0;
-                    for (int i = (1 + ((batchNum - 1) * 10000000)); i <= (batchNum * 10000000); i++)
-                    //for (int i = (1 + ((batchNum - 1) * 1)); i <= (batchNum * 1); i++)
+                    for (var i = (1 + ((batchNum - 1) * 10000000)); i <= (batchNum * 10000000); i++)
                     {
-                        if (cancel)
-                            break;
+                        cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                         var accountId = i.ToString().PadLeft(9, '0');
 
@@ -99,31 +157,52 @@ namespace account_generator
                         tasks.Add(
                             _pollyRetryPolicy.ExecuteAsync(async () =>
                                 {
-                                    await container.UpsertItemAsync(orderFaker.Generate(), new PartitionKey(accountId));
+                                    await transactionsContainer.UpsertItemAsync(orderFaker.Generate(), new PartitionKey(accountId));
                                 }
-                            )
+                            ).ContinueWith(t =>
+                            {
+                                if (t.IsFaulted)
+                                {
+                                    Console.WriteLine($"Error occurred while upserting item: {t.Exception}");
+                                }
+                            }, cancellationTokenSource.Token)
                         );
 
                         if (tasks.Count == 100)
                         {
                             await Task.WhenAll(tasks);
                             totalTasks += tasks.Count;
-                            Console.WriteLine($"{totalTasks} account summary items written in batch #{batchNum}");
+                            if (options.Verbose)
+                            {
+                                Console.WriteLine($"{totalTasks} account summary items written in batch #{batchNum}");
+                            }
                             tasks.Clear();
+                        }
+
+                        if (options.RunMode == GeneratorOptions.RunModeOption.OneTime && totalTasks >= options.BatchSize)
+                        {
+                            await Task.WhenAll(tasks);
+                            return;
                         }
                     }
 
                     await Task.WhenAll(tasks);
+                    await Task.Delay(Math.Max(1, options.SleepTime), cancellationTokenSource.Token);
                     tasks.Clear();
+
+                    if (options.RunMode == GeneratorOptions.RunModeOption.OneTime)
+                    {
+                        return;
+                    }
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("Operation canceled.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Sending message failed: {ex.Message}");
-            }
-            finally
-            {
-                cosmosClient.Dispose();
             }
         }
     }

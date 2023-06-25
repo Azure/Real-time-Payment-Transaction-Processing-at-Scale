@@ -1,8 +1,17 @@
 {
   "IsEncrypted": false,
   "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "CosmosDBConnection__accountEndpoint": "{{cosmosEndpoint}}",
-    "EventHubConnection__fullyQualifiedNamespace": "{{eventHubEndpoint}}"
+    "EventHubConnection__fullyQualifiedNamespace": "{{eventHubEndpoint}}",
+    "customerContainer": "customerTransactions",
+    "globalIndexContainer": "globalIndex",
+    "isMasterRegion": "True",
+    "memberContainer": "members",
+    "paymentsDatabase": "payments",
+    "preferredRegions": "East US",
+    "transactionsContainer": "transactions"
   },
   "Host": {
     "LocalHttpPort": 7071,
