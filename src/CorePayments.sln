@@ -14,7 +14,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.SemanticKernel
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.Infrastructure", "CorePayments.Infrastructure\CorePayments.Infrastructure.csproj", "{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePayments.EventMonitor", "CorePayments.EventMonitor\CorePayments.EventMonitor.csproj", "{AF16ABA8-748C-4157-845D-CD2111B2E0DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.EventMonitor", "CorePayments.EventMonitor\CorePayments.EventMonitor.csproj", "{AF16ABA8-748C-4157-845D-CD2111B2E0DB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "account-generator", "account-generator\account-generator.csproj", "{B376FFE8-A936-4310-B14C-29A79CE340B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +40,10 @@ Global
 		{AF16ABA8-748C-4157-845D-CD2111B2E0DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF16ABA8-748C-4157-845D-CD2111B2E0DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF16ABA8-748C-4157-845D-CD2111B2E0DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
