@@ -56,12 +56,20 @@ if ($openAiName) {
 } else {
     $openAi=$(az cognitiveservices account list -g $openAiRg --query "[?kind=='OpenAI'].{name: name, kind:kind, endpoint: properties.endpoint}" -o json | ConvertFrom-Json)
 }
-Write-Host $openAi
+
 $openAiKey=$(az cognitiveservices account keys list -g $openAiRg -n $openAi.name -o json --query key1 | ConvertFrom-Json)
 
 if (-not $openAiDeployment) {
     $openAiDeployment = "completions"
 }
+
+## Getting Frontdoor info
+$frontdoor=$(az afd profile list -g $resourceGroup -o json | ConvertFrom-Json).name
+Write-Host "az afd profile list -g $resourceGroup -o json"
+Write-Host $frontdoor
+$fdEndpoint=$(az afd endpoint list -g $resourceGroup --profile-name $frontdoor -o json | ConvertFrom-Json).hostName
+Write-Host "az afd endpoint list -g $resourceGroup --profile-name $frontdoor.name -o json"
+Write-Host $fdEndpoint
 
 ## Showing Values that will be used
 
@@ -73,6 +81,7 @@ $tokens.eventHubEndpoint="https://$eventHubName.servicebus.windows.net"
 $tokens.openAiEndpoint=$openAi.properties.endpoint
 $tokens.openAiKey=$openAiKey
 $tokens.openAiDeployment=$openAiDeployment
+$tokens.apiUrl="https://${fdEndpoint}/api"
 
 Write-Host ($tokens | ConvertTo-Json) -ForegroundColor Yellow
 Write-Host "===========================================================" -ForegroundColor Yellow
@@ -91,4 +100,12 @@ Push-Location $($MyInvocation.InvocationName | Split-Path)
 $functionappSettingsTemplatePath=$(./Join-Path-Recursively -pathParts $functionappSettingsTemplate.Split(","))
 $functionappSettingsPath=$(./Join-Path-Recursively -pathParts $functionappSettings.Split(","))
 & ./Token-Replace.ps1 -inputFile $functionappSettingsTemplatePath -outputFile $functionappSettingsPath -tokens $tokens
+Pop-Location
+
+$siteSettingsTemplate="..,..,ui,env.template"
+$siteSettings="..,..,ui,.env.local"
+Push-Location $($MyInvocation.InvocationName | Split-Path)
+$siteSettingsTemplatePath=$(./Join-Path-Recursively -pathParts $siteSettingsTemplate.Split(","))
+$siteSettingsPath=$(./Join-Path-Recursively -pathParts $siteSettings.Split(","))
+& ./Token-Replace.ps1 -inputFile $siteSettingsTemplatePath -outputFile $siteSettingsPath -tokens $tokens
 Pop-Location

@@ -23,7 +23,4 @@ if (-not $deployment) {
     }
 }
 
-Write-Host $openAi
-Write-Host $openAiDeployment
-
 Pop-Location

@@ -25,7 +25,7 @@ var containers = [
   {
     name: 'members'
     partitionKeys: ['/memberId']
-    enableIndex: false
+    enableIndex: true
     enableAnalyticalStore: false
   }
   {
