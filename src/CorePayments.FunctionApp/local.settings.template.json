@@ -8,7 +8,7 @@
     "LocalHttpPort": 7071,
     "CORS": "http://localhost:3000"
   },
-  "RulesEngine": {
+  "AnalyticsEngine": {
     "OpenAIEndpoint": "https://<deployment>.openai.azure.com/",
     "OpenAIKey": "...",
     "OpenAICompletionsDeployment": "<model_deployment>"

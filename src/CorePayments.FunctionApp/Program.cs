@@ -26,7 +26,7 @@ var host = new HostBuilder()
     })
     .ConfigureServices((hostContext, services) =>
     {
-        services.Configure<RulesEngineSettings>(hostContext.Configuration.GetSection("RulesEngine"));
+        services.Configure<AnalyticsEngineSettings>(hostContext.Configuration.GetSection("AnalyticsEngine"));
 
         services.AddSingleton(s =>
         {
@@ -45,7 +45,7 @@ var host = new HostBuilder()
         services.AddSingleton<IMemberRepository, MemberRepository>();
         services.AddSingleton<ITransactionRepository, TransactionRepository>();
 
-        services.AddSingleton<IRulesEngine, RulesEngine>();
+        services.AddSingleton<IAnalyticsEngine, AnalyticsEngine>();
 
         services.Configure<WorkerOptions>(workerOptions =>
         {

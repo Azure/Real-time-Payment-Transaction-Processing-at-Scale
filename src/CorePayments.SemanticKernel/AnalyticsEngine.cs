@@ -7,12 +7,12 @@ using System.Text.Json;
 
 namespace CorePayments.SemanticKernel
 {
-    public class RulesEngine : IRulesEngine
+    public class AnalyticsEngine : IAnalyticsEngine
     {
-        readonly RulesEngineSettings _settings;
+        readonly AnalyticsEngineSettings _settings;
 
-        public RulesEngine(
-            IOptions<RulesEngineSettings> settings)
+        public AnalyticsEngine(
+            IOptions<AnalyticsEngineSettings> settings)
         {
             _settings = settings.Value;
         }
