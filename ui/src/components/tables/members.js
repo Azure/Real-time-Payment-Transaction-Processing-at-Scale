@@ -1,9 +1,9 @@
 'use client';
 
-import { Card, Pagination, Spinner } from 'flowbite-react';
 import { useCallback, useState } from 'react';
-
+import { Card, Pagination, Spinner } from 'flowbite-react';
 import { useRouter } from 'next/navigation';
+
 import Datatable from '~/components/tables/datatable';
 import FormModal from '~/components/modals/form';
 import NewMemberForm from '~/components/forms/new-member';
@@ -93,7 +93,7 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
         }}
         totalPages={100}
       />
-      <FormModal header={modalHeader} openModal={showFormModal}>
+      <FormModal header={modalHeader} setOpenModal={setShowFormModal} openModal={showFormModal}>
         <NewMemberForm setOpenModal={setShowFormModal} />
       </FormModal>
     </Card>

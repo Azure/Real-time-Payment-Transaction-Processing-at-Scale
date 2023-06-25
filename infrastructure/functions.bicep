@@ -7,6 +7,9 @@ param storageAccountName string
 @description('Cosmos DB account name')
 param cosmosAccountName string
 
+@description('Event Hub namespace name')
+param eventHubNamespaceName string
+
 @description('Cosmos DB database name')
 param paymentsDatabase string
 
@@ -103,6 +106,10 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
           value: 'https://${cosmosAccountName}.documents.azure.com:443/'
         }
         {
+          name: 'EventHubConnection__fullyQualifiedNamespace'
+          value: 'https://${eventHubNamespaceName}.servicebus.windows.net'
+        }
+        {
           name: 'paymentsDatabase'
           value: paymentsDatabase
         }
@@ -132,6 +139,28 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
   }
 }
 
+// Grant Permissions to Identity for EventHub
+resource eventHub 'Microsoft.EventHub/namespaces@2022-10-01-preview' existing = {
+  name: eventHubNamespaceName
+}
+
+@description('This is the built-in "Azure Event Hubs Data Owner" role. See https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-event-hubs-data-owner')
+resource eventHubDataOwnerRole 'Microsoft.Authorization/roleDefinitions@2018-01-01-preview' existing = {
+  scope: subscription()
+  name: 'f526a384-b230-433a-b45c-95f59c4a2dec'
+}
+
+resource eventHubRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(eventHub.id, 'DataOwner', functionApp.id, location)
+  scope: eventHub
+  properties: {
+    roleDefinitionId: eventHubDataOwnerRole.id
+    principalId: functionApp.identity.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// Grant Permissions to Identity for CosmosDB
 resource cosmos 'Microsoft.DocumentDB/databaseAccounts@2022-08-15' existing = {
   name: cosmosAccountName
 }

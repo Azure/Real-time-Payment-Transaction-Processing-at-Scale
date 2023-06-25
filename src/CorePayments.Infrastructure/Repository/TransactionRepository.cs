@@ -1,4 +1,5 @@
 ﻿using CorePayments.Infrastructure.Domain.Entities;
+using CorePayments.Infrastructure.Events;
 using Microsoft.Azure.Cosmos;
 using System.ComponentModel;
 using System.Net;
@@ -7,8 +8,8 @@ namespace CorePayments.Infrastructure.Repository
 {
     public class TransactionRepository : CosmosDbRepository, ITransactionRepository
     {
-        public TransactionRepository(CosmosClient client) :
-            base(client, containerName: Environment.GetEnvironmentVariable("transactionsContainer") ?? string.Empty)
+        public TransactionRepository(CosmosClient client, IEventHubService eventHub) :
+            base(client, containerName: Environment.GetEnvironmentVariable("transactionsContainer") ?? string.Empty, eventHub)
         {
         }
 
