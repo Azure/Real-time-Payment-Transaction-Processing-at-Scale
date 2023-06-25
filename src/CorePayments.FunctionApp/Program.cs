@@ -11,8 +11,10 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using Azure.Core.Serialization;
 using CorePayments.SemanticKernel;
+using Microsoft.Azure.Cosmos;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults(builder =>
@@ -32,8 +34,25 @@ var host = new HostBuilder()
         {
             //var endpoint = hostContext.Configuration["CosmosDBConnection__accountEndpoint"];
             var endpoint = Environment.GetEnvironmentVariable("CosmosDBConnection__accountEndpoint");
+            var preferredRegions = Environment.GetEnvironmentVariable("preferredRegions");
+            var region = "";
 
-            return new CosmosClientBuilder(endpoint, new Azure.Identity.DefaultAzureCredential())
+            var regions = string.IsNullOrEmpty(preferredRegions)
+                ? Array.Empty<string>()
+                : preferredRegions.Split(',');
+
+            if (!regions.Any())
+                return new CosmosClientBuilder(accountEndpoint: endpoint,
+                        tokenCredential: new Azure.Identity.DefaultAzureCredential())
+                    .Build();
+            if (regions.Length == 1)
+            {
+                return new CosmosClientBuilder(accountEndpoint: endpoint, tokenCredential: new Azure.Identity.DefaultAzureCredential())
+                    .WithApplicationRegion(regions[0])
+                    .Build();
+            }
+            return new CosmosClientBuilder(accountEndpoint: endpoint, tokenCredential: new Azure.Identity.DefaultAzureCredential())
+                .WithApplicationPreferredRegions(regions)
                 .Build();
         });
         services.AddSingleton<IEventHubService, EventHubService>(s => new EventHubService(

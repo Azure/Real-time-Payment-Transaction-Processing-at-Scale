@@ -1,6 +1,7 @@
 ﻿using Bogus;
+using CorePayments.Infrastructure;
+using CorePayments.Infrastructure.Domain.Entities;
 using Microsoft.Azure.Cosmos;
-using payments_model;
 using Microsoft.Extensions.Configuration;
 using Polly;
 using Polly.Retry;

@@ -31,6 +31,15 @@ param isMasterRegion bool
 @description('Resource location')
 param location string = resourceGroup().location
 
+@description('OpenAI Endpoint')
+param openAiName string
+
+@description('OpenAI Deployment')
+param openAiDeployment string
+
+@description('OpenAI Resource Group')
+param openAiResourceGroup string
+
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
   name: functionAppName
   location: location
@@ -63,6 +72,11 @@ resource plan 'Microsoft.Web/serverfarms@2020-12-01' = {
 
 resource blob 'Microsoft.Storage/storageAccounts@2022-09-01' existing = {
   name: storageAccountName
+}
+
+resource openAi 'Microsoft.CognitiveServices/accounts@2023-05-01' existing = {
+  name: openAiName
+  scope: resourceGroup(openAiResourceGroup)
 }
 
 resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
@@ -108,6 +122,18 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'EventHubConnection__fullyQualifiedNamespace'
           value: 'https://${eventHubNamespaceName}.servicebus.windows.net'
+        }
+        {
+          name: 'AnalyticsEngine__OpenAIEndpoint'
+          value: openAi.properties.endpoint
+        }
+        {
+          name: 'AnalyticsEngine__OpenAIKey'
+          value: openAi.listKeys().key1
+        }
+        {
+          name: 'AnalyticsEngine__OpenAICompletionsDeployment'
+          value: openAiDeployment
         }
         {
           name: 'paymentsDatabase'

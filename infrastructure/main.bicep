@@ -2,7 +2,7 @@
 param cosmosAccountName string = 'cosmospay${suffix}'
 
 @description('EventHub namespace, max length 44 characters, lowercase')
-param eventHubNamespace string = 'ehpay${suffix}'
+param eventHubNamespace string = 'eventhubpay${suffix}'
 
 @description('Function App name')
 param functionAppName string = 'functionpay${suffix}'
@@ -14,13 +14,25 @@ param storageAccountName string = 'blobpay${suffix}'
 param frontDoorName string = 'apipaymentsfd${suffix}'
 
 @description('Enable Cosmos Multi Master')
-param enableCosmosMultiMaster bool = false
+param enableCosmosMultiMaster bool = true
 
 @description('Locations for resource deployment')
-param locations string = 'SouthCentralUS, NorthCentralUS'
+param locations string = 'SouthCentralUS, NorthCentralUS, EastUS'
 
 @description('Suffix for resource deployment')
 param suffix string = uniqueString(resourceGroup().id)
+
+@description('Static website storage account name, max length 24 characters, lowercase')
+param websiteStorageAccountName string = 'webpaysa${suffix}'
+
+@description('OpenAI service name')
+param openAiName string = 'openaipayments${suffix}'
+
+@description('OpenAi Deployment')
+param openAiDeployment string = 'completions'
+
+@description('OpenAI Resource Group')
+param openAiResourceGroup string
 
 var locArray = split(replace(locations, ' ', ''), ',')
 
@@ -42,6 +54,27 @@ module cosmosdb 'cosmos.bicep' = {
     enableCosmosMultiMaster: enableCosmosMultiMaster
   }
 }
+
+// TODO: Deploy via Bicep. Presently, attempting this results in the following error:
+//   {"code": "ApiSetDisabledForCreation", "message": "It's not allowed to create new accounts with type 'OpenAI'."}
+// module openAi 'openai.bicep' = {
+//   name: 'openAiDeploy'
+//   params: {
+//     openAiName: openAiName
+//     location: locArray[0]
+//     deployments: [
+//       {
+//         name: 'completions'
+//         model: 'text-davinci-003'
+//         version: '1'
+//         sku: {
+//           name: 'Standard'
+//           capacity: 60
+//         }
+//       }
+//     ]
+//   }
+// }
 
 module blob 'blob.bicep' = [for (location, i) in locArray: {
   name: 'blobDeploy-${location}'
@@ -66,6 +99,9 @@ module function 'functions.bicep' = [for (location, i) in locArray: {
     preferredRegions: join(concat(array(location), filter(locArray, l => l != location)), ',')
     isMasterRegion: i == 0 || enableCosmosMultiMaster ? true : false
     location: location
+    openAiName: openAiName
+    openAiDeployment: openAiDeployment
+    openAiResourceGroup: openAiResourceGroup
   }
   dependsOn: [
     blob
@@ -78,5 +114,13 @@ module frontdoor 'frontdoor.bicep' = {
     enableMultiMaster: enableCosmosMultiMaster
     frontDoorName: frontDoorName
     functionNames: [for i in range(0, length(locArray)): function[i].outputs.functionName]
+  }
+}
+
+module staticwebsite 'staticwebsite.bicep' = {
+  name: 'staticwebsiteDeploy'
+  params: {
+    storageAccountName: websiteStorageAccountName
+    location: locArray[0]
   }
 }
