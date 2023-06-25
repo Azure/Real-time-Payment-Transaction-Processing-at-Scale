@@ -56,7 +56,7 @@ const TransactionsSection = ({ accountId }) => {
         </div>
       )}
       <TransactionsStatementTable accountId={accountId} />
-      <FormModal header={modalHeader} openModal={isOpenModal}>
+      <FormModal header={modalHeader} setOpenModal={setIsOpenModal} openModal={isOpenModal}>
         <NewTransactionForm accountId={accountId} setOpenModal={setIsOpenModal} />
       </FormModal>
     </div>

@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24 overflow-hidden p-6">
       <MembersSection setMember={setMember} />
-      {member && <MemberDetailsSection member={member} />}
+      {member && <MemberDetailsSection member={member} setMember={setMember} />}
     </main>
   );
 }
