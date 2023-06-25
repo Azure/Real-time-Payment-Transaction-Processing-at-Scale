@@ -1,5 +1,8 @@
 Param(
-    [parameter(Mandatory=$true)][string]$resourceGroup
+    [parameter(Mandatory=$true)][string]$resourceGroup,
+    [parameter(Mandatory=$false)][string]$openAiName,
+    [parameter(Mandatory=$false)][string]$openAiRg,
+    [parameter(Mandatory=$false)][string]$openAiDeployment
 )
 
 function EnsureAndReturnFirstItem($arr, $restype) {
@@ -47,6 +50,19 @@ if ($appInsightsName -and $appInsightsName.Length -eq 1) {
 }
 Write-Host "App Insights Instrumentation Key: $appinsightsId" -ForegroundColor Yellow
 
+## Getting OpenAI info
+if ($openAiName) {
+    $openAi=$(az cognitiveservices account show -n $openAiName -g $openAiRg -o json | ConvertFrom-Json)
+} else {
+    $openAi=$(az cognitiveservices account list -g $openAiRg --query "[?kind=='OpenAI'].{name: name, kind:kind, endpoint: properties.endpoint}" -o json | ConvertFrom-Json)
+}
+Write-Host $openAi
+$openAiKey=$(az cognitiveservices account keys list -g $openAiRg -n $openAi.name -o json --query key1 | ConvertFrom-Json)
+
+if (-not $openAiDeployment) {
+    $openAiDeployment = "completions"
+}
+
 ## Showing Values that will be used
 
 Write-Host "===========================================================" -ForegroundColor Yellow
@@ -54,6 +70,9 @@ Write-Host "settings.json files will be generated with values:"
 
 $tokens.cosmosEndpoint=$docdb.documentEndpoint
 $tokens.eventHubEndpoint="https://$eventHubName.servicebus.windows.net"
+$tokens.openAiEndpoint=$openAi.properties.endpoint
+$tokens.openAiKey=$openAiKey
+$tokens.openAiDeployment=$openAiDeployment
 
 Write-Host ($tokens | ConvertTo-Json) -ForegroundColor Yellow
 Write-Host "===========================================================" -ForegroundColor Yellow

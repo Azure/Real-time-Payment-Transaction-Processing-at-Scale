@@ -9,8 +9,8 @@
     "CORS": "http://localhost:3000"
   },
   "AnalyticsEngine": {
-    "OpenAIEndpoint": "https://<deployment>.openai.azure.com/",
-    "OpenAIKey": "...",
-    "OpenAICompletionsDeployment": "<model_deployment>"
+    "OpenAIEndpoint": "{{openAiEndpoint}}",
+    "OpenAIKey": "{{openAiKey}}",
+    "OpenAICompletionsDeployment": "{{openAiDeployment}}"
   }
 }

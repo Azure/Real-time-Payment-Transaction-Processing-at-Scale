@@ -34,6 +34,12 @@ var containers = [
     enableIndex: true
     enableAnalyticalStore: false
   }
+  {
+    name: 'globalIndex'
+    partitionKeys: ['/partitionKey']
+    enableIndex: true
+    enableAnalyticalStore: false
+  }
 ]
 
 var consistencyPolicy = {
