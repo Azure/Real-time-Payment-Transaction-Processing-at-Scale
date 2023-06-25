@@ -13,9 +13,6 @@ param storageAccountName string = 'blobpay${suffix}'
 @description('Front Door name')
 param frontDoorName string = 'apipaymentsfd${suffix}'
 
-@description('OpenAI service name')
-param openAiName string = 'openaipayments${suffix}'
-
 @description('Enable Cosmos Multi Master')
 param enableCosmosMultiMaster bool = true
 
@@ -27,6 +24,9 @@ param suffix string = uniqueString(resourceGroup().id)
 
 @description('Static website storage account name, max length 24 characters, lowercase')
 param websiteStorageAccountName string = 'webpaysa${suffix}'
+
+@description('OpenAI service name')
+param openAiName string = 'openaipayments${suffix}'
 
 @description('OpenAi Deployment')
 param openAiDeployment string = 'completions'

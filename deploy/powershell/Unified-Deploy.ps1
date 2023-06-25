@@ -11,6 +11,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$stepDeployBicep=$true,
     [parameter(Mandatory=$false)][bool]$stepPublishFunctionApp=$true,
     [parameter(Mandatory=$false)][bool]$stepDeployOpenAi=$true,
+    [parameter(Mandatory=$false)][bool]$stepPublishSite=$true,
     [parameter(Mandatory=$false)][bool]$stepLoginAzure=$true
 )
 
@@ -52,6 +53,10 @@ if ($stepDeployBicep) {
 
 if ($stepPublishFunctionApp) {
     & ./Publish-FunctionApp.ps1 -resourceGroup $resourceGroup -functionAppPath "..,..,src,CorePayments.FunctionApp"
+}
+
+if ($stepPublishSite) {
+    & ./Publish-Site.ps1 -resourceGroup $resourceGroup -storageAccount "webpaysa$suffix"
 }
 
 Pop-Location
