@@ -13,6 +13,8 @@ namespace CorePayments.Infrastructure.Repository
         private readonly IEventHubService _eventHub;
 
         protected Container Container { get; }
+        protected string CurrentWriteRegion { get; }
+        protected string CurrentReadRegion { get; }
 
         public CosmosDbRepository(CosmosClient client, string containerName, IEventHubService eventHub)
         {
@@ -24,6 +26,7 @@ namespace CorePayments.Infrastructure.Repository
             _eventHub = eventHub;
 
             Container = _database.GetContainer(containerName);
+            
         }
 
         protected async Task<IEnumerable<TEntity>> Query<TEntity>(QueryDefinition queryDefinition, PartitionKey? partitionKey = null) where TEntity : new()

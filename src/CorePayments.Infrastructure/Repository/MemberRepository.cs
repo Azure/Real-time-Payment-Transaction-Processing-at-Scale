@@ -2,6 +2,7 @@
 using CorePayments.Infrastructure.Events;
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Linq;
+using System.Drawing.Printing;
 
 namespace CorePayments.Infrastructure.Repository
 {
@@ -41,7 +42,11 @@ namespace CorePayments.Infrastructure.Repository
             if (ops.Count == 0)
                 return 0;
 
-            await Container.PatchItemAsync<Member>(memberId, new PartitionKey(memberId), ops);
+            var response = await Container.PatchItemAsync<Member>(memberId, new PartitionKey(memberId), ops);
+            var paths = string.Join(", ", ops.Select(x => x.Path));
+            var regions = string.Join(", ", response.Diagnostics.GetContactedRegions().Select(x => x.regionName));
+
+            await TriggerTrackingEvent($"Performing member patch operations (paths: {paths}) within the {regions} region(s).");
 
             return ops.Count;
         }
