@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CorePayments.SemanticKernel
 {
-    public interface IRulesEngine
+    public interface IAnalyticsEngine
     {
         Task<string> ReviewTransactions(IEnumerable<Transaction> transactions, string query);
     }

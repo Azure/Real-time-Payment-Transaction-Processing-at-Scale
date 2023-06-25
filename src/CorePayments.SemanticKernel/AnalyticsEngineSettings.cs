@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CorePayments.SemanticKernel
 {
-    public record RulesEngineSettings
+    public record AnalyticsEngineSettings
     {
         public required string OpenAIKey { get; set; }
         public required string OpenAIEndpoint { get; set; }

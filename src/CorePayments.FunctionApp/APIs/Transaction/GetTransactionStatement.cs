@@ -18,11 +18,11 @@ namespace CorePayments.FunctionApp.APIs.Transaction
     public class GetTransactionStatement
     {
         readonly ICustomerRepository _customerRepository;
-        readonly IRulesEngine _rulesEngine;
+        readonly IAnalyticsEngine _rulesEngine;
 
         public GetTransactionStatement(
             ICustomerRepository customerRepository,
-            IRulesEngine rulesEngine)
+            IAnalyticsEngine rulesEngine)
         {
             _customerRepository = customerRepository;
             _rulesEngine = rulesEngine;
