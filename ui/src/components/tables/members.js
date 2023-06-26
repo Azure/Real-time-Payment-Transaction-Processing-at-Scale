@@ -29,10 +29,6 @@ const headers = [
   {
     key: 'details',
     name: ''
-  },
-  {
-    key: 'viewAccounts',
-    name: ''
   }
 ];
 
@@ -50,9 +46,6 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
     },
     [data?.page, setMember]
   );
-  const onClickAccounts = (memberId) => {
-    router.push(`accounts`);
-  };
 
   const formattedData = data?.page.map((row) => {
     return {
@@ -61,11 +54,6 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
       details: (
         <p className="underline cursor-pointer" onClick={() => onClickDetails(row.id)}>
           Details
-        </p>
-      ),
-      viewAccounts: (
-        <p className="underline cursor-pointer" onClick={() => onClickAccounts(row.id)}>
-          View Account(s)
         </p>
       )
     };
