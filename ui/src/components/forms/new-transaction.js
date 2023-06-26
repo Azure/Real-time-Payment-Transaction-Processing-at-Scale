@@ -36,6 +36,7 @@ const NewTransactionForm = ({ accountId, setOpenModal }) => {
       setError(e.response.data);
       setIsLoading(false);
     }
+    setForm({ accountId: '', type: '', description: '', merchant: '', amount: '' });
   };
 
   const onChangeMerchant = (e) => setForm({ ...form, merchant: e.target.value });
