@@ -5,7 +5,7 @@ import { PlusIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { Capitalize, USDollar } from '~/helpers';
 import FormModal from '~/components/modals/form';
 import NewTransactionForm from '~/components/forms/new-transaction';
-import AnalyzeTransactionsForm from '~/components/forms/analyze-transactions'; 
+import AnalyzeTransactionsForm from '~/components/forms/analyze-transactions';
 import TransactionsStatementTable from '~/components/tables/transactions-statement';
 import useAccountSummary from '~/hooks/account-summary';
 
@@ -62,18 +62,21 @@ const TransactionsSection = ({ accountId }) => {
       )}
       <TransactionsStatementTable accountId={accountId} />
 
-      <FormModal header={analyzeModalHeader} openModal={isAnalyzeModalOpen}>
+      <FormModal
+        header={analyzeModalHeader}
+        openModal={isAnalyzeModalOpen}
+        setOpenModal={setIsAnalyzeModalOpen}>
         <AnalyzeTransactionsForm accountId={accountId} setOpenModal={setIsAnalyzeModalOpen} />
       </FormModal>
 
       <div className="justify-end">
-        <Button color="dark" className="p-0" onClick={onClickAdd}>
+        <Button color="dark" className="p-0 mt-6" onClick={onClickAdd}>
           <PlusIcon className="h-6 w-6 text-gray-500 mr-3 text-white" />
           <h4>New Transaction</h4>
         </Button>
       </div>
 
-      <FormModal header={modalHeader} openModal={isOpenModal}>
+      <FormModal header={modalHeader} openModal={isOpenModal} setOpenModal={setIsOpenModal}>
         <NewTransactionForm accountId={accountId} setOpenModal={setIsOpenModal} />
       </FormModal>
     </div>
