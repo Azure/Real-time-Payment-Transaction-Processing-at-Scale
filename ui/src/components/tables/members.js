@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Card, Pagination, Spinner } from 'flowbite-react';
 import { useRouter } from 'next/navigation';
 
@@ -59,6 +59,10 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
     };
   });
 
+  useEffect(() => {
+    console.log(continuationToken);
+  }, [continuationToken]);
+
   const modalHeader = <div className="text-xl p-4">New Member</div>;
 
   return (
@@ -77,6 +81,7 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
         layout="navigation"
         onPageChange={(page) => {
           setPage(page);
+          console.log(data);
           setContinuationToken(data.continuationToken);
         }}
         totalPages={100}
