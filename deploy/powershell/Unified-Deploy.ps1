@@ -15,6 +15,12 @@ Param(
     [parameter(Mandatory=$false)][bool]$stepLoginAzure=$true
 )
 
+az extension add --name  application-insights
+az extension update --name  application-insights
+
+az extension add --name storage-preview
+az extension update --name storage-preview
+
 Push-Location $($MyInvocation.InvocationName | Split-Path)
 
 if (-not $suffix) {
