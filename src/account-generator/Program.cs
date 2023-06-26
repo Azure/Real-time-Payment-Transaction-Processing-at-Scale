@@ -82,6 +82,7 @@ namespace account_generator
             }
 
             Console.WriteLine("Completed generating data.");
+            cosmosClient.Dispose();
         }
 
         static void Console_CancelKeyPressHandler(object? sender, ConsoleCancelEventArgs e)
@@ -126,7 +127,6 @@ namespace account_generator
                 });
             }
             Console.WriteLine("Finished generating Members.");
-            cosmosClient.Dispose();
         }
 
         static async Task LoadAsync(int batchNum, GeneratorOptions options)
