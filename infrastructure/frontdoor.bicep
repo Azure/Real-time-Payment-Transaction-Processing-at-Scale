@@ -29,6 +29,7 @@ resource frontDoorOriginGroup 'Microsoft.Cdn/profiles/originGroups@2022-11-01-pr
   parent: frontDoorProfile
   properties: {
     loadBalancingSettings: {
+      additionalLatencyInMilliseconds: 1000
       sampleSize: 4
       successfulSamplesRequired: 3
     }

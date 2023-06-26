@@ -24,7 +24,7 @@ param indexDocumentPath string = 'index.html'
 param indexDocumentContents string = '<h1>Example static website</h1>'
 
 @description('The path to the web error document.')
-param errorDocument404Path string = 'error.html'
+param errorDocument404Path string = 'index.html'
 
 @description('The contents of the web error document.')
 param errorDocument404Contents string = '<h1>Example 404 error page</h1>'

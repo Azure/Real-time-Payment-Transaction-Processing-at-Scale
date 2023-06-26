@@ -89,6 +89,11 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
   properties: {
     serverFarmId: plan.id
     siteConfig: {
+      cors: {
+        allowedOrigins: [
+          '*'
+        ]
+      }
       use32BitWorkerProcess: false
       appSettings: [
         {
@@ -109,7 +114,7 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
         }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: 'dotnet'
+          value: 'dotnet-isolated'
         }
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
@@ -121,7 +126,7 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
         }
         {
           name: 'EventHubConnection__fullyQualifiedNamespace'
-          value: 'https://${eventHubNamespaceName}.servicebus.windows.net'
+          value: '${eventHubNamespaceName}.servicebus.windows.net'
         }
         {
           name: 'AnalyticsEngine__OpenAIEndpoint'

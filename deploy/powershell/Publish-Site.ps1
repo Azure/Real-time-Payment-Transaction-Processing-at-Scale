@@ -16,7 +16,7 @@ npm ci
 npm run build
 
 Write-Host "===========================================================" -ForegroundColor Yellow
-Write-Host " Deploying to function app $functionAppName" -ForegroundColor Yellow
+Write-Host " Deploying the website" -ForegroundColor Yellow
 Write-Host "===========================================================" -ForegroundColor Yellow
 az storage azcopy blob upload -c `$web --account-name $storageAccount -s "./out/*" --recursive
 

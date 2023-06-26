@@ -52,7 +52,7 @@ if ($stepDeployBicep) {
 & ./Generate-Config.ps1 -resourceGroup $resourceGroup -openAiName $openAiName -openAiRg $openAiRg -openAiDeployment $openAiDeployment
 
 if ($stepPublishFunctionApp) {
-    & ./Publish-FunctionApp.ps1 -resourceGroup $resourceGroup -functionAppPath "..,..,src,CorePayments.FunctionApp"
+    & ./Publish-FunctionApp.ps1 -resourceGroup $resourceGroup -projectName "CorePayments.FunctionApp"
 }
 
 if ($stepPublishSite) {

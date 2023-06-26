@@ -4,7 +4,7 @@ param eventHubNamespace string
 @description('Resource location')
 param location string = resourceGroup().location
 
-var eventHubs = ['IncomingClaim', 'RejectedClaim', 'ClaimApproved', 'ClaimDenied']
+var eventHubs = ['PaymentEvents']
 
 resource namespace 'Microsoft.EventHub/namespaces@2022-10-01-preview' = {
   name: eventHubNamespace
