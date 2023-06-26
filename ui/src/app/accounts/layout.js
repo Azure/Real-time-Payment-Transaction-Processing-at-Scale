@@ -1,8 +1,7 @@
 import '../globals.css';
-import CustomSidebar from '~/components/navigation/sidebar';
 
 export const metadata = {
-  title: 'Accounts',
+  title: 'Azure Cosmos DB Payments Demo App',
   description: 'Accounts section'
 };
 
