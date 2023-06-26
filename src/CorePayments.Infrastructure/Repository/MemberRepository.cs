@@ -33,7 +33,7 @@ namespace CorePayments.Infrastructure.Repository
 
             foreach (JToken item in obj.Values())
             {
-                if (item.Path == "id" || item.Path == "memberId" || string.IsNullOrEmpty(item.ToString()))
+                if (item.Path is "id" or "memberId" or "type" || string.IsNullOrEmpty(item.ToString()))
                     continue;
 
                 ops.Add(PatchOperation.Add($"/{item.Path}", item.ToString()));
