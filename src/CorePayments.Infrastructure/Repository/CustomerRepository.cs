@@ -38,5 +38,13 @@ namespace CorePayments.Infrastructure.Repository
 
             await Container.CreateItemAsync(item);
         }
+
+        public async Task UpsertItem(JObject item)
+        {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+
+            await Container.UpsertItemAsync(item);
+        }
     }
 }
