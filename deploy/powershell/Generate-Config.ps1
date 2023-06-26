@@ -33,6 +33,7 @@ $tokens=@{}
 ## Getting CosmosDb info
 $docdb=$(az cosmosdb list -g $resourceGroup --query "[?kind=='GlobalDocumentDB'].{name: name, kind:kind, documentEndpoint:documentEndpoint}" -o json | ConvertFrom-Json)
 $docdb=EnsureAndReturnFirstItem $docdb "CosmosDB (Document Db)"
+$docdbKey=$(az cosmosdb keys list -g $resourceGroup -n $docdb.name -o json --query primaryMasterKey | ConvertFrom-Json)
 Write-Host "Document Db Account: $($docdb.name)" -ForegroundColor Yellow
 
 ## Getting EventHub info
@@ -76,6 +77,7 @@ Write-Host $fdEndpoint
 Write-Host "===========================================================" -ForegroundColor Yellow
 Write-Host "settings.json files will be generated with values:"
 
+$tokens.cosmosDbConnectionString="AccountEndpoint=$($docdb.documentEndpoint);AccountKey=$docdbKey"
 $tokens.cosmosEndpoint=$docdb.documentEndpoint
 $tokens.eventHubEndpoint="https://$eventHubName.servicebus.windows.net"
 $tokens.openAiEndpoint=$openAi.properties.endpoint
@@ -85,6 +87,14 @@ $tokens.apiUrl="https://${fdEndpoint}/api"
 
 Write-Host ($tokens | ConvertTo-Json) -ForegroundColor Yellow
 Write-Host "===========================================================" -ForegroundColor Yellow
+
+$accountGeneratorSettingsTemplate="..,..,src,account-generator,local.settings.template.json"
+$accountGeneratorSettings="..,..,src,account-generator,local.settings.json"
+Push-Location $($MyInvocation.InvocationName | Split-Path)
+$accountGeneratorSettingsTemplatePath=$(./Join-Path-Recursively -pathParts $accountGeneratorSettingsTemplate.Split(","))
+$accountGeneratorSettingsPath=$(./Join-Path-Recursively -pathParts $accountGeneratorSettings.Split(","))
+& ./Token-Replace.ps1 -inputFile $accountGeneratorSettingsTemplatePath -outputFile $accountGeneratorSettingsPath -tokens $tokens
+Pop-Location
 
 $eventmonitorSettingsTemplate="..,..,src,CorePayments.EventMonitor,local.settings.template.json"
 $eventmonitorSettings="..,..,src,CorePayments.EventMonitor,local.settings.json"

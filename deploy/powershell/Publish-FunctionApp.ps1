@@ -18,7 +18,7 @@ dotnet build /p:DeployOnBuild=true /p:DeployTarget=Package -c Release
 Write-Host "===========================================================" -ForegroundColor Yellow
 Write-Host " Archiving the function app" -ForegroundColor Yellow
 Write-Host "===========================================================" -ForegroundColor Yellow
-Compress-Archive -LiteralPath ./bin/Release/net7.0/publish -DestinationPath ./bin/Release/dist.zip
+Compress-Archive -Path ./bin/Release/net7.0/publish/* -DestinationPath ./bin/Release/dist.zip
 
 $functionAppNames=$(az functionapp list -g $resourceGroup -o json | ConvertFrom-Json).name
 

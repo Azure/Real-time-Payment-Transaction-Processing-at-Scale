@@ -1,5 +1,5 @@
 {
-  "CosmosDbConnectionString": "{{primaryConnectionString}}",
+  "CosmosDbConnectionString": "{{CosmosDbConnectionString}}",
   "GeneratorOptions": {
     "RunMode": "OneTime",
     "BatchSize": 200,

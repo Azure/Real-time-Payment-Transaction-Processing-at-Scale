@@ -17,7 +17,7 @@ param frontDoorName string = 'apipaymentsfd${suffix}'
 param enableCosmosMultiMaster bool = true
 
 @description('Locations for resource deployment')
-param locations string = 'SouthCentralUS, NorthCentralUS, EastUS'
+param locations string = 'SouthCentral US, NorthCentral US, East US'
 
 @description('Suffix for resource deployment')
 param suffix string = uniqueString(resourceGroup().id)
@@ -34,7 +34,12 @@ param openAiDeployment string = 'completions'
 @description('OpenAI Resource Group')
 param openAiResourceGroup string
 
-var locArray = split(replace(locations, ' ', ''), ',')
+var locArray = split(toLower(replace(locations, ' ', '')), ',')
+var regionNames = {
+  eastus: 'East US'
+  northcentralus: 'North Central US'
+  southcentralus: 'South Central US'
+}
 
 module eventHub 'eventhub.bicep' = {
   scope: resourceGroup()
@@ -96,7 +101,7 @@ module function 'functions.bicep' = [for (location, i) in locArray: {
     transactionsContainer: cosmosdb.outputs.cosmosTransactionsContainerName
     customerContainer: cosmosdb.outputs.cosmosCustomerContainerName
     memberContainer: cosmosdb.outputs.cosmosMemberContainerName
-    preferredRegions: join(concat(array(location), filter(locArray, l => l != location)), ',')
+    preferredRegions: join(concat(array(regionNames[location]), map(filter(locArray, l => l != location), l => regionNames[l])), ',')
     isMasterRegion: i == 0 || enableCosmosMultiMaster ? true : false
     location: location
     openAiName: openAiName
