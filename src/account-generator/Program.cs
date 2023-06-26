@@ -113,11 +113,11 @@ namespace account_generator
                     .RuleFor(u => u.lastName, (f, u) => f.Name.LastName())
                     .RuleFor(u => u.email, (f, u) => f.Internet.Email())
                     .RuleFor(u => u.phone, (f, u) => f.Phone.PhoneNumber())
-                    .RuleFor(u => u.address, (f, u) => f.Address.FullAddress())
+                    .RuleFor(u => u.address, (f, u) => f.Address.StreetAddress())
                     .RuleFor(u => u.city, (f, u) => f.Address.City())
                     .RuleFor(u => u.state, (f, u) => f.Address.State())
                     .RuleFor(u => u.zipcode, (f, u) => f.Address.ZipCode())
-                    .RuleFor(u => u.country, (f, u) => f.Address.Country())
+                    .RuleFor(u => u.country, (f, u) => "USA")
                     .RuleFor(u => u.type, (f, u) => Constants.DocumentTypes.Member);
 
                 await _pollyRetryPolicy.ExecuteAsync(async () =>
