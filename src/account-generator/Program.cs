@@ -117,7 +117,7 @@ namespace account_generator
                     .RuleFor(u => u.address, (f, u) => f.Address.StreetAddress())
                     .RuleFor(u => u.city, (f, u) => f.Address.City())
                     .RuleFor(u => u.state, (f, u) => f.Address.State())
-                    .RuleFor(u => u.zipcode, (f, u) => f.Address.ZipCode())
+                    .RuleFor(u => u.zipcode, (f, u) => f.Address.ZipCode("#####"))
                     .RuleFor(u => u.country, (f, u) => "USA")
                     .RuleFor(u => u.type, (f, u) => Constants.DocumentTypes.Member);
 
