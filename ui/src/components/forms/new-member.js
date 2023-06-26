@@ -39,9 +39,7 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
     if (member) {
       modifiedMember = DiffObjects(form, member);
       response = await EditTrigger({
-        ...modifiedMember,
-        id: member.id,
-        memberId: member.memberId
+        ...modifiedMember
       });
     } else {
       response = await AddTrigger(form);
