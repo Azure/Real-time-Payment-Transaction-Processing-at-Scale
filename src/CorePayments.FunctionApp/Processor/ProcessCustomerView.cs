@@ -43,7 +43,7 @@ namespace CorePayments.FunctionApp.Processor
             {
                 try
                 {
-                    await _customerRepository.CreateItem(record);
+                    await _customerRepository.UpsertItem(record);
                 }
                 catch (Exception ex)
                 {
