@@ -30,11 +30,7 @@ const NewTransactionForm = ({ accountId, setOpenModal }) => {
     } else {
       setIsLoading(false);
     }
-<<<<<<< HEAD
     setForm({ accountId, type: 'Credit', description: '', merchant: '', amount: '' });
-=======
-    setForm({ accountId: '', type: '', description: '', merchant: '', amount: '' });
->>>>>>> 364bcb2 (Fixed account viewing and change feed operations)
   };
 
   const onChangeMerchant = (e) => setForm({ ...form, merchant: e.target.value });
