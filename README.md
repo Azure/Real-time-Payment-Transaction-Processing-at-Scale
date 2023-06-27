@@ -1,10 +1,32 @@
-# cosmos-payments-demo
+# Cosmos DB NoSQL API - Payments
+
+## Introduction
+
+This repository provides a code sample in .NET on how you might use a combination of Azure Functions, Cosmos DB, OpenAI and EventHub to implement a payment tracking process.
+
+## Scenario
+
+The scenario centers around a payments and transactions solution. Members having accounts, each account with corresponding balances, overdraft limits and credit/debit transactions. 
+
+Transaction data is replicated across multiple geographic regions for both reads and writes, while maintaining consistency. Updates are made efficiently with the patch operation.
+
+Business rules govern if a transaction is allowed. 
+
+An AI powered co-pilot enables agents to analyze transactions using natural language.
+
+## Solution Architecture
+
+The solution architecture is represented by this diagram:
+
+<p align="center">
+    <img src="img/architecture.png" width="100%">
+</p>
 
 ## Deployment
 
 ### Standard Deployments
 
-From the `deploy/powershell` folder, run the following:
+From the `deploy/powershell` folder, run the following command. This should provision all of the necessary infrastructure, deploy builds to the function apps, deploy the frontend, and deploy necessary artifacts to the Synapse workspace.
 
 ```pwsh
 .\Unified-Deploy.ps1 -resourceGroup <resource-group-name> `
@@ -13,7 +35,7 @@ From the `deploy/powershell` folder, run the following:
 
 ### Deployments using an existing OpenAI service
 
-From the `deploy/powershell` folder, run the following:
+For deployments that need to use an existing OpenAI service, run the following from the `deploy/powershell`.  This will provision all of the necessary infrastruction except the Azure OpenAI service and will deploy the function apps, the frontend, and Synapse artifacts.
 
 ```pwsh
 .\Unified-Deploy.ps1 -resourceGroup <resource-group-name> `
