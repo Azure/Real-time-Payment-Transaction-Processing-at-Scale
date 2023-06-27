@@ -70,3 +70,14 @@ cd deploy/powershell
                      -stepPublishFunctionApp 1 `
                      -stepPublishSite 1
 ```
+
+### Quickstart
+
+1. After deployment is complete, go to the resource group for your deployment and open the Azure Storage Account prefixed with `web`.  This is the storage account hosting the static web app.
+1. Select the `Static website` blade in the left-hand navigation pane and copy the site URL from the `Primary endpoint` field in the detail view.
+
+    <p align="center">
+        <img src="img/website-url.png" width="100%">
+    </p>
+
+1. Browse to the URL copied in the previous step to access the web app.
