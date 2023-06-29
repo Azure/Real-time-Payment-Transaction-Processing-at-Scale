@@ -1,7 +1,7 @@
 'use client';
 
-import { Card, Pagination, Spinner } from 'flowbite-react';
-import { useCallback, useState } from 'react';
+import { Card, Spinner } from 'flowbite-react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Capitalize, USDollar } from '~/helpers';
 import AccountDetailModal from '~/components/modals/account-detail';
@@ -43,11 +43,12 @@ const headers = [
 
 const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
   const [continuationToken, setContinuationToken] = useState('');
-  const [page, setPage] = useState(1);
+  const [history, setHistory] = useState([]);
+  const [page, setPage] = useState(0);
   const [account, setAccount] = useState();
   const [showDetailModal, setShowDetailModal] = useState(false);
 
-  const { data, isLoading } = useAccounts(continuationToken);
+  const { data, isLoading, mutate, isValidating } = useAccounts(continuationToken);
 
   const onClickDetails = useCallback(
     (accountId) => {
@@ -58,6 +59,34 @@ const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
     [data?.page]
   );
   const onClickTransactions = (accountId) => setAccountId(accountId);
+
+  const onClickNext = useCallback(() => {
+    setPage(page + 1);
+  }, [page]);
+
+  const onClickPrev = useCallback(() => {
+    history.pop();
+    setHistory(history);
+    setPage(page - 1);
+  }, [page, history]);
+
+  useEffect(() => {
+    if (data) {
+      setHistory((history) => {
+        if (!history.includes(data.continuationToken) && page === history.length) {
+          return [...history, data.continuationToken];
+        } else return history;
+      });
+    }
+  }, [data, page]);
+
+  useEffect(() => {
+    setContinuationToken(history[page - 1]);
+  }, [history, page]);
+
+  useEffect(() => {
+    mutate();
+  }, [continuationToken, mutate]);
 
   const formattedData = data?.page.map((row) => {
     return {
@@ -83,23 +112,24 @@ const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
   return (
     <Card className="card w-full justify-center items-center">
       <div className="text-xl p-6 font-bold">Accounts</div>
-      {isLoading ? (
+      {isLoading || isValidating ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />
         </div>
       ) : (
         <Datatable headers={headers} data={formattedData} />
       )}
-      <Pagination
-        className="p-6 self-center"
-        currentPage={page}
-        layout="navigation"
-        onPageChange={(page) => {
-          setPage(page);
-          setContinuationToken(data.continuationToken);
-        }}
-        totalPages={100}
-      />
+      <div className="p-6 self-center">
+        <button onClick={onClickPrev} disabled={history.length <= 1} className="p-2 border rounded">
+          Previous
+        </button>
+        <button
+          onClick={onClickNext}
+          disabled={history.length > 1 && history[history.length - 1] === ''}
+          className="p-2 border rounded">
+          Next
+        </button>
+      </div>
       <AccountDetailModal
         openModal={showDetailModal}
         setOpenModal={setShowDetailModal}

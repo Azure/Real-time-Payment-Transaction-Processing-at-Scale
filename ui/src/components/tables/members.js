@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Card, Pagination, Spinner } from 'flowbite-react';
 import { useRouter } from 'next/navigation';
 
@@ -33,11 +33,10 @@ const headers = [
 ];
 
 const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
-  const router = useRouter();
   const [continuationToken, setContinuationToken] = useState('');
-  const [page, setPage] = useState(1);
-
-  const { data, isLoading } = useMembers(continuationToken);
+  const [history, setHistory] = useState([]);
+  const [page, setPage] = useState(0);
+  const { data, isLoading, mutate, isValidating } = useMembers(continuationToken);
 
   const onClickDetails = useCallback(
     (memberId) => {
@@ -46,6 +45,35 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
     },
     [data?.page, setMember]
   );
+
+  const onClickNext = useCallback(() => {
+    setPage(page + 1);
+  }, [page]);
+
+  const onClickPrev = useCallback(() => {
+    history.pop();
+    setHistory(history);
+    setPage(page - 1);
+  }, [page, history]);
+
+  useEffect(() => {
+    if (data) {
+      setHistory((history) => {
+        if (!history.includes(data.continuationToken) && page === history.length) {
+          return [...history, data.continuationToken];
+        } else return history;
+      });
+    }
+  }, [data, page]);
+
+  useEffect(() => {
+    console.log({ history, page });
+    setContinuationToken(history[page - 1]);
+  }, [history, page]);
+
+  useEffect(() => {
+    mutate();
+  }, [continuationToken, mutate]);
 
   const formattedData = data?.page.map((row) => {
     return {
@@ -71,16 +99,17 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
       ) : (
         <Datatable headers={headers} data={formattedData} />
       )}
-      <Pagination
-        className="p-6 self-center"
-        currentPage={page}
-        layout="navigation"
-        onPageChange={(page) => {
-          setPage(page);
-          setContinuationToken(data.continuationToken);
-        }}
-        totalPages={100}
-      />
+      <div className="p-6 self-center">
+        <button onClick={onClickPrev} disabled={history.length <= 1} className="p-2 border rounded">
+          Previous
+        </button>
+        <button
+          onClick={onClickNext}
+          disabled={history.length > 1 && history[history.length - 1] === ''}
+          className="p-2 border rounded">
+          Next
+        </button>
+      </div>
       <FormModal header={modalHeader} setOpenModal={setShowFormModal} openModal={showFormModal}>
         <NewMemberForm setOpenModal={setShowFormModal} />
       </FormModal>
