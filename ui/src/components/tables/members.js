@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Card, Pagination, Spinner } from 'flowbite-react';
-import { useRouter } from 'next/navigation';
 
 import Datatable from '~/components/tables/datatable';
 import FormModal from '~/components/modals/form';
@@ -91,7 +90,7 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
   return (
     <Card className="card w-full justify-center items-center">
       <div className="text-xl p-6 font-bold">Members</div>
-      {isLoading ? (
+      {isLoading || isValidating ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />
         </div>
