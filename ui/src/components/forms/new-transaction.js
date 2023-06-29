@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Label, Spinner, Textarea, TextInput } from 'flowbite-react';
 
 import useAddTransaction from '~/hooks/add-transaction';
@@ -7,7 +7,7 @@ const NewTransactionForm = ({ accountId, setOpenModal }) => {
   const { trigger } = useAddTransaction();
   const [form, setForm] = useState({
     accountId,
-    type: '',
+    type: 'Credit',
     description: '',
     merchant: '',
     amount: ''
@@ -29,12 +29,17 @@ const NewTransactionForm = ({ accountId, setOpenModal }) => {
     } else {
       setIsLoading(false);
     }
+    setForm({ accountId: '', type: '', description: '', merchant: '', amount: '' });
   };
 
   const onChangeMerchant = (e) => setForm({ ...form, merchant: e.target.value });
   const onChangeType = (e) => setForm({ ...form, type: e.target.value });
   const onChangeAmount = (e) => setForm({ ...form, amount: e.target.value });
   const onChangeDescription = (e) => setForm({ ...form, description: e.target.value });
+
+  useEffect(() => {
+    setForm((form) => ({ ...form, accountId }));
+  }, [accountId]);
 
   return (
     <div className="space-y-6">

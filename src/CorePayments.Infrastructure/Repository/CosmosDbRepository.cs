@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Cosmos;
+﻿using CorePayments.Infrastructure.Events;
+using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Bson;
 using System.Drawing.Printing;
 using System.Net;
@@ -9,18 +10,23 @@ namespace CorePayments.Infrastructure.Repository
     {
         private readonly CosmosClient _client;
         private readonly Database _database;
+        private readonly IEventHubService _eventHub;
 
         protected Container Container { get; }
+        protected string CurrentWriteRegion { get; }
+        protected string CurrentReadRegion { get; }
 
-        public CosmosDbRepository(CosmosClient client, string containerName)
+        public CosmosDbRepository(CosmosClient client, string containerName, IEventHubService eventHub)
         {
             if (string.IsNullOrWhiteSpace(containerName))
                 throw new ArgumentNullException(nameof(containerName));
 
             _client = client;
             _database = _client.GetDatabase(Environment.GetEnvironmentVariable("paymentsDatabase"));
+            _eventHub = eventHub;
 
             Container = _database.GetContainer(containerName);
+            
         }
 
         protected async Task<IEnumerable<TEntity>> Query<TEntity>(QueryDefinition queryDefinition, PartitionKey? partitionKey = null) where TEntity : new()
@@ -90,6 +96,11 @@ namespace CorePayments.Infrastructure.Repository
 
                 throw;
             }
+        }
+
+        protected async Task TriggerTrackingEvent<T>(T eventPayload)
+        {
+            await _eventHub.TriggerTrackingEvent<T>(eventPayload);
         }
     }
 }

@@ -7,6 +7,9 @@ param storageAccountName string
 @description('Cosmos DB account name')
 param cosmosAccountName string
 
+@description('Event Hub namespace name')
+param eventHubNamespaceName string
+
 @description('Cosmos DB database name')
 param paymentsDatabase string
 
@@ -27,6 +30,15 @@ param isMasterRegion bool
 
 @description('Resource location')
 param location string = resourceGroup().location
+
+@description('OpenAI Endpoint')
+param openAiName string
+
+@description('OpenAI Deployment')
+param openAiDeployment string
+
+@description('OpenAI Resource Group')
+param openAiResourceGroup string
 
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
   name: functionAppName
@@ -62,6 +74,11 @@ resource blob 'Microsoft.Storage/storageAccounts@2022-09-01' existing = {
   name: storageAccountName
 }
 
+resource openAi 'Microsoft.CognitiveServices/accounts@2023-05-01' existing = {
+  name: openAiName
+  scope: resourceGroup(openAiResourceGroup)
+}
+
 resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
   name: functionAppName
   location: location
@@ -72,6 +89,11 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
   properties: {
     serverFarmId: plan.id
     siteConfig: {
+      cors: {
+        allowedOrigins: [
+          '*'
+        ]
+      }
       use32BitWorkerProcess: false
       appSettings: [
         {
@@ -92,7 +114,7 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
         }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: 'dotnet'
+          value: 'dotnet-isolated'
         }
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
@@ -101,6 +123,22 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'CosmosDBConnection__accountEndpoint'
           value: 'https://${cosmosAccountName}.documents.azure.com:443/'
+        }
+        {
+          name: 'EventHubConnection__fullyQualifiedNamespace'
+          value: '${eventHubNamespaceName}.servicebus.windows.net'
+        }
+        {
+          name: 'AnalyticsEngine__OpenAIEndpoint'
+          value: openAi.properties.endpoint
+        }
+        {
+          name: 'AnalyticsEngine__OpenAIKey'
+          value: openAi.listKeys().key1
+        }
+        {
+          name: 'AnalyticsEngine__OpenAICompletionsDeployment'
+          value: openAiDeployment
         }
         {
           name: 'paymentsDatabase'
@@ -132,6 +170,28 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
   }
 }
 
+// Grant Permissions to Identity for EventHub
+resource eventHub 'Microsoft.EventHub/namespaces@2022-10-01-preview' existing = {
+  name: eventHubNamespaceName
+}
+
+@description('This is the built-in "Azure Event Hubs Data Owner" role. See https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-event-hubs-data-owner')
+resource eventHubDataOwnerRole 'Microsoft.Authorization/roleDefinitions@2018-01-01-preview' existing = {
+  scope: subscription()
+  name: 'f526a384-b230-433a-b45c-95f59c4a2dec'
+}
+
+resource eventHubRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(eventHub.id, 'DataOwner', functionApp.id, location)
+  scope: eventHub
+  properties: {
+    roleDefinitionId: eventHubDataOwnerRole.id
+    principalId: functionApp.identity.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// Grant Permissions to Identity for CosmosDB
 resource cosmos 'Microsoft.DocumentDB/databaseAccounts@2022-08-15' existing = {
   name: cosmosAccountName
 }

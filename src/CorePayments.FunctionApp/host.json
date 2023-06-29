@@ -10,7 +10,7 @@
   },
   "extensions": {
     "cosmosDB": {
-      "connectionMode": "Direct",
+      "connectionMode": "Gateway",
       "userAgentSuffix": "Payments-Demo"
     }
   }

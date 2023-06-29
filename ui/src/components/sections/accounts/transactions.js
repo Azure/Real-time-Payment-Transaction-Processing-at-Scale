@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Button, Spinner } from 'flowbite-react';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
 import { Capitalize, USDollar } from '~/helpers';
 import FormModal from '~/components/modals/form';
 import NewTransactionForm from '~/components/forms/new-transaction';
+import AnalyzeTransactionsForm from '~/components/forms/analyze-transactions';
 import TransactionsStatementTable from '~/components/tables/transactions-statement';
 import useAccountSummary from '~/hooks/account-summary';
 
@@ -14,7 +15,11 @@ const TransactionsSection = ({ accountId }) => {
 
   const onClickAdd = () => setIsOpenModal(true);
 
+  const [isAnalyzeModalOpen, setIsAnalyzeModalOpen] = useState(false);
+  const onClickAnalyze = () => setIsAnalyzeModalOpen(true);
+
   const modalHeader = <div className="text-xl p-4">New Transaction</div>;
+  const analyzeModalHeader = <div className="text-xl p-4">Analyze Transactions</div>;
 
   return (
     <div className="w-full mt-6">
@@ -48,15 +53,30 @@ const TransactionsSection = ({ accountId }) => {
             </div>
           </div>
           <div className="justify-end">
-            <Button color="dark" className="p-0" onClick={onClickAdd}>
-              <PlusIcon className="h-6 w-6 text-gray-500 mr-3 text-white" />
-              <h4>New Transaction</h4>
+            <Button color="dark" className="p-0" onClick={onClickAnalyze}>
+              <SparklesIcon className="h-6 w-6 text-gray-500 mr-3 text-white" />
+              <h4>Analyze Transactions</h4>
             </Button>
           </div>
         </div>
       )}
       <TransactionsStatementTable accountId={accountId} />
-      <FormModal header={modalHeader} openModal={isOpenModal}>
+
+      <FormModal
+        header={analyzeModalHeader}
+        openModal={isAnalyzeModalOpen}
+        setOpenModal={setIsAnalyzeModalOpen}>
+        <AnalyzeTransactionsForm accountId={accountId} setOpenModal={setIsAnalyzeModalOpen} />
+      </FormModal>
+
+      <div className="justify-end">
+        <Button color="dark" className="p-0 mt-6" onClick={onClickAdd}>
+          <PlusIcon className="h-6 w-6 text-gray-500 mr-3 text-white" />
+          <h4>New Transaction</h4>
+        </Button>
+      </div>
+
+      <FormModal header={modalHeader} openModal={isOpenModal} setOpenModal={setIsOpenModal}>
         <NewTransactionForm accountId={accountId} setOpenModal={setIsOpenModal} />
       </FormModal>
     </div>

@@ -7,5 +7,6 @@ namespace CorePayments.Infrastructure.Repository
     {
         Task<AccountSummary> ProcessTransactionSProc(Transaction transaction);
         Task<(AccountSummary? accountSummary, HttpStatusCode statusCode, string message)> ProcessTransactionTBatch(Transaction transaction);
+        Task CreateItem<T>(T item);
     }
 }

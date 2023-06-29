@@ -5,7 +5,7 @@ import CustomSidebar from '~/components/navigation/sidebar';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'Members',
+  title: 'Azure Cosmos DB Payments Demo App',
   description: 'Members section'
 };
 

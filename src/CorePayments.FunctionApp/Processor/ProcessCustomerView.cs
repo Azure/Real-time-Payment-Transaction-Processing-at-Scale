@@ -1,9 +1,6 @@
-<<<<<<< HEAD:src/CorePayments.FunctionApp/Processor/ProcessCustomerView.cs
 using CorePayments.Infrastructure.Domain.Entities;
+using CorePayments.Infrastructure.Repository;
 using Microsoft.Azure.Functions.Worker;
-=======
-using Microsoft.Azure.WebJobs;
->>>>>>> f482f0adcc278b6f40833ae5755a42e4c19aa5c3:src/cosmos-payments-demo/Processor/ProcessCustomerView.cs
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
@@ -12,21 +9,20 @@ using System.Threading.Tasks;
 
 namespace CorePayments.FunctionApp.Processor
 {
-    public static class ProcessCustomerView
+    public class ProcessCustomerView
     {
-<<<<<<< HEAD:src/CorePayments.FunctionApp/Processor/ProcessCustomerView.cs
-        [Function("ProcessCustomerView")]
-=======
-        static ProcessCustomerView()
+        readonly bool _isMasterRegion;
+        readonly ICustomerRepository _customerRepository;
+
+        public ProcessCustomerView(
+            ICustomerRepository customerRepository)
         {
-            isMasterRegion = Convert.ToBoolean(Environment.GetEnvironmentVariable("isMasterRegion"));
+            _isMasterRegion = Convert.ToBoolean(Environment.GetEnvironmentVariable("isMasterRegion"));
+            _customerRepository = customerRepository;
         }
 
-        static bool isMasterRegion;
-
-        [FunctionName("ProcessCustomerView")]
->>>>>>> f482f0adcc278b6f40833ae5755a42e4c19aa5c3:src/cosmos-payments-demo/Processor/ProcessCustomerView.cs
-        public static async Task RunAsync([CosmosDBTrigger(
+        [Function("ProcessCustomerView")]
+        public async Task RunAsync([CosmosDBTrigger(
             databaseName: "%paymentsDatabase%",
             containerName: "%transactionsContainer%",
             Connection = "CosmosDBConnection",
@@ -34,31 +30,25 @@ namespace CorePayments.FunctionApp.Processor
             StartFromBeginning = true,
             FeedPollDelay = 1000,
             MaxItemsPerInvocation = 50,
-<<<<<<< HEAD:src/CorePayments.FunctionApp/Processor/ProcessCustomerView.cs
-            LeaseContainerName = "leases")] IReadOnlyList<JObject> input,
-=======
             PreferredLocations = "%preferredRegions%",
             LeaseContainerName = "leases")]IReadOnlyList<JObject> input,
->>>>>>> f482f0adcc278b6f40833ae5755a42e4c19aa5c3:src/cosmos-payments-demo/Processor/ProcessCustomerView.cs
-            [CosmosDB(
-                databaseName: "%paymentsDatabase%",
-                containerName: "%customerContainer%",
-                Connection = "CosmosDBConnection")] IAsyncCollector<JObject> eventCollector,
-            ILogger log)
+            FunctionContext context)
         {
-            if (!isMasterRegion)
+            var logger = context.GetLogger<ProcessCustomerView>();
+
+            if (!_isMasterRegion)
                 return;
 
             await Parallel.ForEachAsync(input, async (record, token) =>
             {
                 try
                 {
-                    await eventCollector.AddAsync(record, token);
+                    await _customerRepository.UpsertItem(record);
                 }
                 catch (Exception ex)
                 {
                     //Should handle DLQ
-                    log.LogError(ex.Message, ex);
+                    logger.LogError(ex.Message, ex);
                 }
             });
         }

@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace CorePayments.FunctionApp.Models.Response
 {
-    public class PagedTransactionsResponse
+    public class PagedResponse<T>
     {
         [JsonProperty("page")]
-        public IEnumerable<Transaction> Page { get; set; }
+        public IEnumerable<T> Page { get; set; }
 
-        [JsonProperty("countinuationToken")]
+        [JsonProperty("continuationToken")]
         public string ContinuationToken { get; set; }
     }
 }

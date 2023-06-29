@@ -1,23 +1,31 @@
 import { Button, Label, Spinner, Textarea, TextInput } from 'flowbite-react';
-import { useState } from 'react';
+import _ from 'lodash';
+import { useEffect, useState } from 'react';
+import { DiffObjects } from '~/helpers';
 
 import useAddMember from '~/hooks/add-member';
+import useEditMember from '~/hooks/edit-member';
 
-const NewMemberForm = ({ setOpenModal }) => {
-  const { trigger } = useAddMember();
-  const [form, setForm] = useState({
-    address: '',
-    country: '',
-    email: '',
-    phone: '',
-    firstName: '',
-    lastName: '',
-    city: '',
-    state: '',
-    zipcode: ''
-  });
+const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
+  const { trigger: AddTrigger } = useAddMember();
+  const { trigger: EditTrigger } = useEditMember(member?.id);
+
+  const [form, setForm] = useState(
+    member ?? {
+      address: '',
+      country: 'USA',
+      email: '',
+      phone: '',
+      firstName: '',
+      lastName: '',
+      city: '',
+      state: '',
+      zipcode: ''
+    }
+  );
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const onClickCancel = () => {
     setForm({ accountId: '', type: '', description: '', merchant: '', amount: '' });
     setIsLoading(false);
@@ -26,19 +34,31 @@ const NewMemberForm = ({ setOpenModal }) => {
 
   const onSubmit = async () => {
     setIsLoading(true);
-    const response = await trigger(form);
+    let response;
+    let modifiedMember;
+    if (member) {
+      modifiedMember = DiffObjects(form, member);
+      response = await EditTrigger({
+        ...modifiedMember
+      });
+    } else {
+      response = await AddTrigger(form);
+    }
+
+    setIsDisabled(true);
 
     if (response.status === 202) {
       setOpenModal(false);
       setIsLoading(false);
+      if (member) setMember({ ...member, ...modifiedMember });
+      setIsDisabled(false);
     } else {
       setIsLoading(false);
+      setIsDisabled(false);
     }
   };
 
-  const onChangeAccountType = (country) => {
-    setForm({ ...form, country });
-  };
+  const onChangeAccountType = (e) => setForm({ ...form, country: e.target.value });
   const onChangeFirstName = (e) => setForm({ ...form, firstName: e.target.value });
   const onChangeLastName = (e) => setForm({ ...form, lastName: e.target.value });
   const onChangeEmail = (e) => setForm({ ...form, email: e.target.value });
@@ -47,6 +67,19 @@ const NewMemberForm = ({ setOpenModal }) => {
   const onChangeCity = (e) => setForm({ ...form, city: e.target.value });
   const onChangeState = (e) => setForm({ ...form, state: e.target.value });
   const onChangeZipcode = (e) => setForm({ ...form, zipcode: e.target.value });
+
+  useEffect(() => {
+    if (member) setForm(member);
+  }, [member]);
+
+  useEffect(() => {
+    if (member) {
+      const diffFields = DiffObjects(form, member);
+      setIsDisabled(Object.keys(diffFields).length === 0);
+    } else {
+      setIsDisabled(Object.values(form).some((x) => x === ''));
+    }
+  }, [form, member]);
 
   return (
     <div>
@@ -97,7 +130,6 @@ const NewMemberForm = ({ setOpenModal }) => {
         <TextInput
           className="flex-1 ml-6"
           id="phone"
-          type="number"
           onChange={onChangePhone}
           placeholder="Phone"
           value={form.phone}
@@ -160,15 +192,21 @@ const NewMemberForm = ({ setOpenModal }) => {
         <div className="mb-2 block mr-3">
           <Label htmlFor="country" value="Country:" />
         </div>
-        <select onChange={onChangeAccountType} label="Select" id="type" required>
-          <option>US</option>
+        <select
+          className="rounded-md"
+          onChange={onChangeAccountType}
+          label="Select"
+          id="type"
+          required>
+          <option>USA</option>
+          <option>Other</option>
         </select>
       </div>
       <div className="w-full flex justify-between pt-4">
         <Button color="light" onClick={onClickCancel}>
           Cancel
         </Button>
-        <Button color="dark" onClick={onSubmit}>
+        <Button disabled={isDisabled} color="dark" onClick={onSubmit}>
           {isLoading ? <Spinner color="white" size="md" /> : 'Save'}
         </Button>
       </div>

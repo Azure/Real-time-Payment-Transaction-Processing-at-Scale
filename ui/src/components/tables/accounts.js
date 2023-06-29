@@ -105,7 +105,7 @@ const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
         setOpenModal={setShowDetailModal}
         account={account}
       />
-      <FormModal header={modalHeader} openModal={showFormModal}>
+      <FormModal header={modalHeader} setOpenModal={setShowFormModal} openModal={showFormModal}>
         <NewAccountForm setOpenModal={setShowFormModal} />
       </FormModal>
     </Card>
