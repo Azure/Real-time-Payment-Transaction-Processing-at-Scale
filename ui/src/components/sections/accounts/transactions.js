@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Spinner } from 'flowbite-react';
 import { PlusIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
@@ -10,21 +10,25 @@ import TransactionsStatementTable from '~/components/tables/transactions-stateme
 import useAccountSummary from '~/hooks/account-summary';
 
 const TransactionsSection = ({ accountId }) => {
-  const { data, isLoading } = useAccountSummary(accountId);
+  const { data, isLoading, isValidating } = useAccountSummary(accountId);
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isAnalyzeModalOpen, setIsAnalyzeModalOpen] = useState(false);
 
   const onClickAdd = () => setIsOpenModal(true);
-
-  const [isAnalyzeModalOpen, setIsAnalyzeModalOpen] = useState(false);
   const onClickAnalyze = () => setIsAnalyzeModalOpen(true);
 
   const modalHeader = <div className="text-xl p-4">New Transaction</div>;
   const analyzeModalHeader = <div className="text-xl p-4">Analyze Transactions</div>;
 
+  useEffect(() => {
+    setLoading(isLoading || isValidating);
+  }, [isLoading, isValidating]);
+
   return (
     <div className="w-full mt-6">
       <h1 className="my-6">Transactions for Account Id {accountId}</h1>
-      {isLoading ? (
+      {loading ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />
         </div>
@@ -34,21 +38,21 @@ const TransactionsSection = ({ accountId }) => {
             <div className="flex text-sm w-full mb-6">
               <div className="flex flex-1 items-center mr-3">
                 <p className="font-bold mr-2">Customer Greeting Name:</p>
-                <p>{data.customerGreetingName}</p>
+                <p>{data?.customerGreetingName}</p>
               </div>
               <div className="flex flex-1 items-center">
                 <p className="font-bold mr-2">Account type:</p>
-                <p>{Capitalize(data.accountType)}</p>
+                <p>{Capitalize(data?.accountType ?? '')}</p>
               </div>
             </div>
             <div className="flex text-sm w-full">
               <div className="flex flex-1 items-center mr-3">
                 <p className="font-bold mr-2">Balance:</p>
-                <p>{USDollar.format(data.balance)}</p>
+                <p>{USDollar.format(data?.balance)}</p>
               </div>
               <div className="flex flex-1 items-center">
                 <p className="font-bold mr-2">Overdraft Limit:</p>
-                <p>{USDollar.format(data.overdraftLimit)}</p>
+                <p>{USDollar.format(data?.overdraftLimit)}</p>
               </div>
             </div>
           </div>
@@ -60,7 +64,14 @@ const TransactionsSection = ({ accountId }) => {
           </div>
         </div>
       )}
-      <TransactionsStatementTable accountId={accountId} />
+
+      {loading ? (
+        <div className="text-center p-6">
+          <Spinner aria-label="Loading..." />
+        </div>
+      ) : (
+        <TransactionsStatementTable accountId={accountId} />
+      )}
 
       <FormModal
         header={analyzeModalHeader}

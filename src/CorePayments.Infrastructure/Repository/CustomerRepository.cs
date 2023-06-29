@@ -28,6 +28,8 @@ namespace CorePayments.Infrastructure.Repository
             QueryDefinition query = new QueryDefinition("select * from c where c.type = @docType order by c.accountId")
                 .WithParameter("@docType", Constants.DocumentTypes.AccountSummary);
 
+            await TriggerTrackingEvent($"Retrieving paged account summary with page size {pageSize}.");
+
             return await PagedQuery<AccountSummary>(query, pageSize, null, continuationToken);
         }
 

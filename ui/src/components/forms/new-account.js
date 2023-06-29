@@ -5,6 +5,8 @@ import useAddAccount from '~/hooks/add-account';
 
 const NewAccountForm = ({ setOpenModal }) => {
   const { trigger } = useAddAccount();
+
+  const [error, setError] = useState('');
   const [form, setForm] = useState({
     id: '0909090908',
     accountType: '',
@@ -28,19 +30,22 @@ const NewAccountForm = ({ setOpenModal }) => {
 
   const onSubmit = async () => {
     setIsLoading(true);
-    const response = await trigger(form);
+    setError('');
 
-    if (response.status === 202) {
-      setOpenModal(false);
-      setIsLoading(false);
-    } else {
+    try {
+      const response = await trigger(form);
+
+      if (response.status === 202) {
+        setOpenModal(false);
+        setIsLoading(false);
+      }
+    } catch (e) {
+      setError(e.response.data);
       setIsLoading(false);
     }
   };
 
-  const onChangeAccountType = (accountType) => {
-    setForm({ ...form, accountType });
-  };
+  const onChangeAccountType = (accountType) => setForm({ ...form, accountType });
   const onChangeCustomerGreetingName = (e) =>
     setForm({ ...form, customerGreetingName: e.target.value });
   const onChangeOverdraftLimit = (e) => setForm({ ...form, overdraftLimit: e.target.value });
@@ -95,6 +100,7 @@ const NewAccountForm = ({ setOpenModal }) => {
           required
         />
       </div>
+      <p className="text-red-500">{error}</p>
       <div className="w-full flex justify-between pt-4">
         <Button color="light" onClick={onClickCancel}>
           Cancel

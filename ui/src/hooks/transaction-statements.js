@@ -5,7 +5,7 @@ const fetcher = (accountId, continuationToken, pageSize) =>
   axios
     .get(
       `${process.env.NEXT_PUBLIC_API_URL}/statement/${accountId}/?pageSize=${pageSize}${
-        continuationToken && `&continuationToken=${continuationToken}`
+        continuationToken ? `&continuationToken=${continuationToken}` : ''
       }`
     )
     .then((res) => res.data);
