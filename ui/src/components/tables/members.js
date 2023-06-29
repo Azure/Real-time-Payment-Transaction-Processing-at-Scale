@@ -67,7 +67,6 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
   }, [data, page]);
 
   useEffect(() => {
-    console.log({ history, page });
     setContinuationToken(history[page - 1]);
   }, [history, page]);
 

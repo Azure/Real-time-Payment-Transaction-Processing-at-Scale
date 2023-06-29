@@ -10,7 +10,7 @@ import TransactionsStatementTable from '~/components/tables/transactions-stateme
 import useAccountSummary from '~/hooks/account-summary';
 
 const TransactionsSection = ({ accountId }) => {
-  const { data, isLoading, isValidating, mutate } = useAccountSummary(accountId);
+  const { data, isLoading, isValidating } = useAccountSummary(accountId);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isAnalyzeModalOpen, setIsAnalyzeModalOpen] = useState(false);
@@ -24,10 +24,6 @@ const TransactionsSection = ({ accountId }) => {
   useEffect(() => {
     setLoading(isLoading || isValidating);
   }, [isLoading, isValidating]);
-
-  useEffect(() => {
-    if (!isOpenModal) mutate();
-  }, [isOpenModal, mutate]);
 
   return (
     <div className="w-full mt-6">

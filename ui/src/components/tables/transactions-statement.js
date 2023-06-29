@@ -60,7 +60,6 @@ const TransactionsStatementTable = ({ accountId }) => {
   }, [data, page]);
 
   useEffect(() => {
-    console.log({ history, page });
     setContinuationToken(history[page - 1]);
   }, [history, page]);
 
