@@ -6,6 +6,7 @@ import useAddTransaction from '~/hooks/add-transaction';
 const NewTransactionForm = ({ accountId, setOpenModal }) => {
   const { trigger } = useAddTransaction();
 
+  const [error, setError] = useState('');
   const [form, setForm] = useState({
     accountId,
     type: 'Credit',
@@ -22,15 +23,19 @@ const NewTransactionForm = ({ accountId, setOpenModal }) => {
 
   const onSubmit = async () => {
     setIsLoading(true);
-    const response = await trigger(form);
+    setError('');
+    try {
+      const response = await trigger(form);
 
-    if (response.status === 200) {
-      setOpenModal(false);
-      setIsLoading(false);
-    } else {
+      if (response.status === 200) {
+        setOpenModal(false);
+        setIsLoading(false);
+        setForm({ accountId, type: 'Credit', description: '', merchant: '', amount: '' });
+      }
+    } catch (e) {
+      setError(e.response.data);
       setIsLoading(false);
     }
-    setForm({ accountId, type: 'Credit', description: '', merchant: '', amount: '' });
   };
 
   const onChangeMerchant = (e) => setForm({ ...form, merchant: e.target.value });
@@ -90,6 +95,7 @@ const NewTransactionForm = ({ accountId, setOpenModal }) => {
           value={form.description}
         />
       </div>
+      <p className="text-red-500">{error}</p>
       <div className="w-full flex justify-between pt-4">
         <Button color="light" onClick={onClickCancel}>
           Cancel
