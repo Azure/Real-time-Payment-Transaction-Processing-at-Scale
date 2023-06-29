@@ -45,7 +45,7 @@ const Datatable = ({
             )}
             {data.length > 10 && (
               <button onClick={onClickGoToTop} className="p-2 rounded border">
-                Go to top
+                Go to top / reset grid
               </button>
             )}
           </Table.Cell>
