@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Card, Pagination, Spinner } from 'flowbite-react';
+import { Card, Spinner } from 'flowbite-react';
 
 import Datatable from '~/components/tables/datatable';
 import FormModal from '~/components/modals/form';
@@ -95,19 +95,15 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
           <Spinner aria-label="Loading..." />
         </div>
       ) : (
-        <Datatable headers={headers} data={formattedData} />
+        <div className="tables">
+          <Datatable
+            headers={headers}
+            data={formattedData}
+            continuationToken={data.continuationToken}
+            onClickLoadMore={onClickLoadMore}
+          />
+        </div>
       )}
-      <div className="p-6 self-center">
-        <button onClick={onClickPrev} disabled={history.length <= 1} className="p-2 border rounded">
-          Previous
-        </button>
-        <button
-          onClick={onClickNext}
-          disabled={history.length > 1 && history[history.length - 1] === ''}
-          className="p-2 border rounded">
-          Next
-        </button>
-      </div>
       <FormModal header={modalHeader} setOpenModal={setShowFormModal} openModal={showFormModal}>
         <NewMemberForm setOpenModal={setShowFormModal} />
       </FormModal>

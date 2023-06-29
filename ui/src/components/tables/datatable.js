@@ -2,7 +2,7 @@
 
 import { Table } from 'flowbite-react';
 
-const Datatable = ({ headers = [], data = [] }) => {
+const Datatable = ({ headers = [], data = [], continuationToken = '', onClickLoadMore }) => {
   return (
     <Table className="w-full" hoverable>
       <Table.Head>
@@ -27,6 +27,15 @@ const Datatable = ({ headers = [], data = [] }) => {
           <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
             <Table.Cell colSpan={headers.length} className="!p-4 text-center">
               No results.
+            </Table.Cell>
+          </Table.Row>
+        )}
+        {continuationToken && (
+          <Table.Row>
+            <Table.Cell className="text-center" colSpan={headers.length}>
+              <button onClick={onClickLoadMore} className="p-2 rounded border">
+                Load more...
+              </button>
             </Table.Cell>
           </Table.Row>
         )}
