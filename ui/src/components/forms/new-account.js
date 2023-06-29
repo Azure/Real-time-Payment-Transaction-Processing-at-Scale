@@ -8,8 +8,7 @@ const NewAccountForm = ({ setOpenModal }) => {
 
   const [error, setError] = useState('');
   const [form, setForm] = useState({
-    id: '0909090908',
-    accountType: '',
+    accountType: 'Checking',
     balance: '',
     customerGreetingName: '',
     overdraftLimit: ''
@@ -18,7 +17,6 @@ const NewAccountForm = ({ setOpenModal }) => {
   const [isLoading, setIsLoading] = useState(false);
   const onClickCancel = () => {
     setForm({
-      id: '0909090908',
       accountType: '',
       balance: '',
       customerGreetingName: '',
@@ -40,7 +38,7 @@ const NewAccountForm = ({ setOpenModal }) => {
         setIsLoading(false);
       }
     } catch (e) {
-      setError(e.response.data);
+      setError(e?.response?.data ?? 'There was an error creating the account');
       setIsLoading(false);
     }
   };

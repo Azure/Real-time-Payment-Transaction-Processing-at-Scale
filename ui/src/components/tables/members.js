@@ -1,8 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Card, Pagination, Spinner } from 'flowbite-react';
-import { useRouter } from 'next/navigation';
+import { Card, Spinner } from 'flowbite-react';
 
 import Datatable from '~/components/tables/datatable';
 import FormModal from '~/components/modals/form';
@@ -34,7 +33,8 @@ const headers = [
 
 const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
   const [continuationToken, setContinuationToken] = useState('');
-  const [history, setHistory] = useState([]);
+  const [nextToken, setNextToken] = useState('');
+  const [rows, setRows] = useState([]);
   const [page, setPage] = useState(0);
   const { data, isLoading, mutate, isValidating } = useMembers(continuationToken);
 
@@ -46,35 +46,32 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
     [data?.page, setMember]
   );
 
-  const onClickNext = useCallback(() => {
+  const onClickLoadMore = useCallback(() => {
     setPage(page + 1);
   }, [page]);
 
-  const onClickPrev = useCallback(() => {
-    history.pop();
-    setHistory(history);
-    setPage(page - 1);
-  }, [page, history]);
+  const onClickGoToTop = useCallback(() => {
+    setPage(0);
+    setRows([]);
+    setNextToken('');
+  }, []);
 
   useEffect(() => {
     if (data) {
-      setHistory((history) => {
-        if (!history.includes(data.continuationToken) && page === history.length) {
-          return [...history, data.continuationToken];
-        } else return history;
-      });
+      setRows((currRows) => [...currRows, ...data.page]);
+      setNextToken(data.continuationToken);
     }
-  }, [data, page]);
+  }, [data]);
 
   useEffect(() => {
-    setContinuationToken(history[page - 1]);
-  }, [history, page]);
+    setContinuationToken(nextToken);
+  }, [page]);
 
   useEffect(() => {
     mutate();
   }, [continuationToken, mutate]);
 
-  const formattedData = data?.page.map((row) => {
+  const formattedData = rows.map((row) => {
     return {
       ...row,
       name: `${row.firstName} ${row.lastName}`,
@@ -91,24 +88,21 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
   return (
     <Card className="card w-full justify-center items-center">
       <div className="text-xl p-6 font-bold">Members</div>
-      {isLoading ? (
+      {isLoading || isValidating ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />
         </div>
       ) : (
-        <Datatable headers={headers} data={formattedData} />
+        <div className="tables">
+          <Datatable
+            headers={headers}
+            data={formattedData}
+            continuationToken={data.continuationToken}
+            onClickLoadMore={onClickLoadMore}
+            onClickGoToTop={onClickGoToTop}
+          />
+        </div>
       )}
-      <div className="p-6 self-center">
-        <button onClick={onClickPrev} disabled={history.length <= 1} className="p-2 border rounded">
-          Previous
-        </button>
-        <button
-          onClick={onClickNext}
-          disabled={history.length > 1 && history[history.length - 1] === ''}
-          className="p-2 border rounded">
-          Next
-        </button>
-      </div>
       <FormModal header={modalHeader} setOpenModal={setShowFormModal} openModal={showFormModal}>
         <NewMemberForm setOpenModal={setShowFormModal} />
       </FormModal>

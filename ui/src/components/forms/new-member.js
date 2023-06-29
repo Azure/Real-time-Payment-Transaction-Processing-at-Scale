@@ -58,7 +58,7 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
         setIsDisabled(false);
       }
     } catch (e) {
-      setError(e.response.data);
+      setError(e?.response?.data ?? 'There was an error creating the member');
       setIsLoading(false);
       setIsDisabled(false);
     }
