@@ -50,6 +50,12 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
     setPage(page + 1);
   }, [page]);
 
+  const onClickGoToTop = useCallback(() => {
+    setPage(0);
+    setRows([]);
+    setNextToken('');
+  }, []);
+
   useEffect(() => {
     if (data) {
       setRows((currRows) => [...currRows, ...data.page]);
@@ -93,6 +99,7 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
             data={formattedData}
             continuationToken={data.continuationToken}
             onClickLoadMore={onClickLoadMore}
+            onClickGoToTop={onClickGoToTop}
           />
         </div>
       )}

@@ -65,6 +65,12 @@ const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
     setPage(page + 1);
   }, [page]);
 
+  const onClickGoToTop = useCallback(() => {
+    setPage(0);
+    setRows([]);
+    setNextToken('');
+  }, []);
+
   useEffect(() => {
     if (data) {
       setRows((currRows) => [...currRows, ...data.page]);
@@ -115,6 +121,7 @@ const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
             data={formattedData}
             onClickLoadMore={onClickLoadMore}
             continuationToken={data.continuationToken}
+            onClickGoToTop={onClickGoToTop}
           />
         </div>
       )}

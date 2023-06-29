@@ -2,7 +2,13 @@
 
 import { Table } from 'flowbite-react';
 
-const Datatable = ({ headers = [], data = [], continuationToken = '', onClickLoadMore }) => {
+const Datatable = ({
+  headers = [],
+  data = [],
+  continuationToken = '',
+  onClickLoadMore,
+  onClickGoToTop
+}) => {
   return (
     <Table className="w-full" hoverable>
       <Table.Head>
@@ -30,15 +36,20 @@ const Datatable = ({ headers = [], data = [], continuationToken = '', onClickLoa
             </Table.Cell>
           </Table.Row>
         )}
-        {continuationToken && (
-          <Table.Row>
-            <Table.Cell className="text-center" colSpan={headers.length}>
+        <Table.Row>
+          <Table.Cell className="text-center" colSpan={headers.length}>
+            {continuationToken && (
               <button onClick={onClickLoadMore} className="p-2 rounded border">
                 Load more...
               </button>
-            </Table.Cell>
-          </Table.Row>
-        )}
+            )}
+            {data.length > 10 && (
+              <button onClick={onClickGoToTop} className="p-2 rounded border">
+                Go to top
+              </button>
+            )}
+          </Table.Cell>
+        </Table.Row>
       </Table.Body>
     </Table>
   );
