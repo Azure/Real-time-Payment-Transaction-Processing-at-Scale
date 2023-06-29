@@ -33,7 +33,7 @@ const NewTransactionForm = ({ accountId, setOpenModal }) => {
         setForm({ accountId, type: 'Credit', description: '', merchant: '', amount: '' });
       }
     } catch (e) {
-      setError(e.response.data);
+      setError(e?.response?.data ?? 'There was an error creating the transaction');
       setIsLoading(false);
     }
     setForm({ accountId, type: 'Credit', description: '', merchant: '', amount: '' });

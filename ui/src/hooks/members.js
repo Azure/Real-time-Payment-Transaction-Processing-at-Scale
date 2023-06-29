@@ -11,7 +11,6 @@ const fetcher = (continuationToken = null, pageSize) =>
     .then((res) => res.data);
 
 const useMembers = (continuationToken = null, pageSize = 10) => {
-  console.log(continuationToken);
   return useSWR('members', () => fetcher(continuationToken, pageSize));
 };
 

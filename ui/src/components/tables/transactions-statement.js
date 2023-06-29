@@ -32,6 +32,8 @@ const headers = [
 
 const TransactionsStatementTable = ({ accountId }) => {
   const [continuationToken, setContinuationToken] = useState('');
+  const [nextToken, setNextToken] = useState('');
+  const [rows, setRows] = useState([]);
   const [history, setHistory] = useState([]);
   const [page, setPage] = useState(0);
   const { data, isLoading, mutate, isValidating } = useTransactionsStatement(
@@ -39,35 +41,26 @@ const TransactionsStatementTable = ({ accountId }) => {
     continuationToken
   );
 
-  const onClickNext = useCallback(() => {
+  const onClickLoadMore = useCallback(() => {
     setPage(page + 1);
   }, [page]);
 
-  const onClickPrev = useCallback(() => {
-    history.pop();
-    setHistory(history);
-    setPage(page - 1);
-  }, [page, history]);
-
   useEffect(() => {
     if (data) {
-      setHistory((history) => {
-        if (!history.includes(data.continuationToken) && page === history.length) {
-          return [...history, data.continuationToken];
-        } else return history;
-      });
+      setRows((currRows) => [...currRows, ...data.page]);
+      setNextToken(data.continuationToken);
     }
-  }, [data, page]);
+  }, [data]);
 
   useEffect(() => {
-    setContinuationToken(history[page - 1]);
-  }, [history, page]);
+    setContinuationToken(nextToken);
+  }, [page]);
 
   useEffect(() => {
     mutate();
   }, [continuationToken, mutate]);
 
-  const formattedData = data?.page.map((row) => {
+  const formattedData = rows.map((row) => {
     const date = new Date(row.timestamp);
     return {
       ...row,
@@ -85,19 +78,15 @@ const TransactionsStatementTable = ({ accountId }) => {
           <Spinner aria-label="Loading..." />
         </div>
       ) : (
-        <Datatable headers={headers} data={formattedData} />
+        <div className="tables">
+          <Datatable
+            headers={headers}
+            data={formattedData}
+            onClickLoadMore={onClickLoadMore}
+            continuationToken={data.continuationToken}
+          />
+        </div>
       )}
-      <div className="p-6 self-center">
-        <button onClick={onClickPrev} disabled={history.length <= 1} className="p-2 border rounded">
-          Previous
-        </button>
-        <button
-          onClick={onClickNext}
-          disabled={history.length > 1 && history[history.length - 1] === ''}
-          className="p-2 border rounded">
-          Next
-        </button>
-      </div>
     </Card>
   );
 };

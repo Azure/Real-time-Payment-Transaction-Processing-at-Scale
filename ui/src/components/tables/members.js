@@ -33,7 +33,8 @@ const headers = [
 
 const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
   const [continuationToken, setContinuationToken] = useState('');
-  const [history, setHistory] = useState([]);
+  const [nextToken, setNextToken] = useState('');
+  const [rows, setRows] = useState([]);
   const [page, setPage] = useState(0);
   const { data, isLoading, mutate, isValidating } = useMembers(continuationToken);
 
@@ -45,35 +46,26 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
     [data?.page, setMember]
   );
 
-  const onClickNext = useCallback(() => {
+  const onClickLoadMore = useCallback(() => {
     setPage(page + 1);
   }, [page]);
 
-  const onClickPrev = useCallback(() => {
-    history.pop();
-    setHistory(history);
-    setPage(page - 1);
-  }, [page, history]);
-
   useEffect(() => {
     if (data) {
-      setHistory((history) => {
-        if (!history.includes(data.continuationToken) && page === history.length) {
-          return [...history, data.continuationToken];
-        } else return history;
-      });
+      setRows((currRows) => [...currRows, ...data.page]);
+      setNextToken(data.continuationToken);
     }
-  }, [data, page]);
+  }, [data]);
 
   useEffect(() => {
-    setContinuationToken(history[page - 1]);
-  }, [history, page]);
+    setContinuationToken(nextToken);
+  }, [page]);
 
   useEffect(() => {
     mutate();
   }, [continuationToken, mutate]);
 
-  const formattedData = data?.page.map((row) => {
+  const formattedData = rows.map((row) => {
     return {
       ...row,
       name: `${row.firstName} ${row.lastName}`,
