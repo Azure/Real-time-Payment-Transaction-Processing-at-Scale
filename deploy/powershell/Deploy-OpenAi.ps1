@@ -15,12 +15,14 @@ if (-not $openAi) {
     $openAi=$(az cognitiveservices account create -g $resourceGroup -n $name -l $location --kind OpenAI --sku S0 --yes | ConvertFrom-Json)
 }
 
-if (-not $deployment) {
-    $deployment='completions'
-    $openAiDeployment=$(az cognitiveservices account deployment show -g $resourceGroup -n $name --deployment-name $deployment)
+if ($deployment) {
+    $openAiDeployment=$(az cognitiveservices account deployment show -g $resourceGroup -n $openAi.name --deployment-name $deployment)
     if (-not $openAiDeployment) {
-        $openAiDeployment=$(az cognitiveservices account deployment create -g $resourceGroup -n $name --deployment-name completions --model-name 'text-davinci-003' --model-version '1' --model-format OpenAI)
+        $openAiDeployment=$(az cognitiveservices account deployment create -g $resourceGroup -n $openAi.name --deployment-name $deployment --model-name 'gpt-35-turbo' --model-version '0301' --model-format OpenAI)
     }
+} else {
+    $deployment='completions'
+    $openAiDeployment=$(az cognitiveservices account deployment show -g $resourceGroup -n $openAi.name --deployment-name $deployment)
 }
 
 Pop-Location
