@@ -49,7 +49,7 @@ const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
   const [account, setAccount] = useState();
   const [showDetailModal, setShowDetailModal] = useState(false);
 
-  const { data, isLoading, mutate, isValidating } = useAccounts(continuationToken);
+  const { data, isLoading } = useAccounts(continuationToken);
 
   const onClickDetails = useCallback(
     (accountId) => {
@@ -63,12 +63,13 @@ const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
 
   const onClickLoadMore = useCallback(() => {
     setPage(page + 1);
-  }, [page]);
+    setContinuationToken(nextToken);
+  }, [page, nextToken]);
 
   const onClickGoToTop = useCallback(() => {
     setPage(0);
     setRows([]);
-    setNextToken('');
+    setContinuationToken('');
   }, []);
 
   useEffect(() => {
@@ -77,14 +78,6 @@ const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
       setNextToken(data.continuationToken);
     }
   }, [data]);
-
-  useEffect(() => {
-    setContinuationToken(nextToken);
-  }, [page]);
-
-  useEffect(() => {
-    mutate();
-  }, [continuationToken, mutate]);
 
   const formattedData = rows.map((row) => {
     return {
@@ -110,7 +103,7 @@ const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
   return (
     <Card className="card w-full justify-center items-center">
       <div className="text-xl p-6 font-bold">Accounts</div>
-      {isLoading || isValidating ? (
+      {isLoading ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />
         </div>
@@ -120,7 +113,7 @@ const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
             headers={headers}
             data={formattedData}
             onClickLoadMore={onClickLoadMore}
-            continuationToken={data.continuationToken}
+            continuationToken={data?.continuationToken}
             onClickGoToTop={onClickGoToTop}
           />
         </div>

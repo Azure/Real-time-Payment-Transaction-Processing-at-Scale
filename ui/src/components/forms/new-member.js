@@ -7,7 +7,7 @@ import useAddMember from '~/hooks/add-member';
 import useEditMember from '~/hooks/edit-member';
 
 const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
-  const { trigger: AddTrigger } = useAddMember();
+  const { mutate: AddTrigger } = useAddMember();
   const { trigger: EditTrigger } = useEditMember(member?.id);
 
   const [error, setError] = useState('');

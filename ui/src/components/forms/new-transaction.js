@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { Button, Label, Spinner, Textarea, TextInput } from 'flowbite-react';
 
 import useAddTransaction from '~/hooks/add-transaction';
+import { useQueryClient } from 'react-query';
 
 const NewTransactionForm = ({ accountId, setOpenModal }) => {
-  const { trigger } = useAddTransaction();
+  const { mutate } = useAddTransaction();
+  const client = useQueryClient();
 
   const [error, setError] = useState('');
   const [form, setForm] = useState({
@@ -21,22 +23,21 @@ const NewTransactionForm = ({ accountId, setOpenModal }) => {
     setOpenModal(false);
   };
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     setIsLoading(true);
     setError('');
-    try {
-      const response = await trigger(form);
-
-      if (response.status === 200) {
+    mutate(form, {
+      onSuccess: async () => {
         setOpenModal(false);
         setIsLoading(false);
         setForm({ accountId, type: 'Credit', description: '', merchant: '', amount: '' });
+        setError('');
+      },
+      onError: (e) => {
+        setError(e?.response?.data ?? 'There was an error creating the transaction');
+        setIsLoading(false);
       }
-    } catch (e) {
-      setError(e?.response?.data ?? 'There was an error creating the transaction');
-      setIsLoading(false);
-    }
-    setForm({ accountId, type: 'Credit', description: '', merchant: '', amount: '' });
+    });
   };
 
   const onChangeMerchant = (e) => setForm({ ...form, merchant: e.target.value });

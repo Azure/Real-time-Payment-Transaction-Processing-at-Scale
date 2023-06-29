@@ -1,6 +1,7 @@
 'use client';
 
 import { Table } from 'flowbite-react';
+import { useEffect } from 'react';
 
 const Datatable = ({
   headers = [],
@@ -10,7 +11,7 @@ const Datatable = ({
   onClickGoToTop
 }) => {
   return (
-    <Table className="w-full" hoverable>
+    <Table autoFocus className="w-full" hoverable>
       <Table.Head>
         {headers.map((header) => (
           <Table.HeadCell key={header.key} className="!p-4">

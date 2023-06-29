@@ -36,7 +36,7 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
   const [nextToken, setNextToken] = useState('');
   const [rows, setRows] = useState([]);
   const [page, setPage] = useState(0);
-  const { data, isLoading, mutate, isValidating } = useMembers(continuationToken);
+  const { data, isLoading } = useMembers(continuationToken);
 
   const onClickDetails = useCallback(
     (memberId) => {
@@ -48,12 +48,13 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
 
   const onClickLoadMore = useCallback(() => {
     setPage(page + 1);
-  }, [page]);
+    setContinuationToken(nextToken);
+  }, [page, nextToken]);
 
   const onClickGoToTop = useCallback(() => {
     setPage(0);
     setRows([]);
-    setNextToken('');
+    setContinuationToken('');
   }, []);
 
   useEffect(() => {
@@ -62,14 +63,6 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
       setNextToken(data.continuationToken);
     }
   }, [data]);
-
-  useEffect(() => {
-    setContinuationToken(nextToken);
-  }, [page]);
-
-  useEffect(() => {
-    mutate();
-  }, [continuationToken, mutate]);
 
   const formattedData = rows.map((row) => {
     return {
@@ -88,7 +81,7 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
   return (
     <Card className="card w-full justify-center items-center">
       <div className="text-xl p-6 font-bold">Members</div>
-      {isLoading || isValidating ? (
+      {isLoading ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />
         </div>
@@ -97,7 +90,7 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
           <Datatable
             headers={headers}
             data={formattedData}
-            continuationToken={data.continuationToken}
+            continuationToken={data?.continuationToken}
             onClickLoadMore={onClickLoadMore}
             onClickGoToTop={onClickGoToTop}
           />
