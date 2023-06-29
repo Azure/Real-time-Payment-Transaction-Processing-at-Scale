@@ -10,6 +10,7 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
   const { trigger: AddTrigger } = useAddMember();
   const { trigger: EditTrigger } = useEditMember(member?.id);
 
+  const [error, setError] = useState('');
   const [form, setForm] = useState(
     member ?? {
       address: '',
@@ -34,25 +35,30 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
 
   const onSubmit = async () => {
     setIsLoading(true);
-    let response;
-    let modifiedMember;
-    if (member) {
-      modifiedMember = DiffObjects(form, member);
-      response = await EditTrigger({
-        ...modifiedMember
-      });
-    } else {
-      response = await AddTrigger(form);
-    }
+    setError('');
 
-    setIsDisabled(true);
+    try {
+      let response;
+      let modifiedMember;
+      if (member) {
+        modifiedMember = DiffObjects(form, member);
+        response = await EditTrigger({
+          ...modifiedMember
+        });
+      } else {
+        response = await AddTrigger(form);
+      }
 
-    if (response.status === 202) {
-      setOpenModal(false);
-      setIsLoading(false);
-      if (member) setMember({ ...member, ...modifiedMember });
-      setIsDisabled(false);
-    } else {
+      setIsDisabled(true);
+
+      if (response.status === 202) {
+        setOpenModal(false);
+        setIsLoading(false);
+        if (member) setMember({ ...member, ...modifiedMember });
+        setIsDisabled(false);
+      }
+    } catch (e) {
+      setError(e.response.data);
       setIsLoading(false);
       setIsDisabled(false);
     }
@@ -202,6 +208,7 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
           <option>Other</option>
         </select>
       </div>
+      <p className="text-red-500">{error}</p>
       <div className="w-full flex justify-between pt-4">
         <Button color="light" onClick={onClickCancel}>
           Cancel

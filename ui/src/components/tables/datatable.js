@@ -13,15 +13,23 @@ const Datatable = ({ headers = [], data = [] }) => {
         ))}
       </Table.Head>
       <Table.Body className="divide-y">
-        {data.map((row) => (
-          <Table.Row key={row.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-            {Object.values(headers).map((header, index) => (
-              <Table.Cell key={`${row.id}-${index}`} className="!p-4">
-                {row[header.key]}
-              </Table.Cell>
-            ))}
+        {data.length ? (
+          data.map((row) => (
+            <Table.Row key={row.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+              {Object.values(headers).map((header, index) => (
+                <Table.Cell key={`${row.id}-${index}`} className="!p-4">
+                  {row[header.key]}
+                </Table.Cell>
+              ))}
+            </Table.Row>
+          ))
+        ) : (
+          <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+            <Table.Cell colSpan={headers.length} className="!p-4 text-center">
+              No results.
+            </Table.Cell>
           </Table.Row>
-        ))}
+        )}
       </Table.Body>
     </Table>
   );
