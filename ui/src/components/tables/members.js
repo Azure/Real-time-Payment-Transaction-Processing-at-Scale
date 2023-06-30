@@ -7,6 +7,7 @@ import Datatable from '~/components/tables/datatable';
 import FormModal from '~/components/modals/form';
 import NewMemberForm from '~/components/forms/new-member';
 import useMembers from '~/hooks/members';
+import _ from 'lodash';
 
 const headers = [
   {
@@ -59,7 +60,7 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
 
   useEffect(() => {
     if (data) {
-      setRows((currRows) => [...currRows, ...data.page]);
+      setRows((currRows) => _.unionBy([...currRows, ...data.page], 'id'));
       setNextToken(data.continuationToken);
     }
   }, [data]);

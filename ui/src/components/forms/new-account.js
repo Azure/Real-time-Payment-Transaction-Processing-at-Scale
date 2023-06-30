@@ -32,17 +32,24 @@ const NewAccountForm = ({ setOpenModal }) => {
     setIsLoading(true);
     setError('');
 
-    try {
-      const response = mutate(form);
-
-      if (response.status === 202) {
+    mutate(form, {
+      onSuccess: async () => {
         setOpenModal(false);
         setIsLoading(false);
+        setForm({
+          id: '0909090908',
+          accountType: 'Checking',
+          balance: '',
+          customerGreetingName: '',
+          overdraftLimit: ''
+        });
+        setError('');
+      },
+      onError: (e) => {
+        setError(e?.response?.data ?? 'There was an error creating the account');
+        setIsLoading(false);
       }
-    } catch (e) {
-      setError(e?.response?.data ?? 'There was an error creating the account');
-      setIsLoading(false);
-    }
+    });
   };
 
   const onChangeAccountType = (accountType) => setForm({ ...form, accountType });

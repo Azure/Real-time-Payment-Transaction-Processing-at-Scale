@@ -9,7 +9,7 @@ const useAddMember = () => {
   return useMutation({
     mutationFn: (data) => addMember(data),
     onSuccess: () => {
-      client.invalidateQueries('members');
+      client.invalidateQueries();
     }
   });
 };

@@ -9,6 +9,7 @@ import Datatable from '~/components/tables/datatable';
 import useAccounts from '~/hooks/accounts';
 import FormModal from '~/components/modals/form';
 import NewAccountForm from '~/components/forms/new-account';
+import _ from 'lodash';
 
 const headers = [
   {
@@ -74,7 +75,9 @@ const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
 
   useEffect(() => {
     if (data) {
-      setRows((currRows) => [...currRows, ...data.page]);
+      setRows((currRows) =>
+        _.orderBy(_.unionBy([...currRows, ...data.page], 'id'), ['timestamp'], ['desc'])
+      );
       setNextToken(data.continuationToken);
     }
   }, [data]);
