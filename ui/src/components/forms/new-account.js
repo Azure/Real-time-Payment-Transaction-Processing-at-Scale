@@ -8,7 +8,7 @@ const NewAccountForm = ({ setOpenModal }) => {
 
   const [error, setError] = useState('');
   const [form, setForm] = useState({
-    id: '0909090908',
+    id: '',
     accountType: 'Checking',
     balance: '',
     customerGreetingName: '',
@@ -18,7 +18,7 @@ const NewAccountForm = ({ setOpenModal }) => {
   const [isLoading, setIsLoading] = useState(false);
   const onClickCancel = () => {
     setForm({
-      id: '0909090908',
+      id: '',
       accountType: '',
       balance: '',
       customerGreetingName: '',
@@ -37,7 +37,7 @@ const NewAccountForm = ({ setOpenModal }) => {
         setOpenModal(false);
         setIsLoading(false);
         setForm({
-          id: '0909090908',
+          id: '',
           accountType: 'Checking',
           balance: '',
           customerGreetingName: '',
@@ -52,6 +52,7 @@ const NewAccountForm = ({ setOpenModal }) => {
     });
   };
 
+  const onChangeAccountId = (e) => setForm({ ...form, id: e.target.value });
   const onChangeAccountType = (accountType) => setForm({ ...form, accountType });
   const onChangeCustomerGreetingName = (e) =>
     setForm({ ...form, customerGreetingName: e.target.value });
@@ -60,6 +61,18 @@ const NewAccountForm = ({ setOpenModal }) => {
 
   return (
     <div className="space-y-6">
+      <div className="mb-4">
+        <div className="mb-2 block">
+          <Label htmlFor="accountId" value="Account Id:" />
+        </div>
+        <TextInput
+          id="accountId"
+          placeholder="Account Id"
+          onChange={onChangeAccountId}
+          value={form.accountId}
+          required
+        />
+      </div>
       <div className="mb-4">
         <div className="mb-2 block">
           <Label htmlFor="customerGreetingName" value="Customer Greeting Name:" />
