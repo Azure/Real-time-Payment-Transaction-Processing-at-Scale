@@ -1,14 +1,16 @@
 import { Button, Label, Spinner, Textarea, TextInput } from 'flowbite-react';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
+import { useQueryClient } from 'react-query';
 import { DiffObjects } from '~/helpers';
 
 import useAddMember from '~/hooks/add-member';
 import useEditMember from '~/hooks/edit-member';
 
 const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
-  const { trigger: AddTrigger } = useAddMember();
-  const { trigger: EditTrigger } = useEditMember(member?.id);
+  const client = useQueryClient();
+  const { mutate: AddTrigger } = useAddMember();
+  const { mutate: EditTrigger } = useEditMember(member?.id);
 
   const [error, setError] = useState('');
   const [form, setForm] = useState(
@@ -37,30 +39,40 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
     setIsLoading(true);
     setError('');
 
-    try {
-      let response;
-      let modifiedMember;
-      if (member) {
-        modifiedMember = DiffObjects(form, member);
-        response = await EditTrigger({
+    if (member) {
+      const modifiedMember = DiffObjects(form, member);
+      EditTrigger(
+        {
           ...modifiedMember
-        });
-      } else {
-        response = await AddTrigger(form);
-      }
-
-      setIsDisabled(true);
-
-      if (response.status === 202) {
-        setOpenModal(false);
-        setIsLoading(false);
-        if (member) setMember({ ...member, ...modifiedMember });
-        setIsDisabled(false);
-      }
-    } catch (e) {
-      setError(e?.response?.data ?? 'There was an error creating the member');
-      setIsLoading(false);
-      setIsDisabled(false);
+        },
+        {
+          onSuccess: async () => {
+            setOpenModal(false);
+            setIsLoading(false);
+            setMember({ ...member, ...modifiedMember });
+            setIsDisabled(false);
+            await client.refetchQueries('members');
+          },
+          onError: () => {
+            setError(e?.response?.data ?? 'There was an error editing the member');
+            setIsLoading(false);
+            setIsDisabled(false);
+          }
+        }
+      );
+    } else {
+      AddTrigger(form, {
+        onSuccess: () => {
+          setOpenModal(false);
+          setIsLoading(false);
+          setIsDisabled(false);
+        },
+        onError: () => {
+          setError(e?.response?.data ?? 'There was an error creating the member');
+          setIsLoading(false);
+          setIsDisabled(false);
+        }
+      });
     }
   };
 

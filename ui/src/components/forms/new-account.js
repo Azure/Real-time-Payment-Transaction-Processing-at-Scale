@@ -4,10 +4,11 @@ import { Button, Label, Spinner, TextInput } from 'flowbite-react';
 import useAddAccount from '~/hooks/add-account';
 
 const NewAccountForm = ({ setOpenModal }) => {
-  const { trigger } = useAddAccount();
+  const { mutate } = useAddAccount();
 
   const [error, setError] = useState('');
   const [form, setForm] = useState({
+    id: '0909090908',
     accountType: 'Checking',
     balance: '',
     customerGreetingName: '',
@@ -17,6 +18,7 @@ const NewAccountForm = ({ setOpenModal }) => {
   const [isLoading, setIsLoading] = useState(false);
   const onClickCancel = () => {
     setForm({
+      id: '0909090908',
       accountType: '',
       balance: '',
       customerGreetingName: '',
@@ -30,17 +32,24 @@ const NewAccountForm = ({ setOpenModal }) => {
     setIsLoading(true);
     setError('');
 
-    try {
-      const response = await trigger(form);
-
-      if (response.status === 202) {
+    mutate(form, {
+      onSuccess: async () => {
         setOpenModal(false);
         setIsLoading(false);
+        setForm({
+          id: '0909090908',
+          accountType: 'Checking',
+          balance: '',
+          customerGreetingName: '',
+          overdraftLimit: ''
+        });
+        setError('');
+      },
+      onError: (e) => {
+        setError(e?.response?.data ?? 'There was an error creating the account');
+        setIsLoading(false);
       }
-    } catch (e) {
-      setError(e?.response?.data ?? 'There was an error creating the account');
-      setIsLoading(false);
-    }
+    });
   };
 
   const onChangeAccountType = (accountType) => setForm({ ...form, accountType });

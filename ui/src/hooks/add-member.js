@@ -1,9 +1,17 @@
-import useSWRMutation from 'swr/mutation';
 import axios from 'axios';
+import { useMutation, useQueryClient } from 'react-query';
 
-const addMember = async (url, { arg }) =>
-  await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/member`, arg);
+const addMember = async (data) =>
+  await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/member`, data);
 
-const useAddMember = () => useSWRMutation('members', addMember);
+const useAddMember = () => {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => addMember(data),
+    onSuccess: () => {
+      client.invalidateQueries();
+    }
+  });
+};
 
 export default useAddMember;

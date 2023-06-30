@@ -34,37 +34,28 @@ const TransactionsStatementTable = ({ accountId }) => {
   const [continuationToken, setContinuationToken] = useState('');
   const [nextToken, setNextToken] = useState('');
   const [rows, setRows] = useState([]);
-  const [history, setHistory] = useState([]);
   const [page, setPage] = useState(0);
-  const { data, isLoading, mutate, isValidating } = useTransactionsStatement(
-    accountId,
-    continuationToken
-  );
+  const { data, isLoading, isRefetching } = useTransactionsStatement(accountId, continuationToken);
 
   const onClickLoadMore = useCallback(() => {
     setPage(page + 1);
-  }, [page]);
+    setContinuationToken(nextToken);
+  }, [page, nextToken]);
 
   const onClickGoToTop = useCallback(() => {
     setPage(0);
     setRows([]);
-    setNextToken('');
+    setContinuationToken('');
   }, []);
 
   useEffect(() => {
     if (data) {
-      setRows((currRows) => [...currRows, ...data.page]);
+      setRows((currRows) =>
+        _.orderBy(_.unionBy([...currRows, ...data.page], 'id'), ['timestamp'], ['desc'])
+      );
       setNextToken(data.continuationToken);
     }
   }, [data]);
-
-  useEffect(() => {
-    setContinuationToken(nextToken);
-  }, [page]);
-
-  useEffect(() => {
-    mutate();
-  }, [continuationToken, mutate]);
 
   const formattedData = rows.map((row) => {
     const date = new Date(row.timestamp);
@@ -79,7 +70,7 @@ const TransactionsStatementTable = ({ accountId }) => {
   return (
     <Card className="card w-full justify-center items-center">
       <div className="text-xl p-6 font-bold">Transactions</div>
-      {isLoading || isValidating ? (
+      {isLoading || !isRefetching ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />
         </div>
@@ -89,7 +80,7 @@ const TransactionsStatementTable = ({ accountId }) => {
             headers={headers}
             data={formattedData}
             onClickLoadMore={onClickLoadMore}
-            continuationToken={data.continuationToken}
+            continuationToken={data?.continuationToken}
             onClickGoToTop={onClickGoToTop}
           />
         </div>
