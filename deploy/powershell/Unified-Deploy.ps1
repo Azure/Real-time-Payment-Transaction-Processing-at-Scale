@@ -4,6 +4,7 @@ Param(
     [parameter(Mandatory=$true)][string]$resourceGroup,
     [parameter(Mandatory=$false)][string]$locations="SouthCentralUS, NorthCentralUS, EastUS",
     [parameter(Mandatory=$true)][string]$subscription,
+    [parameter(Mandatory=$false)][string]$template="main.bicep",
     [parameter(Mandatory=$false)][string]$openAiName=$null,
     [parameter(Mandatory=$false)][string]$openAiRg=$null,
     [parameter(Mandatory=$false)][string]$openAiDeployment=$null,
@@ -52,7 +53,7 @@ if ($stepDeployOpenAi) {
 }
 
 if ($stepDeployBicep) {
-    & ./Deploy-Bicep.ps1 -resourceGroup $resourceGroup -locations $locations -suffix $suffix -openAiName $openAiName -openAiRg $openAiRg -openAiDeployment $openAiDeployment
+    & ./Deploy-Bicep.ps1 -resourceGroup $resourceGroup -locations $locations -template $template -suffix $suffix -openAiName $openAiName -openAiRg $openAiRg -openAiDeployment $openAiDeployment
 }
 
 & ./Generate-Config.ps1 -resourceGroup $resourceGroup -openAiName $openAiName -openAiRg $openAiRg -openAiDeployment $openAiDeployment
