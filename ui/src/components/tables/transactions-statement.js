@@ -4,7 +4,7 @@ import { Card, Spinner } from 'flowbite-react';
 import { useCallback, useEffect, useState } from 'react';
 
 import Datatable from '~/components/tables/datatable';
-import { Capitalize, USDollar } from '~/helpers';
+import { Capitalize, USDollar, FormatDate } from '~/helpers';
 import useTransactionsStatement from '~/hooks/transaction-statements';
 
 const headers = [
@@ -58,19 +58,18 @@ const TransactionsStatementTable = ({ accountId }) => {
   }, [data]);
 
   const formattedData = rows.map((row) => {
-    const date = new Date(row.timestamp);
     return {
       ...row,
       type: Capitalize(row.type),
       amount: USDollar.format(row.amount),
-      timestamp: `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+      timestamp: FormatDate(row.timestamp)
     };
   });
 
   return (
     <Card className="card w-full justify-center items-center">
       <div className="text-xl p-6 font-bold">Transactions</div>
-      {isLoading || !isRefetching ? (
+      {isLoading ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />
         </div>
