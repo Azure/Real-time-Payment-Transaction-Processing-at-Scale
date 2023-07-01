@@ -14,9 +14,11 @@ const getTransactions = async ({ queryKey }) => {
 
 const useTransactionsStatement = (accountId, continuationToken = null, pageSize = 10) => {
   const client = useQueryClient();
-  return useQuery(['transactions', { accountId, continuationToken, pageSize }], getTransactions, {
-    onSuccess: () => {
-      client.invalidateQueries();
+  const queryKey = ['transactions', { accountId, continuationToken, pageSize }];
+
+  return useQuery(queryKey, getTransactions, {
+    onSuccess: (data) => {
+      client.setQueryData(queryKey, data); // Update the query data with the fetched result
     }
   });
 };
