@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
+  h3 {
+    @apply text-lg;
+  }
+  h4 {
+    @apply text-base;
+  }
+  h5 {
+    @apply text-sm;
+  }
+}
+
+:root {
+  @apply text-base;
+}
+
+.card > div {
+  @apply p-0;
+  @apply gap-0;
+  @apply w-full;
+}
+
+.sidebar-margin {
+  margin-left: 16rem;
+}
+
+.tables {
+  max-height: 30rem;
+  overflow: scroll;
+}

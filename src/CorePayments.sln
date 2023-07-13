@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.FunctionApp", "CorePayments.FunctionApp\CorePayments.FunctionApp.csproj", "{93BADCFD-1005-404C-A748-DEC1CFB9B83D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cosmos", "Cosmos", "{1A3148D7-982F-4947-BA71-A9FCFC387776}"
+	ProjectSection(SolutionItems) = preProject
+		processTransaction.js = processTransaction.js
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.SemanticKernel", "CorePayments.SemanticKernel\CorePayments.SemanticKernel.csproj", "{06739374-6C6F-4622-9251-FB0735EB9D56}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.Infrastructure", "CorePayments.Infrastructure\CorePayments.Infrastructure.csproj", "{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.EventMonitor", "CorePayments.EventMonitor\CorePayments.EventMonitor.csproj", "{AF16ABA8-748C-4157-845D-CD2111B2E0DB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "account-generator", "account-generator\account-generator.csproj", "{B376FFE8-A936-4310-B14C-29A79CE340B0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93BADCFD-1005-404C-A748-DEC1CFB9B83D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06739374-6C6F-4622-9251-FB0735EB9D56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06739374-6C6F-4622-9251-FB0735EB9D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06739374-6C6F-4622-9251-FB0735EB9D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06739374-6C6F-4622-9251-FB0735EB9D56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF16ABA8-748C-4157-845D-CD2111B2E0DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF16ABA8-748C-4157-845D-CD2111B2E0DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF16ABA8-748C-4157-845D-CD2111B2E0DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF16ABA8-748C-4157-845D-CD2111B2E0DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6A7F5709-D391-4145-91FF-461D969EC33C}
+	EndGlobalSection
+EndGlobal
