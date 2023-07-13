@@ -1,0 +1,3 @@
+{
+  "EventHubConnection__fullyQualifiedNamespace": "{{eventHubEndpoint}}"
+}
