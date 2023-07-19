@@ -11,7 +11,7 @@ Param(
     [parameter(Mandatory=$false)][string]$suffix=$null,
     [parameter(Mandatory=$false)][bool]$stepDeployBicep=$true,
     [parameter(Mandatory=$false)][bool]$stepPublishFunctionApp=$true,
-    [parameter(Mandatory=$false)][bool]$stepDeployOpenAi=$true,
+    [parameter(Mandatory=$false)][bool]$stepDeployOpenAi=$false,
     [parameter(Mandatory=$false)][bool]$stepPublishSite=$true,
     [parameter(Mandatory=$false)][bool]$stepLoginAzure=$true
 )
