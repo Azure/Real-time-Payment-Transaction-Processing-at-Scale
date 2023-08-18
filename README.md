@@ -24,6 +24,11 @@ The solution architecture is represented by this diagram:
 
 ## Deployment
 
+### Prerequisites
+
+- Powershell
+- Azure CLI 2.49.0 or greater
+
 ### Standard Deployments
 
 From the `deploy/powershell` folder, run the following command. This should provision all of the necessary infrastructure, deploy builds to the function apps, deploy the frontend, and deploy necessary artifacts to the Synapse workspace.

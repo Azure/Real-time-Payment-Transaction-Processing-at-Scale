@@ -3,11 +3,12 @@
 Param(
     [parameter(Mandatory=$true)][string]$resourceGroup,
     [parameter(Mandatory=$false)][string]$locations="SouthCentralUS, NorthCentralUS, EastUS",
+    [parameter(Mandatory=$false)][string]$openAiLocation="EastUS",
     [parameter(Mandatory=$true)][string]$subscription,
     [parameter(Mandatory=$false)][string]$template="main.bicep",
     [parameter(Mandatory=$false)][string]$openAiName=$null,
     [parameter(Mandatory=$false)][string]$openAiRg=$null,
-    [parameter(Mandatory=$false)][string]$openAiDeployment=$null,
+    [parameter(Mandatory=$false)][string]$openAiDeployment="completions",
     [parameter(Mandatory=$false)][string]$suffix=$null,
     [parameter(Mandatory=$false)][bool]$stepDeployBicep=$true,
     [parameter(Mandatory=$false)][bool]$stepPublishFunctionApp=$true,
@@ -40,6 +41,14 @@ if ($stepLoginAzure) {
 
 az account set --subscription $subscription
 
+$rg = $(az group show -g $resourceGroup -o json | ConvertFrom-Json)
+if (-not $rg) {
+    $rg=$(az group create -g $resourceGroup -l $locations.Split(',')[0] --subscription $subscription)
+}
+
+# Waiting to make sure resource group is available
+Start-Sleep -Seconds 10
+
 if ($stepDeployOpenAi) {
     if (-not $openAiName) {
         $openAiName="openai-$suffix"
@@ -49,7 +58,7 @@ if ($stepDeployOpenAi) {
         $openAiRg=$resourceGroup
     }
 
-    & ./Deploy-OpenAi.ps1 -name $openAiName -resourceGroup $openAiRg -location $locations.Split(',')[0] -suffix $suffix -deployment $openAiDeployment
+    & ./Deploy-OpenAi.ps1 -name $openAiName -resourceGroup $openAiRg -location $openAiLocation -deployment $openAiDeployment
 }
 
 if ($stepDeployBicep) {
