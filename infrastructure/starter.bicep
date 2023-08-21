@@ -14,7 +14,7 @@ param storageAccountName string = 'blobpay${suffix}'
 param frontDoorName string = 'apipaymentsfd${suffix}'
 
 @description('Enable Cosmos Multi Master')
-param enableCosmosMultiMaster bool = true
+param enableCosmosMultiMaster bool = false
 
 @description('Locations for resource deployment')
 param locations string = 'SouthCentral US, NorthCentral US, East US'
