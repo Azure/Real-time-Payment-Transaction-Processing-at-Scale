@@ -21,5 +21,6 @@ namespace CorePayments.Infrastructure.Domain.Entities
         public string state { get; set; }
         public string zipcode { get; set; }
         public string country { get; set; }
+        public DateTime memberSince { get; set; }
     }
 }
