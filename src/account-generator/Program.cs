@@ -161,15 +161,15 @@ namespace account_generator
 
                 await _pollyRetryPolicy.ExecuteAsync(async () =>
                 {
-                    var member =
-                        await membersContainer.CreateItemAsync(memberFaker.Generate(), new PartitionKey(memberId));
-                    memberList.Add(member.Resource);
+                    var member = memberFaker.Generate();
+                    await membersContainer.CreateItemAsync(member, new PartitionKey(memberId));
+                    memberList.Add(member);
                     // Create a global index lookup for this member.
                     var globalIndex = new GlobalIndex
                     {
-                        partitionKey = member.Resource.id,
-                        targetDocType = typeof(Member).ToString(),
-                        id = member.Resource.id
+                        partitionKey = memberId,
+                        targetDocType = nameof(Member),
+                        id = memberId
                     };
                     await globalIndexContainer.CreateItemAsync(globalIndex, new PartitionKey(globalIndex.partitionKey));
                 });
@@ -240,8 +240,8 @@ namespace account_generator
                                     var globalIndexMemberAccount = new GlobalIndex
                                     {
                                         partitionKey = member.id,
-                                        targetDocType = typeof(AccountSummary).ToString(),
-                                        id = account.Resource.id
+                                        targetDocType = nameof(AccountSummary),
+                                        id = accountId
                                     };
                                     await globalIndexContainer.CreateItemAsync(globalIndexMemberAccount,
                                         new PartitionKey(globalIndexMemberAccount.partitionKey));
@@ -249,8 +249,8 @@ namespace account_generator
                                     // Create a global index entry to associate the account with the member.
                                     var globalIndexAccountMember = new GlobalIndex
                                     {
-                                        partitionKey = account.Resource.id,
-                                        targetDocType = typeof(Member).ToString(),
+                                        partitionKey = accountId,
+                                        targetDocType = nameof(Member),
                                         id = member.id
                                     };
                                     await globalIndexContainer.CreateItemAsync(globalIndexAccountMember,
