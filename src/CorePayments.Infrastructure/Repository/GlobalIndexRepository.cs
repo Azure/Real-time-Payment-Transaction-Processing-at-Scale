@@ -59,5 +59,14 @@ namespace CorePayments.Infrastructure.Repository
                     new PartitionKey(globalIndexAccountMemberToDelete.partitionKey));
             }
         }
+
+        public async Task<IEnumerable<GlobalIndex>> GetAccountsForMember(string memberId)
+        {
+            QueryDefinition query = new QueryDefinition("select * from c where c.partitionKey = @memberId and c.targetDocType = @docType order by c.id")
+                .WithParameter("@memberId", memberId)
+                .WithParameter("@docType", Constants.DocumentTypes.AccountSummary);
+
+            return await Query<GlobalIndex>(query);
+        }
     }
 }
