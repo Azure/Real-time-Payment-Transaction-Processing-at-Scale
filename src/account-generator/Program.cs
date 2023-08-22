@@ -142,7 +142,7 @@ namespace account_generator
                 return memberList;
             }
 
-            for (var i = 0; i <= 10; i++)
+            for (var i = 0; i <= 350; i++)
             {
                 var memberId = Guid.NewGuid().ToString();
                 var memberFaker = new Faker<Member>()
@@ -168,7 +168,7 @@ namespace account_generator
                     var globalIndex = new GlobalIndex
                     {
                         partitionKey = memberId,
-                        targetDocType = nameof(Member),
+                        targetDocType = Constants.DocumentTypes.Member,
                         id = memberId
                     };
                     await globalIndexContainer.CreateItemAsync(globalIndex, new PartitionKey(globalIndex.partitionKey));
@@ -210,23 +210,24 @@ namespace account_generator
                         var memberSinceDate = accountSummary.memberSince.Date;
                         var currentDate = DateTime.UtcNow;
                         var isNegative = false;
-                        var positiveBankTransaction = GetRandomBankTransaction(TransactionType.Positive);
-                        var negativeBankTransaction = GetRandomBankTransaction(TransactionType.Negative);
 
                         var transactionFaker = new Faker<CorePayments.Infrastructure.Domain.Entities.Transaction>()
-                            .RuleFor(u => u.id, (f, u) => f.Random.Guid().ToString())
-                            .RuleFor(u => u.accountId, (f, u) => accountId)
-                            .RuleFor(u => u.amount, (f, u) =>
+                            .RuleFor(u => u.id, f => f.Random.Guid().ToString())
+                            .RuleFor(u => u.accountId, f => accountId)
+                            .RuleFor(u => u.timestamp, (f, u) => f.Date.Between(memberSinceDate, currentDate))
+                            .RuleFor(u => u.type, f => f.Random.Bool(0.8f) ? "Debit" : "Credit")
+                            .Rules((f, u) =>
                             {
-                                isNegative = f.Random.Bool(0.8f); // 80% chance of being negative
-                                var minAmount = isNegative ? -5000 : 5; // adjust the minimum value based on negativity
-                                var maxAmount = isNegative ? -5 : 5000; // adjust the maximum value based on negativity
-                                return Convert.ToDouble(f.Finance.Amount(minAmount, maxAmount, 2));
-                            })
-                            .RuleFor(u => u.type, (f, u) => isNegative ? "Debit" : "Credit")
-                            .RuleFor(u => u.description, (f, u) => isNegative ? negativeBankTransaction.Description : positiveBankTransaction.Description)
-                            .RuleFor(u => u.merchant, (f, u) => isNegative ? negativeBankTransaction.CompanyName : positiveBankTransaction.CompanyName)
-                            .RuleFor(u => u.timestamp, (f, u) => f.Date.Between(memberSinceDate, currentDate));
+                                var selectedTransactionType = u.type == "Debit" ? TransactionType.Negative : TransactionType.Positive;
+                                var selectedTransaction = GetRandomBankTransaction(selectedTransactionType);
+
+                                u.description = selectedTransaction.Description;
+                                u.merchant = selectedTransaction.CompanyName;
+
+                                var minAmount = u.type == "Debit" ? -5000 : 5;
+                                var maxAmount = u.type == "Debit" ? -5 : 5000;
+                                u.amount = Convert.ToDouble(f.Finance.Amount(minAmount, maxAmount, 2));
+                            });
 
                         var transactions = transactionFaker.GenerateBetween(4, 8);
 
@@ -240,7 +241,7 @@ namespace account_generator
                                     var globalIndexMemberAccount = new GlobalIndex
                                     {
                                         partitionKey = member.id,
-                                        targetDocType = nameof(AccountSummary),
+                                        targetDocType = Constants.DocumentTypes.AccountSummary,
                                         id = accountId
                                     };
                                     await globalIndexContainer.CreateItemAsync(globalIndexMemberAccount,
@@ -250,7 +251,7 @@ namespace account_generator
                                     var globalIndexAccountMember = new GlobalIndex
                                     {
                                         partitionKey = accountId,
-                                        targetDocType = nameof(Member),
+                                        targetDocType = Constants.DocumentTypes.Member,
                                         id = member.id
                                     };
                                     await globalIndexContainer.CreateItemAsync(globalIndexAccountMember,
