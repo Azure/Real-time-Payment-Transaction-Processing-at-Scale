@@ -72,7 +72,7 @@ resource account 'Microsoft.DocumentDB/databaseAccounts@2022-05-15' = {
     enableAutomaticFailover: !enableCosmosMultiMaster
     consistencyPolicy: consistencyPolicy[enableCosmosMultiMaster ? 'BoundedStaleness' : 'Strong']
     databaseAccountOfferType: 'Standard'
-    enableAnalyticalStorage: true
+    enableAnalyticalStorage: false
     analyticalStorageConfiguration: {
       schemaType: 'FullFidelity'
     }

@@ -29,6 +29,26 @@ The solution architecture is represented by this diagram:
 - Powershell
 - Azure CLI 2.49.0 or greater
 
+### Prerequisites for running/debugging locally
+
+- Backend (Function App, Console Apps, etc.)
+  - Visual Studio Code or Visual Studio 2022
+  - .NET 7 SDK
+- Frontend (React web app)
+  - Visual Studio Code
+  - Ensure you have the latest version of NPM and node.js:
+    - Install NVM from https://github.com/coreybutler/nvm-windows
+    - Run nvm install latest
+    - Run nvm list (to see the versions of NPM/node.js available)
+    - Run nvm use latest (to use the latest available version)
+
+To start the React web app:
+
+1. Navigate to the `ui` folder
+2. Run npm install to restore the packages
+3. Run npm run dev
+4. Open localhost:3000 in a web browser
+
 ### Standard Deployments
 
 From the `deploy/powershell` folder, run the following command. This should provision all of the necessary infrastructure, deploy builds to the function apps, deploy the frontend, and deploy necessary artifacts to the Synapse workspace.
