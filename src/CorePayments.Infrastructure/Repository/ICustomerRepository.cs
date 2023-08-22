@@ -9,6 +9,8 @@ namespace CorePayments.Infrastructure.Repository
 
         Task<(IEnumerable<AccountSummary>? accounts, string? continuationToken)> GetPagedAccountSummary(int pageSize, string continuationToken);
 
+        Task<IEnumerable<AccountSummary>> FindAccountSummary(string searchString);
+        
         Task CreateItem(JObject item);
 
         Task UpsertItem(JObject item);

@@ -31,6 +31,20 @@ namespace CorePayments.Infrastructure.Repository
             return await PagedQuery<AccountSummary>(query, pageSize, null, continuationToken);
         }
 
+        public async Task<IEnumerable<AccountSummary>> FindAccountSummary(string searchString)
+        {
+            if (!searchString.Contains("%"))
+            {
+                searchString = $"%{searchString}%";
+            }
+            
+            QueryDefinition query = new QueryDefinition("select * from c where c.id like @searchString and c.type = @docType order by c.accountId")
+                .WithParameter("@searchString", searchString)
+                .WithParameter("@docType", Constants.DocumentTypes.AccountSummary);
+
+            return await Query<AccountSummary>(query);
+        }
+
         public async Task CreateItem(JObject item)
         {
             if (item == null)
