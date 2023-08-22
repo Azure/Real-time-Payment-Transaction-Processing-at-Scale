@@ -49,6 +49,22 @@ To start the React web app:
 3. Run npm run dev
 4. Open localhost:3000 in a web browser
 
+#### Running the backend locally
+
+- Since the app uses role-based access control (RBAC), if you want to run the Function App locally, you have to assign yourself to the "Cosmos DB Built-in Data Contributor" role via the Azure Cloud Shell or Azure CLI with the following:
+
+    ```bash
+    az cosmosdb sql role assignment create --account-name YOUR_COSMOS_DB_ACCOUNT_NAME --resource-group YOUR_RESOURCE_GROUP_NAME --scope "/" --principal-id YOUR_AZURE_AD_PRINCIPAL_ID --role-definition-id 00000000-0000-0000-0000-000000000002
+    ```
+
+- Event Hubs is also using RBAC. The Member Repository sends an Event Hubs event when patching members. The `CorePayments.EventMonitor` monitor listens for Event Hub events and displays the output. For the events to work, you need to add yourself to the "Azure Event Hubs Data Owner" role via the Azure Cloud Shell or Azure CLI with the following:
+
+    ```bash
+    az role assignment create --assignee "YOUR_EMAIL_ADDRESS" --role "Azure Event Hubs Data Owner" --scope "/subscriptions/YOUR_AZURE_SUBSCRIPTION_ID/resourceGroups/YOUR_RESOURCE_GROUP_NAME/providers/Microsoft.EventHub/namespaces/YOUR_EVENT_HUBS_NAMESPACE"
+    ```
+
+    > Make sure you're signed in to Azure from the Visual Studio or VS Code terminal before running the Function App locally. You need to run `az login` and `az account set --subscription YOUR_AZURE_SUBSCRIPTION_ID` first.
+
 ### Standard Deployments
 
 From the `deploy/powershell` folder, run the following command. This should provision all of the necessary infrastructure, deploy builds to the function apps, deploy the frontend, and deploy necessary artifacts to the Synapse workspace.
