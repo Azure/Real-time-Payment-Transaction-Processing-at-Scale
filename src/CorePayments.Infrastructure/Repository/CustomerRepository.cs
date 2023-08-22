@@ -31,6 +31,15 @@ namespace CorePayments.Infrastructure.Repository
             return await PagedQuery<AccountSummary>(query, pageSize, null, continuationToken);
         }
 
+        public async Task<IEnumerable<AccountSummary>> GetAccountSummaries(IEnumerable<string> accountSummaryIds)
+        {
+            QueryDefinition query = new QueryDefinition("select * from c where c.type = @docType and ARRAY_CONTAINS(@accountSummaryIds, c.id) order by c.accountId")
+                .WithParameter("@docType", Constants.DocumentTypes.AccountSummary)
+                .WithParameter("@accountSummaryIds", accountSummaryIds);
+
+            return await Query<AccountSummary>(query);
+        }
+
         public async Task<IEnumerable<AccountSummary>> FindAccountSummary(string searchString)
         {
             if (!searchString.Contains("%"))
