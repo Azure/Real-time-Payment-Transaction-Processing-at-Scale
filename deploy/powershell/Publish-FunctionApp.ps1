@@ -24,6 +24,9 @@ function publish {
     log "Publishing project '$($projectName)' in folder '$($publishDestPath)' ..."
     dotnet publish $projectPath -c Release -o $publishDestPath
 
+    # Add sleep to allow the publish to complete before zipping
+    Start-Sleep -Seconds 10
+
     $zipArchiveFullPath="$($publishDestPath).Zip"
     log "Creating zip archive '$($zipArchiveFullPath)'"
     $compress = @{
