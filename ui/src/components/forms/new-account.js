@@ -1,10 +1,25 @@
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Button, Label, Spinner, TextInput } from 'flowbite-react';
 
 import useAddAccount from '~/hooks/add-account';
+import useAccountMatch from '~/hooks/account-id-match';
 
 const NewAccountForm = ({ setOpenModal }) => {
   const { mutate } = useAddAccount();
+  // const { mutate } = useAccountMatch();
+
+  const [accountId, changeAccountId] = useState("");
+  const [accountIdExists, setAccountIdExists] = useState(false);
+
+  const { data } = useAccountMatch(accountId);
+
+  useEffect(() => {
+    if(data?.id) {
+      setAccountIdExists(true);
+    } else {
+      setAccountIdExists(false);
+    }
+  }, [data]);
 
   const [error, setError] = useState('');
   const [form, setForm] = useState({
@@ -52,6 +67,11 @@ const NewAccountForm = ({ setOpenModal }) => {
     });
   };
 
+  function onAccountBlur(event) {
+    // console.log(event.target.value);
+    changeAccountId(event.target.value);
+  };
+
   const onChangeAccountId = (e) => setForm({ ...form, id: e.target.value });
   const onChangeAccountType = (accountType) => setForm({ ...form, accountType });
   const onChangeCustomerGreetingName = (e) =>
@@ -63,13 +83,16 @@ const NewAccountForm = ({ setOpenModal }) => {
     <div className="space-y-6">
       <div className="mb-4">
         <div className="mb-2 block">
-          <Label htmlFor="accountId" value="Account Id:" />
+          <Label htmlFor="accountId" value="Account Id:" color={accountIdExists ? "failure" : ""} />
         </div>
         <TextInput
           id="accountId"
           placeholder="Account Id"
+          onBlur={onAccountBlur}
           onChange={onChangeAccountId}
           value={form.accountId}
+          color={accountIdExists ? "failure" : ""}
+          helperText={accountIdExists ? <><span className="font-medium">Oops! </span>Account Id already taken!</> : ""}
           required
         />
       </div>

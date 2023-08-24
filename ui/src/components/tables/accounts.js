@@ -54,11 +54,11 @@ const AccountsTable = ({ setAccountId, showFormModal, setShowFormModal }) => {
 
   const onClickDetails = useCallback(
     (accountId) => {
-      const account = data?.page.find((account) => account.id === accountId);
+      const account = rows.find((account) => account.id === accountId);
       setAccount(account);
       setShowDetailModal(true);
     },
-    [data?.page]
+    [data?.page, rows]
   );
   const onClickTransactions = (accountId) => setAccountId(accountId);
 
