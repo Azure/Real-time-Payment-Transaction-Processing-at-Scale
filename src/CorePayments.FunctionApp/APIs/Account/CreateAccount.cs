@@ -35,8 +35,6 @@ namespace CorePayments.FunctionApp.APIs.Account
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var account = JsonSerializationHelper.DeserializeItem<AccountSummary>(requestBody);
 
-                account.id = Guid.NewGuid().ToString();
-
                 await _transactionRepository.CreateItem(account);
 
                 var response = req.CreateResponse(System.Net.HttpStatusCode.OK);
