@@ -68,7 +68,6 @@ const NewAccountForm = ({ setOpenModal }) => {
   };
 
   function onAccountBlur(event) {
-    // console.log(event.target.value);
     changeAccountId(event.target.value);
   };
 

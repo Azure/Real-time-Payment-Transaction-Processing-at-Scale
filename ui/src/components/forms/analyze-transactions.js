@@ -26,7 +26,6 @@ const AnalyzeTransactionsForm = ({ accountId, setOpenModal }) => {
 
     if (response.status === 200) {
       ref.current.value = response.data;
-      console.log(response.data);
       setIsLoading(false);
     } else {
       setIsLoading(false);
