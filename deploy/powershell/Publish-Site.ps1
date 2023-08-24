@@ -12,6 +12,7 @@ Write-Host "===========================================================" -Foregr
 Write-Host " Building the website" -ForegroundColor Yellow
 Write-Host "===========================================================" -ForegroundColor Yellow
 Remove-Item -Path ./out -Recurse -Force
+Start-Sleep -Seconds 10
 npm ci
 npm run build
 

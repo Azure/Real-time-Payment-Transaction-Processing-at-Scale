@@ -86,6 +86,16 @@ For deployments that need to use an existing OpenAI service, run the following f
                      -openAiDeployment <openAi-completions-deployment-name>
 ```
 
+### Publish the React web app after making changes
+
+If you make changes to the React web app and want to redeploy it, run the following from the `deploy/powershell` folder:
+
+
+```pwsh
+./Publish-Site.ps1 -resourceGroup <resource-group-name> `
+                     -storageAccount <storage-account-name (webpayxxxx)>
+```
+
 ### Enabling/Disabling Deployment Steps
 
 The following flags can be used to enable/disable specific deployment steps in the `Unified-Deploy.ps1` script.
