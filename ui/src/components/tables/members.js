@@ -41,10 +41,10 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
 
   const onClickDetails = useCallback(
     (memberId) => {
-      const member = data?.page.find((member) => member.id === memberId);
+      const member = rows.find((member) => member.id === memberId);
       setMember(member);
     },
-    [data?.page, setMember]
+    [data?.page, setMember, rows]
   );
 
   const onClickLoadMore = useCallback(() => {
