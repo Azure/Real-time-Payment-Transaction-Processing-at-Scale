@@ -67,6 +67,7 @@ builder.Services.AddSingleton<IAnalyticsEngine, AnalyticsEngine>();
 // Add Endpoint classes.
 builder.Services.AddScoped<EndpointsBase, AccountEndpoints>();
 builder.Services.AddScoped<EndpointsBase, MemberEndpoints>();
+builder.Services.AddScoped<EndpointsBase, TransactionEndpoints>();
 
 // Implement serialization resolver and rules
 builder.Services.ConfigureHttpJsonOptions(options => {
