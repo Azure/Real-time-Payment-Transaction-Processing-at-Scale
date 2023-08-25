@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.EventMonitor",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "account-generator", "account-generator\account-generator.csproj", "{B376FFE8-A936-4310-B14C-29A79CE340B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePayments.WebAPI", "CorePayments.WebAPI\CorePayments.WebAPI.csproj", "{B43ACA3A-1D70-4A3E-8A8A-905870A4AB7A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B43ACA3A-1D70-4A3E-8A8A-905870A4AB7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B43ACA3A-1D70-4A3E-8A8A-905870A4AB7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B43ACA3A-1D70-4A3E-8A8A-905870A4AB7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B43ACA3A-1D70-4A3E-8A8A-905870A4AB7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
