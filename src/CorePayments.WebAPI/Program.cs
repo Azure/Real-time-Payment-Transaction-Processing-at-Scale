@@ -26,6 +26,7 @@ builder.Services.AddCors(policyBuilder =>
         });
 });
 
+builder.Services.Configure<AnalyticsEngineSettings>(builder.Configuration.GetSection("AnalyticsEngine"));
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection(nameof(DatabaseSettings)));
 
 builder.Services.AddSingleton(s =>
