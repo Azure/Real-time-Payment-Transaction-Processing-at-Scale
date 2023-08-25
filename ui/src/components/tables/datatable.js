@@ -8,7 +8,8 @@ const Datatable = ({
   data = [],
   continuationToken = '',
   onClickLoadMore,
-  onClickGoToTop
+  onClickGoToTop,
+  showLoadMore = true
 }) => {
   return (
     <Table autoFocus className="w-full" hoverable>
@@ -44,7 +45,7 @@ const Datatable = ({
                 Load more...
               </button>
             )}
-            {data.length > 10 && (
+            {data.length > 10 && showLoadMore && (
               <button onClick={onClickGoToTop} className="p-2 rounded border">
                 Go to top / reset grid
               </button>
