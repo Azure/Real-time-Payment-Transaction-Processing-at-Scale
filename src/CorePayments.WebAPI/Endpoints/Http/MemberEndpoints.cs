@@ -57,6 +57,15 @@ namespace CorePayments.WebAPI.Endpoints.Http
                     member.memberId = Guid.NewGuid().ToString();
 
                     await _memberRepository.CreateItem(member);
+
+                    // Create a global index lookup for this member.
+                    var globalIndex = new GlobalIndex
+                    {
+                        partitionKey = member.memberId,
+                        targetDocType = DocumentTypes.Member,
+                        id = member.memberId
+                    };
+                    await _globalIndexRepository.CreateItem(globalIndex);
                 }
                 else
                 {

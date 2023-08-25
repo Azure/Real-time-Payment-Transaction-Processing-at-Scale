@@ -5,6 +5,8 @@ using CorePayments.WebAPI.Components;
 using CorePayments.WebAPI.Models.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Client;
+using static CorePayments.Infrastructure.Constants;
 
 namespace CorePayments.WebAPI.Endpoints.Http
 {
@@ -12,14 +14,17 @@ namespace CorePayments.WebAPI.Endpoints.Http
     {
         readonly ICustomerRepository _customerRepository;
         readonly ITransactionRepository _transactionRepository;
+        readonly IGlobalIndexRepository _globalIndexRepository;
 
         public AccountEndpoints(
             ICustomerRepository customerRepository,
             ITransactionRepository transactionRepository,
+            IGlobalIndexRepository globalIndexRepository,
             ILogger<AccountEndpoints> logger)
         {
             _customerRepository = customerRepository;
             _transactionRepository = transactionRepository;
+            _globalIndexRepository = globalIndexRepository;
             Logger = logger;
             UrlFragment = "api/account";
         }
@@ -41,6 +46,15 @@ namespace CorePayments.WebAPI.Endpoints.Http
             try
             {
                 await _transactionRepository.CreateItem(account);
+
+                // Create a global index lookup for this account.
+                var globalIndex = new GlobalIndex
+                {
+                    partitionKey = account.id,
+                    targetDocType = DocumentTypes.AccountSummary,
+                    id = account.id
+                };
+                await _globalIndexRepository.CreateItem(globalIndex);
 
                 return Results.Ok(account);
             }

@@ -236,6 +236,15 @@ namespace account_generator
                                     var account = await transactionsContainer.UpsertItemAsync(accountSummary,
                                         new PartitionKey(accountId));
 
+                                    // Create a global index lookup for this account.
+                                    var globalIndex = new GlobalIndex
+                                    {
+                                        partitionKey = accountId,
+                                        targetDocType = Constants.DocumentTypes.AccountSummary,
+                                        id = accountId
+                                    };
+                                    await globalIndexContainer.CreateItemAsync(globalIndex, new PartitionKey(globalIndex.partitionKey));
+
                                     // Create a global index entry to associate the member with the account.
                                     var globalIndexMemberAccount = new GlobalIndex
                                     {

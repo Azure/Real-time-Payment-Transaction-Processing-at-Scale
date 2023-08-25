@@ -70,5 +70,10 @@ namespace CorePayments.Infrastructure.Repository
 
             return await Query<GlobalIndex>(query);
         }
+
+        public async Task CreateItem(GlobalIndex globalIndex)
+        {
+            await Container.CreateItemAsync(globalIndex, new PartitionKey(globalIndex.partitionKey));
+        }
     }
 }
