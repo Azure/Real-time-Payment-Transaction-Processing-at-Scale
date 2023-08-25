@@ -21,7 +21,7 @@ namespace CorePayments.WebAPI.Endpoints.Http
             IMemberRepository memberRepository,
             IGlobalIndexRepository globalIndexRepository,
             ICustomerRepository customerRepository,
-            ILogger<AccountEndpoints> logger)
+            ILogger<MemberEndpoints> logger)
         {
             _memberRepository = memberRepository;
             _globalIndexRepository = globalIndexRepository;
