@@ -1,6 +1,8 @@
 ﻿using CorePayments.Infrastructure.Domain.Entities;
+using CorePayments.Infrastructure.Domain.Settings;
 using CorePayments.Infrastructure.Events;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
@@ -9,8 +11,8 @@ namespace CorePayments.Infrastructure.Repository
 {
     public class CustomerRepository : CosmosDbRepository, ICustomerRepository
     {
-        public CustomerRepository(CosmosClient client, IEventHubService eventHub) :
-            base(client, containerName: Environment.GetEnvironmentVariable("customerContainer") ?? string.Empty, eventHub)
+        public CustomerRepository(CosmosClient client, IEventHubService eventHub, IOptions<DatabaseSettings> options) :
+            base(client, containerName: options.Value.CustomerContainer ?? string.Empty, eventHub, options)
         {
         }
 
@@ -38,6 +40,11 @@ namespace CorePayments.Infrastructure.Repository
                 .WithParameter("@accountSummaryIds", accountSummaryIds);
 
             return await Query<AccountSummary>(query);
+        }
+
+        public async Task<AccountSummary> GetAccountSummary(string accountId)
+        {
+            return await ReadItem<AccountSummary>(accountId, accountId);
         }
 
         public async Task<IEnumerable<AccountSummary>> FindAccountSummary(string searchString)

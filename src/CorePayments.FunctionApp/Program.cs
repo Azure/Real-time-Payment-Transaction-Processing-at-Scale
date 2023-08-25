@@ -15,6 +15,7 @@ using System.Linq;
 using Azure.Core.Serialization;
 using CorePayments.SemanticKernel;
 using Microsoft.Azure.Cosmos;
+using CorePayments.Infrastructure.Domain.Settings;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults(builder =>
@@ -29,12 +30,13 @@ var host = new HostBuilder()
     .ConfigureServices((hostContext, services) =>
     {
         services.Configure<AnalyticsEngineSettings>(hostContext.Configuration.GetSection("AnalyticsEngine"));
+        services.Configure<DatabaseSettings>(hostContext.Configuration.GetSection(nameof(DatabaseSettings)));
 
         services.AddSingleton(s =>
         {
             //var endpoint = hostContext.Configuration["CosmosDBConnection__accountEndpoint"];
-            var endpoint = Environment.GetEnvironmentVariable("CosmosDBConnection__accountEndpoint");
-            var preferredRegions = Environment.GetEnvironmentVariable("preferredRegions");
+            var endpoint = hostContext.Configuration.GetValue<string>("CosmosDBConnection__accountEndpoint");
+            var preferredRegions = hostContext.Configuration.GetValue<string>("preferredRegions");
             var region = "";
 
             var regions = string.IsNullOrEmpty(preferredRegions)
@@ -56,7 +58,7 @@ var host = new HostBuilder()
                 .Build();
         });
         services.AddSingleton<IEventHubService, EventHubService>(s => new EventHubService(
-            Environment.GetEnvironmentVariable("EventHubConnection__fullyQualifiedNamespace"),
+            hostContext.Configuration.GetValue<string>("EventHubConnection__fullyQualifiedNamespace"),
             Constants.EventHubs.PaymentEvents));
 
         services.AddSingleton<ICustomerRepository, CustomerRepository>();

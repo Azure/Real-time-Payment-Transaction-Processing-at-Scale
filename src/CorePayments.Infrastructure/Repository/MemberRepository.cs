@@ -1,6 +1,8 @@
 ﻿using CorePayments.Infrastructure.Domain.Entities;
+using CorePayments.Infrastructure.Domain.Settings;
 using CorePayments.Infrastructure.Events;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using System.Drawing.Printing;
 
@@ -8,8 +10,8 @@ namespace CorePayments.Infrastructure.Repository
 {
     public class MemberRepository : CosmosDbRepository, IMemberRepository
     {
-        public MemberRepository(CosmosClient client, IEventHubService eventHub) :
-            base(client, containerName: Environment.GetEnvironmentVariable("memberContainer") ?? string.Empty, eventHub)
+        public MemberRepository(CosmosClient client, IEventHubService eventHub, IOptions<DatabaseSettings> options) :
+            base(client, containerName: options.Value.MemberContainer ?? string.Empty, eventHub, options)
         {
         }
 

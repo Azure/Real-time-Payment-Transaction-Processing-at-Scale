@@ -1,7 +1,9 @@
 using CorePayments.Infrastructure.Domain.Entities;
+using CorePayments.Infrastructure.Domain.Settings;
 using CorePayments.Infrastructure.Repository;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -15,9 +17,9 @@ namespace CorePayments.FunctionApp.Processor
         readonly ICustomerRepository _customerRepository;
 
         public ProcessCustomerView(
-            ICustomerRepository customerRepository)
+            ICustomerRepository customerRepository, IOptions<DatabaseSettings> options)
         {
-            _isMasterRegion = Convert.ToBoolean(Environment.GetEnvironmentVariable("isMasterRegion"));
+            _isMasterRegion = options.Value.IsMasterRegion;
             _customerRepository = customerRepository;
         }
 

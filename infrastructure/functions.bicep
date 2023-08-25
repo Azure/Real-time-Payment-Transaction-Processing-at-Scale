@@ -16,6 +16,9 @@ param paymentsDatabase string
 @description('Cosmos DB transactions container name')
 param transactionsContainer string
 
+@description('Cosmos DB global index container name')
+param globalIndexContainer string
+
 @description('Cosmos DB customer container name')
 param customerContainer string
 
@@ -147,6 +150,10 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'transactionsContainer'
           value: transactionsContainer
+        }
+        {
+          name: 'globalIndexContainer'
+          value: globalIndexContainer
         }
         {
           name: 'customerContainer'
