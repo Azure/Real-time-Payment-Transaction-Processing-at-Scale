@@ -202,7 +202,6 @@ namespace account_generator
                             .RuleFor(u => u.customerGreetingName, (f, u) => member.firstName)
                             .RuleFor(u => u.balance, (f, u) => Convert.ToDouble(f.Finance.Amount(-1000, 50000, 2)))
                             .RuleFor(u => u.accountType, (f, u) => f.PickRandom(accountType))
-                            .RuleFor(u => u.type, (f, u) => Constants.DocumentTypes.AccountSummary)
                             .RuleFor(u => u.overdraftLimit, (f, u) => 5000)
                             .RuleFor(u => u.memberSince, (f, u) => member.memberSince);
 
@@ -236,6 +235,15 @@ namespace account_generator
                                 {
                                     var account = await transactionsContainer.UpsertItemAsync(accountSummary,
                                         new PartitionKey(accountId));
+
+                                    // Create a global index lookup for this account.
+                                    var globalIndex = new GlobalIndex
+                                    {
+                                        partitionKey = accountId,
+                                        targetDocType = Constants.DocumentTypes.AccountSummary,
+                                        id = accountId
+                                    };
+                                    await globalIndexContainer.CreateItemAsync(globalIndex, new PartitionKey(globalIndex.partitionKey));
 
                                     // Create a global index entry to associate the member with the account.
                                     var globalIndexMemberAccount = new GlobalIndex

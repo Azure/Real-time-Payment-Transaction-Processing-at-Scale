@@ -7,5 +7,6 @@ namespace CorePayments.Infrastructure.Repository
     {
         Task ProcessAccountAssignment(AccountAssignmentOperations operation, string memberId, string accountId);
         Task<IEnumerable<GlobalIndex>> GetAccountsForMember(string memberId);
+        Task CreateItem(GlobalIndex globalIndex);
     }
 }

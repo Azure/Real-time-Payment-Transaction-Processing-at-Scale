@@ -42,9 +42,17 @@ namespace CorePayments.Infrastructure.Repository
             return await Query<AccountSummary>(query);
         }
 
-        public async Task<AccountSummary> GetAccountSummary(string accountId)
+        public async Task<AccountSummary?> GetAccountSummary(string accountId)
         {
-            return await ReadItem<AccountSummary>(accountId, accountId);
+            var result = await ReadItem<AccountSummary?>(accountId, accountId);
+            if (result != null)
+            {
+                return result;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public async Task<IEnumerable<AccountSummary>> FindAccountSummary(string searchString)

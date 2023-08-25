@@ -83,7 +83,7 @@ namespace CorePayments.Infrastructure.Repository
 
         }
 
-        protected async Task<ItemResponse<TEntity>> ReadItem<TEntity>(string partitionKey, string itemId) where TEntity : new()
+        protected async Task<ItemResponse<TEntity>?> ReadItem<TEntity>(string partitionKey, string itemId) where TEntity : new()
         {
             try
             {

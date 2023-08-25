@@ -26,6 +26,7 @@ builder.Services.AddCors(policyBuilder =>
         });
 });
 
+builder.Services.Configure<AnalyticsEngineSettings>(builder.Configuration.GetSection("AnalyticsEngine"));
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection(nameof(DatabaseSettings)));
 
 builder.Services.AddSingleton(s =>
@@ -66,6 +67,8 @@ builder.Services.AddSingleton<IAnalyticsEngine, AnalyticsEngine>();
 
 // Add Endpoint classes.
 builder.Services.AddScoped<EndpointsBase, AccountEndpoints>();
+builder.Services.AddScoped<EndpointsBase, MemberEndpoints>();
+builder.Services.AddScoped<EndpointsBase, TransactionEndpoints>();
 
 // Implement serialization resolver and rules
 builder.Services.ConfigureHttpJsonOptions(options => {

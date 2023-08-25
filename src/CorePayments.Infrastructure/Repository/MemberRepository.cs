@@ -27,6 +27,19 @@ namespace CorePayments.Infrastructure.Repository
             return await PagedQuery<Member>(query, pageSize, null, continuationToken);
         }
 
+        public async Task<Member?> GetMember(string memberId)
+        {
+            var result = await ReadItem<Member?>(memberId, memberId);
+            if (result != null)
+            {
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public async Task<int> PatchMember(Member member, string memberId)
         {
             JObject obj = JObject.FromObject(member);

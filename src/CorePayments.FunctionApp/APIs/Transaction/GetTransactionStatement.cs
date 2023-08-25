@@ -59,7 +59,7 @@ namespace CorePayments.FunctionApp.APIs.Transaction
         }
 
 
-        [Function("GetTransactionsAnalyis")]
+        [Function("GetTransactionsAnalysis")]
         public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "statement/{accountId}/analyze")] HttpRequestData req,
             string accountId,
