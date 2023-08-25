@@ -1,10 +1,40 @@
+using CorePayments.Infrastructure.Domain.Settings;
+using CorePayments.Infrastructure.Repository;
 using CorePayments.WorkerService;
+using Microsoft.Azure.Cosmos.Fluent;
 
-IHost host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(services =>
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection(nameof(DatabaseSettings)));
+
+builder.Services.AddSingleton(s =>
+{
+    var endpoint = builder.Configuration["CosmosDBConnection:accountEndpoint"];
+    var preferredRegions = builder.Configuration["DatabaseSettings:PreferredRegions"];
+    var region = "";
+
+    var regions = string.IsNullOrEmpty(preferredRegions)
+        ? Array.Empty<string>()
+        : preferredRegions.Split(',');
+
+    if (!regions.Any())
+        return new CosmosClientBuilder(accountEndpoint: endpoint,
+                tokenCredential: new Azure.Identity.DefaultAzureCredential())
+            .Build();
+    if (regions.Length == 1)
     {
-        services.AddHostedService<ChangeFeedWorker>();
-    })
-    .Build();
+        return new CosmosClientBuilder(accountEndpoint: endpoint, tokenCredential: new Azure.Identity.DefaultAzureCredential())
+            .WithApplicationRegion(regions[0])
+            .Build();
+    }
+    return new CosmosClientBuilder(accountEndpoint: endpoint, tokenCredential: new Azure.Identity.DefaultAzureCredential())
+        .WithApplicationPreferredRegions(regions)
+        .Build();
+});
+
+builder.Services.AddSingleton<ICustomerRepository, CustomerRepository>();
+builder.Services.AddHostedService<ChangeFeedWorker>();
+
+var host = builder.Build();
 
 host.Run();
