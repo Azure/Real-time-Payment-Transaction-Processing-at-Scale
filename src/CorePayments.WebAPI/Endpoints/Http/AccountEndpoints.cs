@@ -1,4 +1,5 @@
-﻿using CorePayments.Infrastructure.Domain.Entities;
+﻿using CorePayments.Infrastructure;
+using CorePayments.Infrastructure.Domain.Entities;
 using CorePayments.Infrastructure.Repository;
 using CorePayments.WebAPI.Components;
 using CorePayments.WebAPI.Models.Response;
@@ -68,7 +69,7 @@ namespace CorePayments.WebAPI.Endpoints.Http
             var (accounts, newContinuationToken) = await _customerRepository.GetPagedAccountSummary(pageSize.Value, continuationToken);
             if (accounts == null)
             {
-                Results.NotFound();
+                return Results.NotFound();
             }
             
             return Results.Ok(new PagedResponse<AccountSummary>
@@ -82,7 +83,7 @@ namespace CorePayments.WebAPI.Endpoints.Http
         {
             var account = await _customerRepository.GetAccountSummary(accountId);
 
-            return Results.Ok(account);
+            return account == null ? Results.NotFound() : Results.Ok(account);
         }
     }
 }

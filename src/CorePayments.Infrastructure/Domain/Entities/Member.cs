@@ -11,7 +11,7 @@ namespace CorePayments.Infrastructure.Domain.Entities
     {
         public string id => memberId;
         public string memberId { get; set; }
-        public string type => "member";
+        public string type => Constants.DocumentTypes.Member;
         public string firstName { get; set; }
         public string lastName { get; set; }
         public string email { get; set; }

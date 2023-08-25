@@ -11,7 +11,7 @@ namespace CorePayments.Infrastructure.Repository
 
         Task<IEnumerable<AccountSummary>> GetAccountSummaries(IEnumerable<string> accountSummaryIds);
 
-        Task<AccountSummary> GetAccountSummary(string accountId);
+        Task<AccountSummary?> GetAccountSummary(string accountId);
 
         Task<IEnumerable<AccountSummary>> FindAccountSummary(string searchString);
         
