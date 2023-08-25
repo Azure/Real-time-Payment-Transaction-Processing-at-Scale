@@ -369,3 +369,4 @@ local.settings.json
 /src/cosmos-payments-demo/Properties/serviceDependencies.functionpayh832bx20 - Zip Deploy.json
 /src/cosmos-payments-demo/Properties/serviceDependencies.json
 /src/CorePayments.WebAPI/appsettings.Development.json
+/src/CorePayments.WorkerService/appsettings.Development.json
