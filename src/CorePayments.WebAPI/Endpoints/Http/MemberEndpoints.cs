@@ -33,7 +33,7 @@ namespace CorePayments.WebAPI.Endpoints.Http
         public override void AddRoutes(WebApplication app)
         {
             app.MapPost($"/{UrlFragment}", async (Member member) => await CreateMember(member))
-                .WithName("CreateAccount");
+                .WithName("CreateMember");
             app.MapGet($"/{UrlFragment}/{{memberId}}/accounts", async (string memberId) => await GetMemberAccounts(memberId))
                 .WithName("GetMemberAccounts");
             app.MapGet($"/{UrlFragment}s", async ([FromQuery] int? pageSize, [FromQuery] string? continuationToken) => await GetMembers(pageSize, continuationToken))
