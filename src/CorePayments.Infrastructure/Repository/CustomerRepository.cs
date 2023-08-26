@@ -11,8 +11,8 @@ namespace CorePayments.Infrastructure.Repository
 {
     public class CustomerRepository : CosmosDbRepository, ICustomerRepository
     {
-        public CustomerRepository(CosmosClient client, IEventHubService eventHub, IOptions<DatabaseSettings> options) :
-            base(client, containerName: options.Value.CustomerContainer ?? string.Empty, eventHub, options)
+        public CustomerRepository(CosmosClient client, IOptions<DatabaseSettings> options) :
+            base(client, containerName: options.Value.CustomerContainer ?? string.Empty, options)
         {
         }
 
