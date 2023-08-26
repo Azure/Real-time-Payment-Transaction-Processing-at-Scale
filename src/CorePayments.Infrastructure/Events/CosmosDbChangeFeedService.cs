@@ -22,7 +22,6 @@ namespace CorePayments.Infrastructure.Events
         private ChangeFeedProcessor _changeFeedProcessorProcessCustomerView;
 
         private readonly ILogger<CosmosDbChangeFeedService> _logger;
-        private readonly ITransactionRepository _transactionRepository;
         private readonly ICustomerRepository _customerRepository;
 
         private bool _changeFeedsInitialized = false;
@@ -31,12 +30,10 @@ namespace CorePayments.Infrastructure.Events
 
         public CosmosDbChangeFeedService(CosmosClient client,
             ILogger<CosmosDbChangeFeedService> logger,
-            ITransactionRepository transactionRepository,
             ICustomerRepository customerRepository,
             IOptions<DatabaseSettings> options)
         {
             _client = client;
-            _transactionRepository = transactionRepository;
             _customerRepository = customerRepository;
             _logger = logger;
 
@@ -53,6 +50,7 @@ namespace CorePayments.Infrastructure.Events
 
         public async Task StartChangeFeedProcessorsAsync()
         {
+            _logger.LogInformation("Starting Change Feed Processors...");
             try
             {
                 _changeFeedProcessorProcessCustomerView = _transaction
@@ -65,6 +63,7 @@ namespace CorePayments.Infrastructure.Events
                 await _changeFeedProcessorProcessCustomerView.StartAsync();
 
                 _changeFeedsInitialized = true;
+                _logger.LogInformation("Change Feed Processors started.");
             }
             catch (Exception ex)
             {
@@ -87,7 +86,9 @@ namespace CorePayments.Infrastructure.Events
             IReadOnlyCollection<JObject> input,
             CancellationToken cancellationToken)
         {
-            using var logScope = _logger.BeginScope("CosmosDbTrigger: AssignClaimAdjudicator");
+            using var logScope = _logger.BeginScope("Cosmos DB Change Feed Processor: ProcessCustomerViewChangeFeedHandler");
+
+            _logger.LogInformation("Cosmos DB Change Feed Processor: Processing {count} changes...", input.Count);
 
             await Parallel.ForEachAsync(input, cancellationToken, async (record, token) =>
             {

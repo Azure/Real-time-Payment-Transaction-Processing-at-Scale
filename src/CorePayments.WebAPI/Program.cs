@@ -54,10 +54,6 @@ builder.Services.AddSingleton(s =>
         .Build();
 });
 
-builder.Services.AddSingleton<IEventHubService, EventHubService>(s => new EventHubService(
-            builder.Configuration["EventHubConnection:fullyQualifiedNamespace"],
-            Constants.EventHubs.PaymentEvents));
-
 builder.Services.AddSingleton<ICustomerRepository, CustomerRepository>();
 builder.Services.AddSingleton<IGlobalIndexRepository, GlobalIndexRepository>();
 builder.Services.AddSingleton<IMemberRepository, MemberRepository>();

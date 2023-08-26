@@ -10,8 +10,8 @@ namespace CorePayments.Infrastructure.Repository
 {
     public class TransactionRepository : CosmosDbRepository, ITransactionRepository
     {
-        public TransactionRepository(CosmosClient client, IEventHubService eventHub, IOptions<DatabaseSettings> options) :
-            base(client, containerName: options.Value.TransactionsContainer ?? string.Empty, eventHub, options)
+        public TransactionRepository(CosmosClient client, IOptions<DatabaseSettings> options) :
+            base(client, containerName: options.Value.TransactionsContainer ?? string.Empty, options)
         {
         }
 

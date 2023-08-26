@@ -1,4 +1,6 @@
+using CorePayments.Infrastructure;
 using CorePayments.Infrastructure.Domain.Settings;
+using CorePayments.Infrastructure.Events;
 using CorePayments.Infrastructure.Repository;
 using CorePayments.WorkerService;
 using Microsoft.Azure.Cosmos.Fluent;
@@ -33,6 +35,8 @@ builder.Services.AddSingleton(s =>
 });
 
 builder.Services.AddSingleton<ICustomerRepository, CustomerRepository>();
+builder.Services.AddSingleton<ICosmosDbChangeFeedService, CosmosDbChangeFeedService>();
+
 builder.Services.AddHostedService<ChangeFeedWorker>();
 
 var host = builder.Build();

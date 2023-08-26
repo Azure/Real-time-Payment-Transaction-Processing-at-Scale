@@ -12,20 +12,16 @@ namespace CorePayments.Infrastructure.Repository
     {
         private readonly CosmosClient _client;
         private readonly Database _database;
-        private readonly IEventHubService _eventHub;
 
         protected Container Container { get; }
-        protected string CurrentWriteRegion { get; }
-        protected string CurrentReadRegion { get; }
 
-        public CosmosDbRepository(CosmosClient client, string containerName, IEventHubService eventHub, IOptions<DatabaseSettings> options)
+        public CosmosDbRepository(CosmosClient client, string containerName, IOptions<DatabaseSettings> options)
         {
             if (string.IsNullOrWhiteSpace(containerName))
                 throw new ArgumentNullException(nameof(containerName));
 
             _client = client;
             _database = _client.GetDatabase(options.Value.PaymentsDatabase);
-            _eventHub = eventHub;
 
             Container = _database.GetContainer(containerName);
             
@@ -98,11 +94,6 @@ namespace CorePayments.Infrastructure.Repository
 
                 throw;
             }
-        }
-
-        protected async Task TriggerTrackingEvent<T>(T eventPayload)
-        {
-            await _eventHub.TriggerTrackingEvent<T>(eventPayload);
         }
     }
 }

@@ -57,9 +57,6 @@ var host = new HostBuilder()
                 .WithApplicationPreferredRegions(regions)
                 .Build();
         });
-        services.AddSingleton<IEventHubService, EventHubService>(s => new EventHubService(
-            hostContext.Configuration.GetValue<string>("EventHubConnection__fullyQualifiedNamespace"),
-            Constants.EventHubs.PaymentEvents));
 
         services.AddSingleton<ICustomerRepository, CustomerRepository>();
         services.AddSingleton<IGlobalIndexRepository, GlobalIndexRepository>();

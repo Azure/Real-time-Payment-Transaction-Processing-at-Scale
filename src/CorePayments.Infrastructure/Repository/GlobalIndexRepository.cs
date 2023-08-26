@@ -9,8 +9,8 @@ namespace CorePayments.Infrastructure.Repository
 {
     public class GlobalIndexRepository : CosmosDbRepository, IGlobalIndexRepository
     {
-        public GlobalIndexRepository(CosmosClient client, IEventHubService eventHub, IOptions<DatabaseSettings> options) :
-            base(client, containerName: options.Value.GlobalIndexContainer ?? string.Empty, eventHub, options)
+        public GlobalIndexRepository(CosmosClient client, IOptions<DatabaseSettings> options) :
+            base(client, containerName: options.Value.GlobalIndexContainer ?? string.Empty, options)
         {
         }
 
