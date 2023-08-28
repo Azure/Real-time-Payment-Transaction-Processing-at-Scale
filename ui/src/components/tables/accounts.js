@@ -43,7 +43,7 @@ const headers = [
   }
 ];
 
-const AccountsTable = ({ setAccountId, setRemoveAccountId, showFormModal, setShowFormModal, setShowRemoveAccountModal, memberId, setMember, reload, setReload, setViewTransactions }) => {
+const AccountsTable = ({ setAccountId, setRemoveAccountId, showFormModal, setShowFormModal, setShowRemoveAccountModal, memberId, setMember, reload, setReload, setViewTransactions = null }) => {
   const [continuationToken, setContinuationToken] = useState('');
   const [nextToken, setNextToken] = useState('');
   const [rows, setRows] = useState([]);
@@ -68,7 +68,9 @@ const AccountsTable = ({ setAccountId, setRemoveAccountId, showFormModal, setSho
   );
   const onClickTransactions = (accountId) => {
     setAccountId(accountId);
-    setViewTransactions(true);
+    if (setViewTransactions) {
+      setViewTransactions(true);
+    }
   };
 
   const onClickLoadMore = useCallback(() => {
@@ -165,7 +167,7 @@ const AccountsTable = ({ setAccountId, setRemoveAccountId, showFormModal, setSho
 
   return (
     <Card className="card w-full justify-center items-center">
-      <div className="text-xl p-6 font-bold">Accounts {memberId}</div>
+      <div className="text-xl p-6 font-bold">Accounts</div>
       {isLoading ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />

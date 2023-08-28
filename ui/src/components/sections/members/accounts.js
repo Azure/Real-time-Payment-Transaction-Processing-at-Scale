@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Button, Card } from 'flowbite-react';
+import { PlusIcon } from '@heroicons/react/24/outline';
 
 import FormModal from '~/components/modals/form';
+import AssignAccountForm from '~/components/forms/assign-account';
 import AccountsTable from '~/components/tables/accounts';
 import TransactionsSection from '~/components/sections/accounts/transactions';
 
@@ -28,14 +30,6 @@ const ViewAccountsSection = ({ member, setMember }) => {
     }
   }, [member]);
 
-  useEffect(() => {
-    if (viewTransactions) {
-        console.log("View Transactions");
-    }
-  }, [viewTransactions]);
-
-
-
   const onClickRemoveAssingedAccount = () => {
     setConfirmation(true);
     RemoveTrigger(confirmation, {
@@ -56,10 +50,15 @@ const ViewAccountsSection = ({ member, setMember }) => {
 
   return (
     <Card className="w-full mt-6">
-      <div className="font-bold">Accounts: {member.firstName} {member.lastName}</div>
-      <Button onClick={onClickAssign} color="dark" className="w-36">
-       Assign Account
-      </Button>
+      <div className="flex items-center justify-between">
+        <h1 className="my-6 text-left font-bold">Accounts: {member.firstName} {member.lastName}</h1>
+        <div className="justify-end">
+          <Button color="dark" className="p-0" onClick={onClickAssign}>
+            <PlusIcon className="h-6 w-6 text-gray-500 mr-3 text-white" />
+            <h4>Assign Account</h4>
+          </Button>
+        </div>
+      </div>
       <div className="flex space-between items-center mb-6 flex-col">
         <AccountsTable
             memberId={member.id}
@@ -85,7 +84,7 @@ const ViewAccountsSection = ({ member, setMember }) => {
         </div>
       </FormModal>
       <FormModal header={assignAccountHeader} setOpenModal={setShowFormModal} openModal={showFormModal}>
-        <div>Select Account:</div>
+        <AssignAccountForm setOpenModal={setShowFormModal} memberId={member.id} />
       </FormModal>
     </Card>
   );
