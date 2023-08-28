@@ -10,7 +10,7 @@ Param(
     [parameter(Mandatory=$false)][string]$charts = "*",
     [parameter(Mandatory=$false)][string]$valuesFile = "",
     [parameter(Mandatory=$false)][string]$namespace = "",
-    [parameter(Mandatory=$false)][string][ValidateSet('prod','staging','none','custom', IgnoreCase=$false)]$tlsEnv = "none",
+    [parameter(Mandatory=$false)][string][ValidateSet('prod','staging','none','custom', IgnoreCase=$false)]$tlsEnv = "prod",
     [parameter(Mandatory=$false)][string]$tlsHost="",
     [parameter(Mandatory=$false)][string]$tlsSecretName="tls-prod",
     [parameter(Mandatory=$false)][bool]$autoscale=$false
@@ -123,6 +123,10 @@ foreach($location in $locArray)
     validate
 
     Push-Location $($MyInvocation.InvocationName | Split-Path)
+
+    & ./DeployCertManager.ps1
+    & ./DeployTlsSupport.ps1 -sslSupport prod -resourceGroup $resourceGroup -aksName $aksName
+
     Push-Location $(Join-Path .. helm)
 
     $aksArray = $aksNames.Split(',')

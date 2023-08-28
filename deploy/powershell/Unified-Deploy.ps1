@@ -8,6 +8,7 @@ Param(
     [parameter(Mandatory=$false)][string]$template="main.bicep",
     [parameter(Mandatory=$false)][string]$suffix=$null,
     [parameter(Mandatory=$false)][bool]$stepDeployBicep=$true,
+    [parameter(Mandatory=$false)][bool]$stepDeployFD=$true,
     [parameter(Mandatory=$false)][bool]$stepBuildPush=$true,
     [parameter(Mandatory=$false)][bool]$stepDeployImages=$true,
     [parameter(Mandatory=$false)][bool]$stepPublishSite=$true,
@@ -64,6 +65,11 @@ Write-Host "The names of your AKS instances: $aksNames" -ForegroundColor Yellow
 New-Item -ItemType Directory -Force -Path $(./Join-Path-Recursively.ps1 -pathParts ..,..,__values)
 $gValuesLocation=$(./Join-Path-Recursively.ps1 -pathParts ..,..,__values,$gValuesFile)
 & ./Generate-Config.ps1 -resourceGroup $resourceGroup -locations $locations -suffix $suffix -outputFile $gValuesLocation
+
+if ($stepDeployFD)
+{
+    & ./Deploy-FDOrigins.ps1 -resourceGroup $resourceGroup -locations $locations
+}
 
 # Create Secrets
 if ([string]::IsNullOrEmpty($acrName))
