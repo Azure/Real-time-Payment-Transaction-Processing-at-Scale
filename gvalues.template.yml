@@ -1,9 +1,5 @@
-azureWebJobsStorage:
-  accountName: "{{dataLakeAccountName}}"
-coreClaimsCosmosDb:
+cosmosDbConnection:
   accountEndpoint: "{{cosmosEndpoint}}"
-coreClaimsEventHub:
-  fullyQualifiedNamespace: "ehcoreclaims{{suffix}}.servicebus.windows.net"
 businessRuleOptions:
   autoApproveThreshold: 200
   requireManagerApproval: 500

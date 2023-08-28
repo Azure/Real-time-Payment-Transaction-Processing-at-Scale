@@ -101,7 +101,7 @@ if ($stepSetupSynapse) {
 }
 
 if ($stepPublishSite) {
-    & ./Publish-Site.ps1 -resourceGroup $resourceGroup -storageAccount "webcoreclaims$suffix"
+    & ./Publish-Site.ps1 -resourceGroup $resourceGroup -storageAccount "webcorepayments$suffix"
 }
 
 Pop-Location

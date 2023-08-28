@@ -31,7 +31,7 @@ if ($rg.length -eq 0) {
 # Write-Host "AKS last version is $aksLastVersion" -ForegroundColor Yellow
 $aksLastVersion="1.26.3"
 
-$deploymentName = "cosmosdb-claims-vmdeploy"
+$deploymentName = "cosmosdb-payments-vmdeploy"
 
 Write-Host "Begining the ARM deployment..." -ForegroundColor Yellow
 Push-Location $sourceFolder

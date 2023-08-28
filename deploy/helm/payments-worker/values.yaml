@@ -36,14 +36,7 @@ ingress:
 
 env:
   configmap:
-    - name: AzureWebJobsStorage__accountName
-    - name: CoreClaimsCosmosDB__accountEndpoint
-    - name: CoreClaimsEventHub__fullyQualifiedNamespace
-    - name: BusinessRuleOptions__AutoApproveThreshold
-    - name: BusinessRuleOptions__RequireManagerApproval
-    - name: BusinessRuleOptions__DemoMode
-    - name: BusinessRuleOptions__DemoAdjudicatorId
-    - name: BusinessRuleOptions__DemoManagerAdjudicatorId
+    - name: CosmosDBConnection__accountEndpoint
     - name: ClientId
   secret:
     - name: ApplicationInsights__ConnectionString

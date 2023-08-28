@@ -1,6 +1,6 @@
-applicationName: ms-claims-cosmosdb-tls
-issuerName: ms-claims-cosmosdb-tls-prod
-certName: ms-claims-cosmosdb-tls-cert-prod
+applicationName: ms-payments-cosmosdb-tls
+issuerName: ms-payments-cosmosdb-tls-prod
+certName: ms-payments-cosmosdb-tls-cert-prod
 environment: prod
 server: https://acme-v02.api.letsencrypt.org/directory
 certSecretName: tls-prod

@@ -1,7 +1,7 @@
 #! /usr/bin/pwsh
 
 Param(
-    [parameter(Mandatory=$false)][string]$name = "ms-claims-demo",
+    [parameter(Mandatory=$false)][string]$name = "ms-payments-demo",
     [parameter(Mandatory=$false)][string]$aksName,
     [parameter(Mandatory=$false)][string]$resourceGroup,
     [parameter(Mandatory=$false)][string]$acrName,
@@ -125,14 +125,14 @@ Write-Host "Configuration file used is $valuesFile" -ForegroundColor Yellow
 
 if ($charts.Contains("api") -or  $charts.Contains("*")) {
     Write-Host "API chart - api" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-api ./claims-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/claims-api --set image.tag=$tag --set hpa.activated=$autoscale"
+    $command = "helm upgrade --install $name-api ./payments-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/payments-api --set image.tag=$tag --set hpa.activated=$autoscale"
     $command = createHelmCommand $command 
     Invoke-Expression "$command"
 }
 
 if ($charts.Contains("web") -or  $charts.Contains("*")) {
     Write-Host "Webapp chart - web" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-worker ./claims-worker -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/claims-worker-service --set image.tag=$tag  --set hpa.activated=$autoscale"
+    $command = "helm upgrade --install $name-worker ./payments-worker -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/payments-worker-service --set image.tag=$tag  --set hpa.activated=$autoscale"
     $command = createHelmCommand $command
     Invoke-Expression "$command"
 }
@@ -157,4 +157,4 @@ if ($charts.Contains("web") -or  $charts.Contains("*")) {
 Pop-Location
 Pop-Location
 
-Write-Host "MS Claims Demo deployed on AKS" -ForegroundColor Yellow
+Write-Host "MS Payments Demo deployed on AKS" -ForegroundColor Yellow

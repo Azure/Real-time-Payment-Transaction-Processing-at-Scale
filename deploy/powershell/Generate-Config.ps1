@@ -60,8 +60,8 @@ $openAi=$(az cognitiveservices account list -g $resourceGroup --query "[?kind=='
 $openAiKey=$(az cognitiveservices account keys list -g $resourceGroup -n $openAi.name -o json --query key1 | ConvertFrom-Json)
 $openAiDeployment = "completions"
 
-$apiIdentityClientId=$(az identity show -g $resourceGroup -n mi-api-coreclaims-$suffix -o json | ConvertFrom-Json).clientId
-$workerIdentityClientId=$(az identity show -g $resourceGroup -n mi-worker-coreclaims-$suffix -o json | ConvertFrom-Json).clientId
+$apiIdentityClientId=$(az identity show -g $resourceGroup -n mi-api-corepayments-$suffix -o json | ConvertFrom-Json).clientId
+$workerIdentityClientId=$(az identity show -g $resourceGroup -n mi-worker-corepayments-$suffix -o json | ConvertFrom-Json).clientId
 $tenantId=$(az account show --query homeTenantId --output tsv)
 
 ## Getting Frontdoor info

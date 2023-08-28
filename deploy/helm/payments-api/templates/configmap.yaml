@@ -11,8 +11,8 @@ metadata:
     heritage: {{ .Release.Service }}
 data:
   AzureWebJobsStorage__accountName: {{ .Values.azureWebJobsStorage.accountName }}
-  CoreClaimsCosmosDB__accountEndpoint: {{ .Values.coreClaimsCosmosDb.accountEndpoint }}
-  CoreClaimsEventHub__fullyQualifiedNamespace: {{ .Values.coreClaimsEventHub.fullyQualifiedNamespace }}
+  CorePaymentsCosmosDB__accountEndpoint: {{ .Values.corePaymentsCosmosDb.accountEndpoint }}
+  CorePaymentsEventHub__fullyQualifiedNamespace: {{ .Values.corePaymentsEventHub.fullyQualifiedNamespace }}
   BusinessRuleOptions__AutoApproveThreshold: {{ .Values.businessRuleOptions.autoApproveThreshold | quote }}
   BusinessRuleOptions__RequireManagerApproval: {{ .Values.businessRuleOptions.requireManagerApproval | quote }}
   BusinessRuleOptions__DemoMode: {{ .Values.businessRuleOptions.demoMode | quote }}
