@@ -71,7 +71,6 @@ From the `deploy/powershell` folder, run the following command. This should prov
 
 ```pwsh
 .\Unified-Deploy.ps1 -resourceGroup <resource-group-name> `
-                     -location EastUS `
                      -subscription <subscription-id>
 ```
 
@@ -84,7 +83,6 @@ git clone https://github.com/hatboyzero/RealTimeTransactions.git
 cd RealTimeTransactions
 chmod +x ./deploy/powershell/*
 ./deploy/powershell/CloudShell-Deploy.ps1 -resourceGroup <rg-name> `
-                                          -location EastUS `
                                           -subscription <target-subscription>
 ```
 
