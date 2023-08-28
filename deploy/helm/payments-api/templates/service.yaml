@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "payments-api.fullname" . }}
+  labels:
+    app: {{ template "payments-api.name" . }}
+    chart: {{ template "payments-api.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "payments-api.name" . }}
+    release: {{ .Release.Name }}

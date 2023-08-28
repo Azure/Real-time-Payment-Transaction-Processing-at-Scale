@@ -1,0 +1,22 @@
+azureWebJobsStorage:
+  accountName: "{{dataLakeAccountName}}"
+coreClaimsCosmosDb:
+  accountEndpoint: "{{cosmosEndpoint}}"
+coreClaimsEventHub:
+  fullyQualifiedNamespace: "ehcoreclaims{{suffix}}.servicebus.windows.net"
+businessRuleOptions:
+  autoApproveThreshold: 200
+  requireManagerApproval: 500
+  demoMode: true
+  demoAdjudicatorId: df166300-5a78-3502-a46a-832842197811
+  demoManagerAdjudicatorId: a735bf55-83e9-331a-899d-a82a60b9f60c
+rulesEngine:
+  openAiEndpoint: "{{openAiEndpoint}}"
+  openAiKey: "{{openAiKey}}"
+  openAiCompletionsDeployment: "{{openAiCompletionsDeployment}}"
+azureWorkloadIdentity:
+  apiClientId: {{apiClientId}}
+  workerClientId: {{workerClientId}}
+  tenantId: {{tenantId}}
+applicationInsights:
+  connectionString: "{{aiConnectionString}}"

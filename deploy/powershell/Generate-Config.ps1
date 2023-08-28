@@ -1,8 +1,11 @@
 Param(
     [parameter(Mandatory=$true)][string]$resourceGroup,
-    [parameter(Mandatory=$false)][string]$openAiName,
-    [parameter(Mandatory=$false)][string]$openAiRg,
-    [parameter(Mandatory=$false)][string]$openAiDeployment
+    [parameter(Mandatory=$true)][string]$suffix,
+    [parameter(Mandatory=$false)][string[]]$outputFile=$null,
+    [parameter(Mandatory=$false)][string[]]$gvaluesTemplate="..,..,gvalues.template.yml",
+    [parameter(Mandatory=$false)][string[]]$dockerComposeTemplate="..,..,docker-compose.template.yml",
+    [parameter(Mandatory=$false)][string]$ingressClass="addon-http-application-routing",
+    [parameter(Mandatory=$false)][string]$domain
 )
 
 function EnsureAndReturnFirstItem($arr, $restype) {
@@ -46,23 +49,20 @@ if ($appInsightsName -and $appInsightsName.Length -eq 1) {
     $appinsightsConfig=$(az monitor app-insights component show --app $appInsightsName -g $resourceGroup -o json | ConvertFrom-Json)
 
     if ($appinsightsConfig) {
-        $appinsightsId = $appinsightsConfig.instrumentationKey           
+        $appinsightsId = $appinsightsConfig.instrumentationKey         
+        $appinsightsConnectionString = $appinsightsConfig.connectionString   
     }
 }
 Write-Host "App Insights Instrumentation Key: $appinsightsId" -ForegroundColor Yellow
 
 ## Getting OpenAI info
-if ($openAiName) {
-    $openAi=$(az cognitiveservices account show -n $openAiName -g $openAiRg -o json | ConvertFrom-Json)
-} else {
-    $openAi=$(az cognitiveservices account list -g $openAiRg --query "[?kind=='OpenAI'].{name: name, kind:kind, endpoint: properties.endpoint}" -o json | ConvertFrom-Json)
-}
+$openAi=$(az cognitiveservices account list -g $resourceGroup --query "[?kind=='OpenAI'].{name: name, kind:kind, endpoint: properties.endpoint}" -o json | ConvertFrom-Json)
+$openAiKey=$(az cognitiveservices account keys list -g $resourceGroup -n $openAi.name -o json --query key1 | ConvertFrom-Json)
+$openAiDeployment = "completions"
 
-$openAiKey=$(az cognitiveservices account keys list -g $openAiRg -n $openAi.name -o json --query key1 | ConvertFrom-Json)
-
-if (-not $openAiDeployment) {
-    $openAiDeployment = "completions"
-}
+$apiIdentityClientId=$(az identity show -g $resourceGroup -n mi-api-coreclaims-$suffix -o json | ConvertFrom-Json).clientId
+$workerIdentityClientId=$(az identity show -g $resourceGroup -n mi-worker-coreclaims-$suffix -o json | ConvertFrom-Json).clientId
+$tenantId=$(az account show --query homeTenantId --output tsv)
 
 ## Getting Frontdoor info
 $frontdoor=$(az afd profile list -g $resourceGroup -o json | ConvertFrom-Json).name
@@ -84,6 +84,20 @@ $tokens.openAiEndpoint=$openAi.properties.endpoint
 $tokens.openAiKey=$openAiKey
 $tokens.openAiDeployment=$openAiDeployment
 $tokens.apiUrl="https://${fdEndpoint}/api"
+$tokens.apiClientId=$apiIdentityClientId
+$tokens.workerClientId=$workerIdentityClientId
+$tokens.tenantId=$tenantId
+$tokens.aiConnectionString=$appinsightsConnectionString
+
+# Standard fixed tokens
+$tokens.ingressclass=$ingressClass
+$tokens.ingressrewritepath="(/|$)(.*)"
+$tokens.ingressrewritetarget="`$2"
+
+if($ingressClass -eq "nginx") {
+    $tokens.ingressrewritepath="(/|$)(.*)" 
+    $tokens.ingressrewritetarget="`$2"
+}
 
 Write-Host ($tokens | ConvertTo-Json) -ForegroundColor Yellow
 Write-Host "===========================================================" -ForegroundColor Yellow

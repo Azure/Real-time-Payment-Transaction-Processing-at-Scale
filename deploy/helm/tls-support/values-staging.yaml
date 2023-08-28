@@ -1,0 +1,8 @@
+applicationName: ms-claims-cosmosdb-tls
+issuerName: ms-claims-cosmosdb-tls-staging
+certName: ms-claims-cosmosdb-tls-cert-staging
+environment: staging
+server: https://acme-v02.api.letsencrypt.org/directory
+certSecretName: tls-staging
+issuerSecretName: letsencrypt-staging
+ingressClass: addon-http-application-routing

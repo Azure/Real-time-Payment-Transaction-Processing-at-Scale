@@ -2,7 +2,7 @@
 param frontDoorName string 
 
 @description('Function Names')
-param functionNames array 
+param aksNames array 
 
 @description('Enable Multi Master')
 param enableMultiMaster bool
@@ -42,14 +42,14 @@ resource frontDoorOriginGroup 'Microsoft.Cdn/profiles/originGroups@2022-11-01-pr
   }
 }
 
-resource frontDoorOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2022-11-01-preview' = [for (function, i) in functionNames: {
-  name: function
+resource frontDoorOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2022-11-01-preview' = [for (aks, i) in aksNames: {
+  name: aks
   parent: frontDoorOriginGroup
   properties: {
-    hostName: '${function}.azurewebsites.net'
+    hostName: '${aks}.azurewebsites.net'
     httpPort: 80
     httpsPort: 443
-    originHostHeader: '${function}.azurewebsites.net'
+    originHostHeader: '${aks}.azurewebsites.net'
     priority: enableMultiMaster ? 1 : (i + 1)
     weight: 1000
   }

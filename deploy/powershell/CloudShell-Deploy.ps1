@@ -1,19 +1,20 @@
 #!/usr/bin/pwsh
 
 Param(
+    [parameter(Mandatory=$false)][string]$acrName="bydtochatgptcr",
+    [parameter(Mandatory=$false)][string]$acrResourceGroup="ms-byd-to-chatgpt",
     [parameter(Mandatory=$true)][string]$resourceGroup,
-    [parameter(Mandatory=$false)][string]$locations="SouthCentralUS, NorthCentralUS, EastUS",
-    [parameter(Mandatory=$false)][string]$openAiLocation="EastUS",
+    [parameter(Mandatory=$true)][string]$location,
     [parameter(Mandatory=$true)][string]$subscription,
-    [parameter(Mandatory=$false)][string]$template="main.bicep",
-    [parameter(Mandatory=$false)][string]$suffix=$null,
+    [parameter(Mandatory=$false)][string]$suffix,
     [parameter(Mandatory=$false)][bool]$stepDeployBicep=$true,
-    [parameter(Mandatory=$false)][bool]$stepBuildPush=$true,
+    [parameter(Mandatory=$false)][bool]$stepBuildPush=$false,
     [parameter(Mandatory=$false)][bool]$stepDeployCertManager=$true,
     [parameter(Mandatory=$false)][bool]$stepDeployTls=$true,
     [parameter(Mandatory=$false)][bool]$stepDeployImages=$true,
+    [parameter(Mandatory=$false)][bool]$stepSetupSynapse=$true,
     [parameter(Mandatory=$false)][bool]$stepPublishSite=$true,
-    [parameter(Mandatory=$false)][bool]$stepLoginAzure=$true
+    [parameter(Mandatory=$false)][bool]$stepLoginAzure=$false
 )
 
 az extension add --name  application-insights
@@ -45,36 +46,30 @@ if ($stepLoginAzure) {
 
 az account set --subscription $subscription
 
-$rg = $(az group show -g $resourceGroup -o json | ConvertFrom-Json)
-if (-not $rg) {
-    $rg=$(az group create -g $resourceGroup -l $locations.Split(',')[0] --subscription $subscription)
-}
-
-# Waiting to make sure resource group is available
-Start-Sleep -Seconds 10
-
 if ($stepDeployBicep) {
-    & ./Deploy-Bicep.ps1 -resourceGroup $resourceGroup -locations $locations -template $template -suffix $suffix -openAiName $openAiName -openAiRg $openAiRg -openAiDeployment $openAiDeployment
+    & ./Deploy-Bicep.ps1 -resourceGroup $resourceGroup -location $location -suffix $suffix
 }
 
 # Connecting kubectl to AKS
 Write-Host "Retrieving Aks Name" -ForegroundColor Yellow
-$aksNames = $(az aks list -g $resourceGroup -o json | ConvertFrom-Json).name
+$aksName = $(az aks list -g $resourceGroup -o json | ConvertFrom-Json).name
 Write-Host "The name of your AKS: $aksName" -ForegroundColor Yellow
 
-az aks enable-addons -g $resourceGroup -n $aksNames[0] --addons http_application_routing
-az aks enable-addons -g $resourceGroup -n $aksNames[1] --addons http_application_routing
-az aks enable-addons -g $resourceGroup -n $aksNames[2] --addons http_application_routing
+az aks enable-addons -g $resourceGroup -n $aksName --addons http_application_routing
+
+# Write-Host "Retrieving credentials" -ForegroundColor Yellow
+az aks get-credentials -n $aksName -g $resourceGroup --overwrite-existing --admin
 
 # Generate Config
 New-Item -ItemType Directory -Force -Path $(./Join-Path-Recursively.ps1 -pathParts ..,..,__values)
 $gValuesLocation=$(./Join-Path-Recursively.ps1 -pathParts ..,..,__values,$gValuesFile)
-& ./Generate-Config.ps1 -resourceGroup $resourceGroup -openAiName $openAiName -openAiRg $openAiRg -openAiDeployment $openAiDeployment
+& ./Generate-Config.ps1 -resourceGroup $resourceGroup -suffix $suffix -outputFile $gValuesLocation
 
 # Create Secrets
 if ([string]::IsNullOrEmpty($acrName))
 {
     $acrName = $(az acr list --resource-group $resourceGroup -o json | ConvertFrom-Json).name
+    $acrResourceGroup = $resourceGroup
 }
 
 Write-Host "The Name of your ACR: $acrName" -ForegroundColor Yellow
@@ -91,18 +86,22 @@ if ($stepDeployTls) {
 
 if ($stepBuildPush) {
     # Build an Push
-    & ./BuildPush.ps1 -resourceGroup $resourceGroup -acrName $acrName
+    & ./BuildPush.ps1 -resourceGroup $acrResourceGroup -acrName $acrName
 }
 
 if ($stepDeployImages) {
     # Deploy images in AKS
     $gValuesLocation=$(./Join-Path-Recursively.ps1 -pathParts ..,..,__values,$gValuesFile)
     $chartsToDeploy = "*"
-    & ./Deploy-Images-Aks.ps1 -aksNames $aksNames -resourceGroup $resourceGroup -charts $chartsToDeploy -acrName $acrName -valuesFile $gValuesLocation
+    & ./Deploy-Images-Aks.ps1 -aksName $aksName -resourceGroup $resourceGroup -charts $chartsToDeploy -acrName $acrName -valuesFile $gValuesLocation
+}
+
+if ($stepSetupSynapse) {
+    & ./Setup-Synapse.ps1 -resourceGroup $resourceGroup
 }
 
 if ($stepPublishSite) {
-    & ./Publish-Site.ps1 -resourceGroup $resourceGroup -storageAccount "webpaysa$suffix"
+    & ./Publish-Site.ps1 -resourceGroup $resourceGroup -storageAccount "webcoreclaims$suffix"
 }
 
 Pop-Location
