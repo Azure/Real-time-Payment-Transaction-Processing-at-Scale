@@ -11,4 +11,5 @@ metadata:
     heritage: {{ .Release.Service }}
 data:
   CosmosDBConnection__accountEndpoint: {{ .Values.cosmosDbConnection.accountEndpoint }}
+  ClientId: {{ .Values.azureWorkloadIdentity.workerClientId }}
 
