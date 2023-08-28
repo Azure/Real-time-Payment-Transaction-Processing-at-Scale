@@ -29,10 +29,14 @@ const headers = [
   {
     key: 'details',
     name: ''
+  },
+  {
+    key: 'viewAccounts',
+    name: ''
   }
 ];
 
-const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
+const MembersTable = ({ setMember, showFormModal, setShowFormModal, setAccountsSelected }) => {
   const [continuationToken, setContinuationToken] = useState('');
   const [nextToken, setNextToken] = useState('');
   const [rows, setRows] = useState([]);
@@ -43,6 +47,16 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
     (memberId) => {
       const member = rows.find((member) => member.id === memberId);
       setMember(member);
+      setAccountsSelected(false);
+    },
+    [data?.page, setMember, rows]
+  );
+
+  const onClickAccounts = useCallback(
+    (memberId) => {
+      const member = rows.find((member) => member.id === memberId);
+      setMember(member);
+      setAccountsSelected(true);
     },
     [data?.page, setMember, rows]
   );
@@ -72,6 +86,11 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal }) => {
       details: (
         <p className="underline cursor-pointer" onClick={() => onClickDetails(row.id)}>
           Details
+        </p>
+      ),
+      viewAccounts: (
+        <p className="underline cursor-pointer" onClick={() => onClickAccounts(row.id)}>
+          View Accounts
         </p>
       )
     };
