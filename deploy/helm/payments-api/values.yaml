@@ -29,26 +29,26 @@ ingress:
     kubernetes.io/ingress.class: addon-http-application-routing
     ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    ingress.kubernetes.io/rewrite-target: /$2
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
   tls:
   - secretName: tls-prod
 
 env:
   configmap:
     - name: CosmosDBConnection__accountEndpoint
-    - name: CorePaymentsCosmosDB__accountEndpoint
-    - name: CorePaymentsEventHub__fullyQualifiedNamespace
-    - name: BusinessRuleOptions__AutoApproveThreshold
-    - name: BusinessRuleOptions__RequireManagerApproval
-    - name: BusinessRuleOptions__DemoMode
-    - name: BusinessRuleOptions__DemoAdjudicatorId
-    - name: BusinessRuleOptions__DemoManagerAdjudicatorId
-    - name: RulesEngine__OpenAIEndpoint
-    - name: RulesEngine__OpenAICompletionsDeployment
+    - name: DatabaseSettings__CustomerContainer
+    - name: DatabaseSettings__GlobalIndexContainer
+    - name: DatabaseSettings__IsMasterRegion
+    - name: DatabaseSettings__MemberContainer
+    - name: DatabaseSettings__PaymentsDatabase
+    - name: DatabaseSettings__PreferredRegions
+    - name: DatabaseSettings__TransactionsContainer
+    - name: AnalyticsEngine__OpenAIEndpoint
+    - name: AnalyticsEngine__OpenAICompletionsEndpoint
     - name: ClientId
   secret:
-    - name: RulesEngine__OpenAIKey
+    - name: AnalyticsEngine__OpenAIKey
     - name: ApplicationInsights__ConnectionString
   values:
     - name: ASPNETCORE_ENVIRONMENT

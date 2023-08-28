@@ -37,14 +37,8 @@ param workerMiName string = 'miworker${suffix}'
 @description('App Insights name')
 param aiName string = 'ai${suffix}'
 
-@description('OpenAi Deployment')
-param openAiDeployment string = 'completions'
-
-@description('OpenAI Resource Group')
-param openAiResourceGroup string
-
 @description('AKS name')
-param
+param aksName string = 'aks${suffix}'
 
 var locArray = split(toLower(replace(locations, ' ', '')), ',')
 var regionNames = {
@@ -69,7 +63,7 @@ module openAi 'openai.bicep' = {
   name: 'openAiDeploy'
   params: {
     openAiName: openAiName
-    location: locArray[0]
+    location: locArray[2]
     deployments: [
       {
         name: 'completions'
@@ -84,15 +78,15 @@ module openAi 'openai.bicep' = {
   }
 }
 
-module blob 'blob.bicep' = [for (location, i) in locArray: {
-  name: 'blobDeploy-${location}'
-  params: {
-    storageAccountName: '${storageAccountName}${i}'
-    location: location
-    apiPrincipalId: apiIdentity.properties.principalId
-    workerPrincipalId: workerIdentity.properties.principalId
-  }
-}]
+// module blob 'blob.bicep' = [for (location, i) in locArray: {
+//   name: 'blobDeploy-${location}'
+//   params: {
+//     storageAccountName: '${storageAccountName}${i}'
+//     location: location
+//     apiPrincipalId: apiIdentity.properties.principalId
+//     workerPrincipalId: workerIdentity.properties.principalId
+//   }
+// }]
 
 // @batchSize(1)
 // module function 'functions.bicep' = [for (location, i) in locArray: {
@@ -119,8 +113,8 @@ module blob 'blob.bicep' = [for (location, i) in locArray: {
 // }]
 
 @batchSize(1)
-module aks 'AKS-construction/bicep/main.bicep' = [for (location, i) in locArray: {
-  name: 'aksconstruction'
+module aks 'AKS-Construction/bicep/main.bicep' = [for (location, i) in locArray: {
+  name: 'aksconstruction${i}'
   params: {
     location : location
     resourceName: '${aksName}${i}'
@@ -141,8 +135,10 @@ module aks 'AKS-construction/bicep/main.bicep' = [for (location, i) in locArray:
     keyVaultAksCSI : true
 
     JustUseSystemPool: true
+
+    httpApplicationRouting: true
   }
-  dependsOn: [cosmosdb, blob, openAi]
+  dependsOn: [cosmosdb, openAi]
 }]
 
 @batchSize(1)
@@ -180,7 +176,7 @@ resource workerIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2022-0
   location: locArray[0]
 
   resource fedCreds 'federatedIdentityCredentials' = [for (location,i) in locArray: {
-    name: '${workerMiName}-fed'
+    name: '${workerMiName}-fed${i}'
     properties: {
       audiences: aks[i].outputs.aksOidcFedIdentityProperties.audiences
       issuer: aks[i].outputs.aksOidcFedIdentityProperties.issuer

@@ -23,9 +23,6 @@ az extension update --name  application-insights
 az extension add --name storage-preview
 az extension update --name storage-preview
 
-winget install --id=Kubernetes.kubectl  -e --accept-package-agreements --accept-source-agreements --silent
-winget install --id=Microsoft.Azure.Kubelogin  -e --accept-package-agreements --accept-source-agreements --silent
-
 $gValuesFile="configFile.yaml"
 
 Push-Location $($MyInvocation.InvocationName | Split-Path)

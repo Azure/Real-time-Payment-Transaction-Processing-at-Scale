@@ -2,15 +2,15 @@
 
 Param(
     [parameter(Mandatory=$false)][string]$name = "ms-payments-demo",
-    [parameter(Mandatory=$false)][string]$aksName,
     [parameter(Mandatory=$false)][string]$resourceGroup,
+    [parameter(Mandatory=$true)][string]$locations,
     [parameter(Mandatory=$false)][string]$acrName,
     [parameter(Mandatory=$false)][string]$acrResourceGroup=$resourceGroup,
     [parameter(Mandatory=$false)][string]$tag="latest",
     [parameter(Mandatory=$false)][string]$charts = "*",
     [parameter(Mandatory=$false)][string]$valuesFile = "",
     [parameter(Mandatory=$false)][string]$namespace = "",
-    [parameter(Mandatory=$false)][string][ValidateSet('prod','staging','none','custom', IgnoreCase=$false)]$tlsEnv = "prod",
+    [parameter(Mandatory=$false)][string][ValidateSet('prod','staging','none','custom', IgnoreCase=$false)]$tlsEnv = "none",
     [parameter(Mandatory=$false)][string]$tlsHost="",
     [parameter(Mandatory=$false)][string]$tlsSecretName="tls-prod",
     [parameter(Mandatory=$false)][bool]$autoscale=$false
@@ -77,84 +77,83 @@ function createHelmCommand([string]$command) {
     return "$newcommand";
 }
 
-Write-Host "--------------------------------------------------------" -ForegroundColor Yellow
-Write-Host " Deploying images on cluster $aksName"  -ForegroundColor Yellow
-Write-Host " "  -ForegroundColor Yellow
-Write-Host " Additional parameters are:"  -ForegroundColor Yellow
-Write-Host " Release Name: $name"  -ForegroundColor Yellow
-Write-Host " AKS to use: $aksName in RG $resourceGroup and ACR $acrName"  -ForegroundColor Yellow
-Write-Host " Images tag: $tag"  -ForegroundColor Yellow
-Write-Host " TLS/SSL environment to enable: $tlsEnv"  -ForegroundColor Yellow
-Write-Host " Namespace (empty means the one in .kube/config): $namespace"  -ForegroundColor Yellow
-Write-Host " --------------------------------------------------------" 
+$locArray = $locations.Split(",")
 
-if ($acrName -ne "bydtochatgptcr") {
-    $acrLogin=$(az acr show -n $acrName -g $acrResourceGroup -o json| ConvertFrom-Json).loginServer
-    Write-Host "acr login server is $acrLogin" -ForegroundColor Yellow
-}
-else {
-    $acrLogin="bydtochatgptcr.azurecr.io"
-}
+$i = 0
+foreach($location in $locArray)
+{
+    $queryString = "[?location=='$($location.toLower())'].{name: name}"
+    $aksName = $(az aks list -g $resourceGroup --query $queryString -o json | ConvertFrom-Json).name
+    az aks get-credentials -n $aksName -g $resourceGroup --admin
 
-if ($tlsEnv -ne "custom" -and [String]::IsNullOrEmpty($tlsHost)) {
-    $aksHost=$(az aks show -n $aksName -g $resourceGroup --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName -o json | ConvertFrom-Json)
+    Write-Host "--------------------------------------------------------" -ForegroundColor Yellow
+    Write-Host " Deploying images on cluster $aksName"  -ForegroundColor Yellow
+    Write-Host " "  -ForegroundColor Yellow
+    Write-Host " Additional parameters are:"  -ForegroundColor Yellow
+    Write-Host " Release Name: $name"  -ForegroundColor Yellow
+    Write-Host " AKS to use: $aksName in RG $resourceGroup and ACR $acrName"  -ForegroundColor Yellow
+    Write-Host " Images tag: $tag"  -ForegroundColor Yellow
+    Write-Host " TLS/SSL environment to enable: $tlsEnv"  -ForegroundColor Yellow
+    Write-Host " Namespace (empty means the one in .kube/config): $namespace"  -ForegroundColor Yellow
+    Write-Host " --------------------------------------------------------" 
 
-    if (-not $aksHost) {
-        $aksHost=$(az aks show -n $aksName -g $resourceGroup --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o json | ConvertFrom-Json)
+    if ($acrName -ne "bydtochatgptcr") {
+        $acrName = $(az acr list -g $resourceGroup --query $queryString -o json | ConvertFrom-Json).name
+        $acrLogin=$(az acr show -n $acrName -g $acrResourceGroup -o json| ConvertFrom-Json).loginServer
+        Write-Host "acr login server is $acrLogin" -ForegroundColor Yellow
+    }
+    else {
+        $acrLogin="bydtochatgptcr.azurecr.io"
     }
 
-    Write-Host "acr login server is $acrLogin" -ForegroundColor Yellow
-    Write-Host "aksHost is $aksHost" -ForegroundColor Yellow
+    if ($tlsEnv -ne "custom" -and [String]::IsNullOrEmpty($tlsHost)) {
+        $aksHost=$(az aks show -n $aksName -g $resourceGroup --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName -o json | ConvertFrom-Json)
+
+        if (-not $aksHost) {
+            $aksHost=$(az aks show -n $aksName -g $resourceGroup --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o json | ConvertFrom-Json)
+        }
+
+        Write-Host "acr login server is $acrLogin" -ForegroundColor Yellow
+        Write-Host "aksHost is $aksHost" -ForegroundColor Yellow
+    }
+    else {
+        $aksHost=$tlsHost
+    }
+
+    validate
+
+    Push-Location $($MyInvocation.InvocationName | Split-Path)
+    Push-Location $(Join-Path .. helm)
+
+    $aksArray = $aksNames.Split(',')
+    $locArray = $locations.Split(',')
+
+    Write-Host "Deploying charts $charts" -ForegroundColor Yellow
+
+    if ([String]::IsNullOrEmpty($valuesFile)) {
+        $valuesFile="gvalues.yaml"
+    }
+
+    Write-Host "Configuration file used is ${valuesFile}${i}.yml" -ForegroundColor Yellow
+
+    if ($charts.Contains("api") -or  $charts.Contains("*")) {
+        Write-Host "API chart - api" -ForegroundColor Yellow
+        $command = "helm upgrade --install $name-api ./payments-api -f ${valuesFile}${i}.yml --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/payments-api --set image.tag=$tag --set hpa.activated=$autoscale"
+        $command = createHelmCommand $command 
+        Invoke-Expression "$command"
+    }
+
+    if ($charts.Contains("web") -or  $charts.Contains("*")) {
+        Write-Host "Webapp chart - web" -ForegroundColor Yellow
+        $command = "helm upgrade --install $name-worker ./payments-worker -f ${valuesFile}${i}.yml --set image.repository=$acrLogin/payments-worker-service --set image.tag=$tag  --set hpa.activated=$autoscale"
+        $command = createHelmCommand $command
+        Invoke-Expression "$command"
+    }
+
+    Pop-Location
+    Pop-Location
+
+    Write-Host "MS Payments Demo deployed on AKS" -ForegroundColor Yellow
+
+    $i++
 }
-else {
-    $aksHost=$tlsHost
-}
-
-validate
-
-Push-Location $($MyInvocation.InvocationName | Split-Path)
-Push-Location $(Join-Path .. helm)
-
-Write-Host "Deploying charts $charts" -ForegroundColor Yellow
-
-if ([String]::IsNullOrEmpty($valuesFile)) {
-    $valuesFile="gvalues.yaml"
-}
-
-Write-Host "Configuration file used is $valuesFile" -ForegroundColor Yellow
-
-if ($charts.Contains("api") -or  $charts.Contains("*")) {
-    Write-Host "API chart - api" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-api ./payments-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/payments-api --set image.tag=$tag --set hpa.activated=$autoscale"
-    $command = createHelmCommand $command 
-    Invoke-Expression "$command"
-}
-
-if ($charts.Contains("web") -or  $charts.Contains("*")) {
-    Write-Host "Webapp chart - web" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-worker ./payments-worker -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/payments-worker-service --set image.tag=$tag  --set hpa.activated=$autoscale"
-    $command = createHelmCommand $command
-    Invoke-Expression "$command"
-}
-
-# Write-Host " --------------------------------------------------------" 
-# Write-Host "Entering holding pattern to wait for proper backend API initialization"
-# Write-Host "Attempting to retrieve status from https://$($aksHost)/api/status every 20 seconds with 50 retries"
-# Write-Host " --------------------------------------------------------" 
-# $apiStatus = "initializing"
-# $retriesLeft = 50
-# while (($apiStatus.ToString() -ne "ready") -and ($retriesLeft -gt 0)) {
-#     Start-Sleep -Seconds 20
-#     $apiStatus = Invoke-RestMethod -Uri "https://$($aksHost)/api/status" -Method GET
-#     Write-Host "API endpoint status: $($apiStatus)"
-#     $retriesLeft -= 1
-# } 
-
-# if ($apiStatus.ToString() -ne "ready") {
-#     throw "The backend API did not enter the ready state."
-# }
-
-Pop-Location
-Pop-Location
-
-Write-Host "MS Payments Demo deployed on AKS" -ForegroundColor Yellow

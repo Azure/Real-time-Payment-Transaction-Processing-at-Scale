@@ -1,12 +1,14 @@
 cosmosDbConnection:
   accountEndpoint: "{{cosmosEndpoint}}"
-businessRuleOptions:
-  autoApproveThreshold: 200
-  requireManagerApproval: 500
-  demoMode: true
-  demoAdjudicatorId: df166300-5a78-3502-a46a-832842197811
-  demoManagerAdjudicatorId: a735bf55-83e9-331a-899d-a82a60b9f60c
-rulesEngine:
+databaseSettings:
+  customerContainer: customerTransactions
+  globalIndexContainer: globalIndex
+  isMasterRegion: true
+  memberContainer: members
+  paymentsDatabase: payments
+  preferredRegions: "{{preferredLocations}}"
+  transactionsContainer: transactions
+analyticsEngine:
   openAiEndpoint: "{{openAiEndpoint}}"
   openAiKey: "{{openAiKey}}"
   openAiCompletionsDeployment: "{{openAiCompletionsDeployment}}"

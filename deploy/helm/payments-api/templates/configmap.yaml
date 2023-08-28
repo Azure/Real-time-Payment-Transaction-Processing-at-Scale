@@ -10,14 +10,14 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
-  AzureWebJobsStorage__accountName: {{ .Values.azureWebJobsStorage.accountName }}
-  CorePaymentsCosmosDB__accountEndpoint: {{ .Values.corePaymentsCosmosDb.accountEndpoint }}
-  CorePaymentsEventHub__fullyQualifiedNamespace: {{ .Values.corePaymentsEventHub.fullyQualifiedNamespace }}
-  BusinessRuleOptions__AutoApproveThreshold: {{ .Values.businessRuleOptions.autoApproveThreshold | quote }}
-  BusinessRuleOptions__RequireManagerApproval: {{ .Values.businessRuleOptions.requireManagerApproval | quote }}
-  BusinessRuleOptions__DemoMode: {{ .Values.businessRuleOptions.demoMode | quote }}
-  BusinessRuleOptions__DemoAdjudicatorId: {{ .Values.businessRuleOptions.demoAdjudicatorId }}
-  BusinessRuleOptions__DemoManagerAdjudicatorId: {{ .Values.businessRuleOptions.demoManagerAdjudicatorId }}
-  RulesEngine__OpenAIEndpoint: {{ .Values.rulesEngine.openAiEndpoint }}
-  RulesEngine__OpenAICompletionsDeployment: {{ .Values.rulesEngine.openAiCompletionsDeployment }}
+  CosmosDBConnection__accountEndpoint: {{ .Values.cosmosDbConnection.accountEndpoint }}
+  DatabaseSettings__CustomerContainer: {{ .Values.databaseSettings.customerContainer }}
+  DatabaseSettings__GlobalIndexContainer: {{ .Values.databaseSettings.globalIndexContainer }}
+  DatabaseSettings__IsMasterRegion: {{ .Values.databaseSettings.isMasterRegion | quote }}
+  DatabaseSettings__MemberContainer: {{ .Values.databaseSettings.memberContainer }}
+  DatabaseSettings__PaymentsDatabase: {{ .Values.databaseSettings.paymentsDatabase }}
+  DatabaseSettings__PreferredRegions: {{ .Values.databaseSettings.preferredRegions }}
+  DatabaseSettings__TransactionsContainer: {{ .Values.databaseSettings.transactionsContainer }}
+  AnalyticsEngine__OpenAIEndpoint: {{ .Values.analyticsEngine.openAiEndpoint }}
+  AnalyticsEngine__OpenAICompletionsEndpoint: {{ .Values.analyticsEngine.openAiCompletionsDeployment }}
   ClientId: {{ .Values.azureWorkloadIdentity.apiClientId }}
