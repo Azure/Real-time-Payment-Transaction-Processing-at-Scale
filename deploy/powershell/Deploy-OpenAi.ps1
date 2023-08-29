@@ -29,7 +29,7 @@ if ($openAi.name) {
         $openAiDeployment=$(az cognitiveservices account deployment show -g $resourceGroup -n $openAi.name --deployment-name $deployment)
         if (-not $openAiDeployment) {
             Write-Host "OpenAI deployment ${deployment} not found - creating..." -ForegroundColor Yellow
-            $openAiDeployment=$(az cognitiveservices account deployment create -g $resourceGroup -n $openAi.name --deployment-name $deployment --model-name 'text-davinci-003' --model-version '1' --model-format OpenAI --scale-settings-scale-type "Standard")
+            $openAiDeployment=$(az cognitiveservices account deployment create -g $resourceGroup -n $openAi.name --deployment-name $deployment --model-name 'gpt-35-turbo' --model-version '1' --model-format OpenAI --scale-settings-scale-type "Standard")
         } else {
             Write-Host "Found OpenAI deployment ${deployment}..." -ForegroundColor Yellow
         }
