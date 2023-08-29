@@ -79,7 +79,7 @@ From the `deploy/powershell` folder, run the following command. This should prov
 Create a cloud shell environment in a tenant that contains the target subscription.  Clone the repository and then execute the `CloudShell-Deploy.ps1` script as illustrated in the following snippet.  This will provision all of the required infrastructure and deploy the API and web app services into AKS.
 
 ```pwsh
-git clone https://github.com/hatboyzero/RealTimeTransactions.git
+git clone --recurse-submodules https://github.com/AzureCosmosDB/RealTimeTransactions.git
 cd RealTimeTransactions
 chmod +x ./deploy/powershell/*
 ./deploy/powershell/CloudShell-Deploy.ps1 -resourceGroup <rg-name> `
