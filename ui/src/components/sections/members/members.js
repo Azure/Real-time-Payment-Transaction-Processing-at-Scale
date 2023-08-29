@@ -5,7 +5,7 @@ import { Button } from 'flowbite-react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import MembersTable from '~/components/tables/members';
 
-const MembersSection = ({ setMember }) => {
+const MembersSection = ({ setMember, setAccountsSelected }) => {
   const [showFormModal, setShowFormModal] = useState(false);
 
   const onClickAdd = () => setShowFormModal(true);
@@ -25,6 +25,7 @@ const MembersSection = ({ setMember }) => {
         showFormModal={showFormModal}
         setShowFormModal={setShowFormModal}
         setMember={setMember}
+        setAccountsSelected={setAccountsSelected}
       />
     </div>
   );
