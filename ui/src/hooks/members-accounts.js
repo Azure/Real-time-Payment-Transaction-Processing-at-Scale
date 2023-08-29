@@ -10,8 +10,8 @@ const fetcher = async ({ queryKey }) => {
     .then((res) => res.data);
 };
 
-const membersAccounts = (memberId) => {
+const MembersAccounts = (memberId) => {
   return useQuery(['members', { memberId }], fetcher);
 };
 
-export default membersAccounts;
+export default MembersAccounts;

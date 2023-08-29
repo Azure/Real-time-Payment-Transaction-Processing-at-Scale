@@ -7,7 +7,7 @@ import AssignAccountForm from '~/components/forms/assign-account';
 import AccountsTable from '~/components/tables/accounts';
 import TransactionsSection from '~/components/sections/accounts/transactions';
 
-import unassignMemberAccount from '~/hooks/unassign-member-account';
+import UnassignMemberAccount from '~/hooks/unassign-member-account';
 
 const ViewAccountsSection = ({ member, setMember }) => {
   const [showFormModal, setShowFormModal] = useState(false);
@@ -19,7 +19,7 @@ const ViewAccountsSection = ({ member, setMember }) => {
   const [viewTransactions, setViewTransactions] = useState(false);
   
 
-  const { mutate: RemoveTrigger } = unassignMemberAccount(removeAccountId, member.id);
+  const { mutate: RemoveTrigger } = UnassignMemberAccount(removeAccountId, member.id);
 
   const onClickAssign = () => setShowFormModal(true);
   const onClickCancelRemoveAssingedAccount = () => setShowRemoveAccountModal(false);

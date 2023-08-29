@@ -2,16 +2,16 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Button, Label, Spinner, TextInput } from 'flowbite-react';
 import { useDebounce } from '~/hooks/use-debounce';
 
-import findAccountMatch from '~/hooks/search-accounts';
-import assignMemberAccount from '~/hooks/assign-member-account';
+import FindAccountMatch from '~/hooks/search-accounts';
+import AssignMemberAccount from '~/hooks/assign-member-account';
 
-const assignAccountForm = ({ setOpenModal, memberId }) => {
+const AssignAccountForm = ({ setOpenModal, memberId }) => {
     const [queryMade, setQueryMade] = useState(false);
     const [form, setForm] = useState("");
     const [account, setAccount] = useState();
     const [confirmation, setConfirmation] = useState(false);
 
-    const { mutate: AddTrigger } = assignMemberAccount(account, memberId);
+    const { mutate: AddTrigger } = AssignMemberAccount(account, memberId);
 
     const onChangeQuery = (e) => {
         setAccount(null);
@@ -50,7 +50,7 @@ const assignAccountForm = ({ setOpenModal, memberId }) => {
     
     const searchQuery = useDebounce(form, 1000)
 
-    const { data, isLoading } = findAccountMatch(searchQuery);
+    const { data, isLoading } = FindAccountMatch(searchQuery);
 
     useEffect(() => {
         if(data?.length === 1) {
@@ -124,4 +124,4 @@ const assignAccountForm = ({ setOpenModal, memberId }) => {
   
 }
 
-export default assignAccountForm;
+export default AssignAccountForm;

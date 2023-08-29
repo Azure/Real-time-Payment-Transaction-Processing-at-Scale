@@ -7,7 +7,7 @@ import { Capitalize, USDollar } from '~/helpers';
 import AccountDetailModal from '~/components/modals/account-detail';
 import Datatable from '~/components/tables/datatable';
 import useAccounts from '~/hooks/accounts';
-import membersAccounts from '~/hooks/members-accounts';
+import MembersAccounts from '~/hooks/members-accounts';
 import FormModal from '~/components/modals/form';
 import NewAccountForm from '~/components/forms/new-account';
 import _ from 'lodash';
@@ -54,7 +54,7 @@ const AccountsTable = ({ setAccountId, setRemoveAccountId, showFormModal, setSho
 
   let x = useAccounts(continuationToken);
   if (memberId) {
-    x = membersAccounts(memberId);
+    x = MembersAccounts(memberId);
   }
   const { data, isLoading } = x;
 
@@ -64,7 +64,7 @@ const AccountsTable = ({ setAccountId, setRemoveAccountId, showFormModal, setSho
       setAccount(account);
       setShowDetailModal(true);
     },
-    [data?.page, rows]
+    [rows]
   );
   const onClickTransactions = (accountId) => {
     setAccountId(accountId);
@@ -129,7 +129,7 @@ const AccountsTable = ({ setAccountId, setRemoveAccountId, showFormModal, setSho
         setNextToken(data.continuationToken);
       }
     }
-  }, [data]);
+  }, [data, memberId]);
 
   useEffect(() => {
     if (reload) {
