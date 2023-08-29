@@ -162,7 +162,7 @@ namespace account_generator
                 await _pollyRetryPolicy.ExecuteAsync(async () =>
                 {
                     var member = memberFaker.Generate();
-                    await membersContainer.CreateItemAsync(member, new PartitionKey(memberId));
+                    await membersContainer.UpsertItemAsync(member, new PartitionKey(memberId));
                     memberList.Add(member);
                     // Create a global index lookup for this member.
                     var globalIndex = new GlobalIndex
@@ -171,7 +171,7 @@ namespace account_generator
                         targetDocType = Constants.DocumentTypes.Member,
                         id = memberId
                     };
-                    await globalIndexContainer.CreateItemAsync(globalIndex, new PartitionKey(globalIndex.partitionKey));
+                    await globalIndexContainer.UpsertItemAsync(globalIndex, new PartitionKey(globalIndex.partitionKey));
                 });
             }
 
@@ -243,7 +243,7 @@ namespace account_generator
                                         targetDocType = Constants.DocumentTypes.AccountSummary,
                                         id = accountId
                                     };
-                                    await globalIndexContainer.CreateItemAsync(globalIndex, new PartitionKey(globalIndex.partitionKey));
+                                    await globalIndexContainer.UpsertItemAsync(globalIndex, new PartitionKey(globalIndex.partitionKey));
 
                                     // Create a global index entry to associate the member with the account.
                                     var globalIndexMemberAccount = new GlobalIndex
@@ -252,7 +252,7 @@ namespace account_generator
                                         targetDocType = Constants.DocumentTypes.AccountSummary,
                                         id = accountId
                                     };
-                                    await globalIndexContainer.CreateItemAsync(globalIndexMemberAccount,
+                                    await globalIndexContainer.UpsertItemAsync(globalIndexMemberAccount,
                                         new PartitionKey(globalIndexMemberAccount.partitionKey));
 
                                     // Create a global index entry to associate the account with the member.
@@ -262,7 +262,7 @@ namespace account_generator
                                         targetDocType = Constants.DocumentTypes.Member,
                                         id = member.id
                                     };
-                                    await globalIndexContainer.CreateItemAsync(globalIndexAccountMember,
+                                    await globalIndexContainer.UpsertItemAsync(globalIndexAccountMember,
                                         new PartitionKey(globalIndexAccountMember.partitionKey));
 
                                     foreach (var transaction in transactions)
