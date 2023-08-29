@@ -49,7 +49,7 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal, setAccountsS
       setMember(member);
       setAccountsSelected(false);
     },
-    [data?.page, setMember, rows]
+    [setMember, rows, setAccountsSelected]
   );
 
   const onClickAccounts = useCallback(
@@ -58,7 +58,7 @@ const MembersTable = ({ setMember, showFormModal, setShowFormModal, setAccountsS
       setMember(member);
       setAccountsSelected(true);
     },
-    [data?.page, setMember, rows]
+    [setMember, rows, setAccountsSelected]
   );
 
   const onClickLoadMore = useCallback(() => {

@@ -12,7 +12,7 @@ const findAccount = async ({ queryKey }) => {
         .catch((err) => err);
 };
 
-const findAccountMatch = (stringSearch = null) =>
+const FindAccountMatch = (stringSearch = null) =>
     useQuery(['findAccount', { stringSearch }], findAccount);
 
-export default findAccountMatch;
+export default FindAccountMatch;
