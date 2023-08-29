@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from 'react-query';
 const editMember = async (accountId, memberId) =>
   await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/member/${memberId}/accounts/add/${accountId}`);
 
-const assignMemberAccount = (accountId = null, memberId = null) => {
+const AssignMemberAccount = (accountId = null, memberId = null) => {
   const client = useQueryClient();
   return useMutation({
     mutationFn: () => editMember(accountId, memberId),
@@ -14,4 +14,4 @@ const assignMemberAccount = (accountId = null, memberId = null) => {
   });
 };
 
-export default assignMemberAccount;
+export default AssignMemberAccount;
