@@ -370,3 +370,6 @@ local.settings.json
 /src/cosmos-payments-demo/Properties/serviceDependencies.json
 /src/CorePayments.WebAPI/appsettings.Development.json
 /src/CorePayments.WorkerService/appsettings.Development.json
+
+__values
+docker-compose.yml

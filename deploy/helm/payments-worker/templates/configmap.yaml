@@ -1,0 +1,15 @@
+{{- $name := include "payments-worker.fullname" . -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "cfg-{{ $name }}"
+  labels:
+    app: {{ template "payments-worker.name" . }}
+    chart: {{ template "payments-worker.chart" .}}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  CosmosDBConnection__accountEndpoint: {{ .Values.cosmosDbConnection.accountEndpoint }}
+  ClientId: {{ .Values.azureWorkloadIdentity.workerClientId }}
+

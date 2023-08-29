@@ -1,9 +1,15 @@
 Param(
     [parameter(Mandatory=$true)][string]$resourceGroup,
-    [parameter(Mandatory=$false)][string]$openAiName,
-    [parameter(Mandatory=$false)][string]$openAiRg,
-    [parameter(Mandatory=$false)][string]$openAiDeployment
+    [parameter(Mandatory=$true)][string]$locations,
+    [parameter(Mandatory=$true)][string]$suffix,
+    [parameter(Mandatory=$false)][string[]]$outputFile=$null,
+    [parameter(Mandatory=$false)][string[]]$gvaluesTemplate="..,..,gvalues.template.yml",
+    [parameter(Mandatory=$false)][string[]]$dockerComposeTemplate="..,..,docker-compose.template.yml",
+    [parameter(Mandatory=$false)][string]$ingressClass="addon-http-application-routing",
+    [parameter(Mandatory=$false)][string]$domain
 )
+
+$locArray = $locations.Split(',')
 
 function EnsureAndReturnFirstItem($arr, $restype) {
     if (-not $arr -or $arr.Length -ne 1) {
@@ -36,33 +42,14 @@ $docdb=EnsureAndReturnFirstItem $docdb "CosmosDB (Document Db)"
 $docdbKey=$(az cosmosdb keys list -g $resourceGroup -n $docdb.name -o json --query primaryMasterKey | ConvertFrom-Json)
 Write-Host "Document Db Account: $($docdb.name)" -ForegroundColor Yellow
 
-## Getting EventHub info
-$eventHubName=$(az eventhubs namespace list -g $resourceGroup -o json | ConvertFrom-Json).name
-
-## Getting App Insights instrumentation key, if required
-$appinsightsId=@()
-$appInsightsName=$(az resource list -g $resourceGroup --resource-type Microsoft.Insights/components --query [].name | ConvertFrom-Json)
-if ($appInsightsName -and $appInsightsName.Length -eq 1) {
-    $appinsightsConfig=$(az monitor app-insights component show --app $appInsightsName -g $resourceGroup -o json | ConvertFrom-Json)
-
-    if ($appinsightsConfig) {
-        $appinsightsId = $appinsightsConfig.instrumentationKey           
-    }
-}
-Write-Host "App Insights Instrumentation Key: $appinsightsId" -ForegroundColor Yellow
-
 ## Getting OpenAI info
-if ($openAiName) {
-    $openAi=$(az cognitiveservices account show -n $openAiName -g $openAiRg -o json | ConvertFrom-Json)
-} else {
-    $openAi=$(az cognitiveservices account list -g $openAiRg --query "[?kind=='OpenAI'].{name: name, kind:kind, endpoint: properties.endpoint}" -o json | ConvertFrom-Json)
-}
+$openAi=$(az cognitiveservices account list -g $resourceGroup --query "[?kind=='OpenAI'].{name: name, kind:kind, endpoint: properties.endpoint}" -o json | ConvertFrom-Json)
+$openAiKey=$(az cognitiveservices account keys list -g $resourceGroup -n $openAi.name -o json --query key1 | ConvertFrom-Json)
+$openAiDeployment = "completions"
 
-$openAiKey=$(az cognitiveservices account keys list -g $openAiRg -n $openAi.name -o json --query key1 | ConvertFrom-Json)
-
-if (-not $openAiDeployment) {
-    $openAiDeployment = "completions"
-}
+$apiIdentityClientId=$(az identity show -g $resourceGroup -n miapi$suffix -o json | ConvertFrom-Json).clientId
+$workerIdentityClientId=$(az identity show -g $resourceGroup -n miworker$suffix -o json | ConvertFrom-Json).clientId
+$tenantId=$(az account show --query homeTenantId --output tsv)
 
 ## Getting Frontdoor info
 $frontdoor=$(az afd profile list -g $resourceGroup -o json | ConvertFrom-Json).name
@@ -72,21 +59,72 @@ $fdEndpoint=$(az afd endpoint list -g $resourceGroup --profile-name $frontdoor -
 Write-Host "az afd endpoint list -g $resourceGroup --profile-name $frontdoor.name -o json"
 Write-Host $fdEndpoint
 
-## Showing Values that will be used
+$aksInstances=$(az aks list -g $resourceGroup --query "[].{name: name, endpoint: addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName}" -o json | ConvertFrom-Json)
+$appInsightsNames=$(az resource list -g $resourceGroup --resource-type Microsoft.Insights/components --query [].name -o json| ConvertFrom-Json)
 
-Write-Host "===========================================================" -ForegroundColor Yellow
-Write-Host "settings.json files will be generated with values:"
+for ($i = 0; $i -lt 3; $i++)
+{
+    ## Getting App Insights instrumentation key, if required
+    $appinsightsConfig=$(az monitor app-insights component show --app $appInsightsNames[$i] -g $resourceGroup -o json | ConvertFrom-Json)
 
-$tokens.cosmosDbConnectionString="AccountEndpoint=$($docdb.documentEndpoint);AccountKey=$docdbKey"
-$tokens.cosmosEndpoint=$docdb.documentEndpoint
-$tokens.eventHubEndpoint="https://$eventHubName.servicebus.windows.net"
-$tokens.openAiEndpoint=$openAi.properties.endpoint
-$tokens.openAiKey=$openAiKey
-$tokens.openAiDeployment=$openAiDeployment
-$tokens.apiUrl="https://${fdEndpoint}/api"
+    if ($appinsightsConfig) {
+        $appinsightsId = $appinsightsConfig.instrumentationKey         
+        $appinsightsConnectionString = $appinsightsConfig.connectionString   
+    }
+    Write-Host "App Insights Instrumentation Key: $appinsightsId" -ForegroundColor Yellow
 
-Write-Host ($tokens | ConvertTo-Json) -ForegroundColor Yellow
-Write-Host "===========================================================" -ForegroundColor Yellow
+    ## Showing Values that will be used
+
+    Write-Host "===========================================================" -ForegroundColor Yellow
+    Write-Host "settings.json files will be generated with values:"
+
+    $tokens.cosmosDbConnectionString="AccountEndpoint=$($docdb.documentEndpoint);AccountKey=$docdbKey"
+    $tokens.cosmosEndpoint=$docdb.documentEndpoint
+    $tokens.eventHubEndpoint="https://$eventHubName.servicebus.windows.net"
+    $tokens.openAiEndpoint=$openAi.endpoint
+    $tokens.openAiKey=$openAiKey
+    $tokens.openAiCompletionsDeployment=$openAiDeployment
+    $tokens.apiUrl="https://${fdEndpoint}/api"
+    $tokens.apiClientId=$apiIdentityClientId
+    $tokens.workerClientId=$workerIdentityClientId
+    $tokens.tenantId=$tenantId
+    $tokens.aiConnectionString=$appinsightsConnectionString
+    $tokens.aksName=$aksInstances[$i].name
+    $tokens.aksEndpoint=$aksInstances[$i].endpoint
+
+    $indices = 0..($locArray.length-1) | ForEach-Object {($_ + $i) % $locArray.Length}
+
+    $tokens.preferredLocations=[system.String]::Join(",", $locArray[$indices].Trim())
+
+    # Standard fixed tokens
+    $tokens.ingressclass=$ingressClass
+    $tokens.ingressrewritepath="(.*)"
+    $tokens.ingressrewritetarget="`$1"
+
+    if($ingressClass -eq "nginx") {
+        $tokens.ingressrewritepath="(/|$)(.*)" 
+        $tokens.ingressrewritetarget="`$2"
+    }
+
+    Write-Host ($tokens | ConvertTo-Json) -ForegroundColor Yellow
+    Write-Host "===========================================================" -ForegroundColor Yellow
+
+    Push-Location $($MyInvocation.InvocationName | Split-Path)
+    $gvaluesTemplatePath=$(./Join-Path-Recursively -pathParts $gvaluesTemplate.Split(","))
+    Write-Host $gvaluesTemplatePath
+    $outputFilePath=$(./Join-Path-Recursively -pathParts $outputFile.Split(","))
+    Write-Host "${outputFilePath}${i}.yml"
+    & ./Token-Replace.ps1 -inputFile $gvaluesTemplatePath -outputFile "${outputFilePath}${i}.yml" -tokens $tokens
+    Pop-Location
+}
+
+
+
+Push-Location $($MyInvocation.InvocationName | Split-Path)
+$dockerComposeTemplatePath=$(./Join-Path-Recursively -pathParts $dockerComposeTemplate.Split(","))
+$outputFilePath=$(./Join-Path-Recursively -pathParts ..,..,docker-compose.yml)
+& ./Token-Replace.ps1 -inputFile $dockerComposeTemplatePath -outputFile $outputFilePath -tokens $tokens
+Pop-Location
 
 $accountGeneratorSettingsTemplate="..,..,src,account-generator,local.settings.template.json"
 $accountGeneratorSettings="..,..,src,account-generator,local.settings.json"
@@ -94,14 +132,6 @@ Push-Location $($MyInvocation.InvocationName | Split-Path)
 $accountGeneratorSettingsTemplatePath=$(./Join-Path-Recursively -pathParts $accountGeneratorSettingsTemplate.Split(","))
 $accountGeneratorSettingsPath=$(./Join-Path-Recursively -pathParts $accountGeneratorSettings.Split(","))
 & ./Token-Replace.ps1 -inputFile $accountGeneratorSettingsTemplatePath -outputFile $accountGeneratorSettingsPath -tokens $tokens
-Pop-Location
-
-$eventmonitorSettingsTemplate="..,..,src,CorePayments.EventMonitor,local.settings.template.json"
-$eventmonitorSettings="..,..,src,CorePayments.EventMonitor,local.settings.json"
-Push-Location $($MyInvocation.InvocationName | Split-Path)
-$eventmonitorSettingsTemplatePath=$(./Join-Path-Recursively -pathParts $eventmonitorSettingsTemplate.Split(","))
-$eventmonitorSettingsPath=$(./Join-Path-Recursively -pathParts $eventmonitorSettings.Split(","))
-& ./Token-Replace.ps1 -inputFile $eventmonitorSettingsTemplatePath -outputFile $eventmonitorSettingsPath -tokens $tokens
 Pop-Location
 
 $functionappSettingsTemplate="..,..,src,CorePayments.FunctionApp,local.settings.template.json"

@@ -28,5 +28,11 @@ namespace CorePayments.Infrastructure
         {
             public const string PaymentEvents = "paymentEvents";
         }
+
+        
+        public static class Identity
+        {
+            public const string ClientId = "ClientId";
+        }
     }
 }

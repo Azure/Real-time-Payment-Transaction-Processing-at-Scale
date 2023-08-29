@@ -7,6 +7,12 @@ param locations array
 @description('Enable Cosmos Multi Master')
 param enableCosmosMultiMaster bool = false
 
+@description('API managed identity service principal Id')
+param apiPrincipalId string
+
+@description('Worker managed identity service principal Id')
+param workerPrincipalId string
+
 var databaseName = 'payments'
 
 var containers = [
@@ -114,6 +120,32 @@ resource container 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/container
     }
   }
 }]
+
+@description('This is the built-in "Cosmos DB Built-in Data Contributor" role. https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-setup-rbac#built-in-role-definitions')
+resource roleDefinition 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2022-11-15' existing = {
+  parent: account
+  name: '00000000-0000-0000-0000-000000000002'
+}
+
+resource apiRoleAssignmentCosmos 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2022-08-15' = {
+  name: guid(apiPrincipalId, roleDefinition.id, account.id)
+  parent: account
+  properties: {
+    scope: account.id
+    roleDefinitionId: roleDefinition.id 
+    principalId: apiPrincipalId
+  }
+}
+
+resource workerRoleAssignmentCosmos 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2022-08-15' = {
+  name: guid(workerPrincipalId, roleDefinition.id, account.id)
+  parent: account
+  properties: {
+    scope: account.id
+    roleDefinitionId: roleDefinition.id 
+    principalId: workerPrincipalId
+  }
+}
 
 output cosmosAccountName string = account.name
 output cosmosDatabaseName string = database.name

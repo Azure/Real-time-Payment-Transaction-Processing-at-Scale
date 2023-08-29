@@ -2,17 +2,15 @@
 
 Param(
     [parameter(Mandatory=$true)][string]$resourceGroup,
-    [parameter(Mandatory=$false)][string]$locations="SouthCentralUS, NorthCentralUS, EastUS",
+    [parameter(Mandatory=$false)][string]$locations="SouthCentralUS,NorthCentralUS,EastUS",
     [parameter(Mandatory=$false)][string]$openAiLocation="EastUS",
     [parameter(Mandatory=$true)][string]$subscription,
     [parameter(Mandatory=$false)][string]$template="main.bicep",
-    [parameter(Mandatory=$false)][string]$openAiName=$null,
-    [parameter(Mandatory=$false)][string]$openAiRg=$null,
-    [parameter(Mandatory=$false)][string]$openAiDeployment="completions",
     [parameter(Mandatory=$false)][string]$suffix=$null,
     [parameter(Mandatory=$false)][bool]$stepDeployBicep=$true,
-    [parameter(Mandatory=$false)][bool]$stepPublishFunctionApp=$true,
-    [parameter(Mandatory=$false)][bool]$stepDeployOpenAi=$false,
+    [parameter(Mandatory=$false)][bool]$stepDeployFD=$true,
+    [parameter(Mandatory=$false)][bool]$stepBuildPush=$true,
+    [parameter(Mandatory=$false)][bool]$stepDeployImages=$true,
     [parameter(Mandatory=$false)][bool]$stepPublishSite=$true,
     [parameter(Mandatory=$false)][bool]$stepLoginAzure=$true
 )
@@ -22,6 +20,11 @@ az extension update --name  application-insights
 
 az extension add --name storage-preview
 az extension update --name storage-preview
+
+winget install --id=Kubernetes.kubectl  -e --accept-package-agreements --accept-source-agreements --silent
+winget install --id=Microsoft.Azure.Kubelogin  -e --accept-package-agreements --accept-source-agreements --silent
+
+$gValuesFile="configFile"
 
 Push-Location $($MyInvocation.InvocationName | Split-Path)
 
@@ -49,26 +52,43 @@ if (-not $rg) {
 # Waiting to make sure resource group is available
 Start-Sleep -Seconds 10
 
-if ($stepDeployOpenAi) {
-    if (-not $openAiName) {
-        $openAiName="openai-$suffix"
-    }
-
-    if (-not $openAiRg) {
-        $openAiRg=$resourceGroup
-    }
-
-    & ./Deploy-OpenAi.ps1 -name $openAiName -resourceGroup $openAiRg -location $openAiLocation -deployment $openAiDeployment
-}
-
 if ($stepDeployBicep) {
-    & ./Deploy-Bicep.ps1 -resourceGroup $resourceGroup -locations $locations -template $template -suffix $suffix -openAiName $openAiName -openAiRg $openAiRg -openAiDeployment $openAiDeployment
+    & ./Deploy-Bicep.ps1 -resourceGroup $resourceGroup -locations $locations -template $template -suffix $suffix
 }
 
-& ./Generate-Config.ps1 -resourceGroup $resourceGroup -openAiName $openAiName -openAiRg $openAiRg -openAiDeployment $openAiDeployment
+# Connecting kubectl to AKS
+Write-Host "Retrieving Aks Names" -ForegroundColor Yellow
+$aksNames = $(az aks list -g $resourceGroup -o json | ConvertFrom-Json).name
+Write-Host "The names of your AKS instances: $aksNames" -ForegroundColor Yellow
 
-if ($stepPublishFunctionApp) {
-    & ./Publish-FunctionApp.ps1 -resourceGroup $resourceGroup -projectName "CorePayments.FunctionApp"
+# Generate Config
+New-Item -ItemType Directory -Force -Path $(./Join-Path-Recursively.ps1 -pathParts ..,..,__values)
+$gValuesLocation=$(./Join-Path-Recursively.ps1 -pathParts ..,..,__values,$gValuesFile)
+& ./Generate-Config.ps1 -resourceGroup $resourceGroup -locations $locations -suffix $suffix -outputFile $gValuesLocation
+
+if ($stepDeployFD)
+{
+    & ./Deploy-FDOrigins.ps1 -resourceGroup $resourceGroup -locations $locations
+}
+
+# Create Secrets
+if ([string]::IsNullOrEmpty($acrName))
+{
+    $acrName = $(az acr list --resource-group $resourceGroup -o json | ConvertFrom-Json).name
+}
+
+Write-Host "The Name of your ACR: $acrName" -ForegroundColor Yellow
+
+if ($stepBuildPush) {
+    # Build an Push
+    & ./BuildPush.ps1 -resourceGroup $resourceGroup -locations $locations
+}
+
+if ($stepDeployImages) {
+    # Deploy images in AKS
+    $gValuesLocation=$(./Join-Path-Recursively.ps1 -pathParts ..,..,__values,$gValuesFile)
+    $chartsToDeploy = "*"
+    & ./Deploy-Images-Aks.ps1 -resourceGroup $resourceGroup -locations $locations -charts $chartsToDeploy -valuesFile $gValuesLocation
 }
 
 if ($stepPublishSite) {
