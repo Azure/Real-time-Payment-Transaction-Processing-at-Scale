@@ -21,10 +21,14 @@ builder.Services.AddSingleton(s =>
         ? Array.Empty<string>()
         : preferredRegions.Split(',');
 
+#if DEBUG
+    var credential = new Azure.Identity.DefaultAzureCredential();
+#else
     var credential = new ChainedTokenCredential(
             new ManagedIdentityCredential(clientId),
             new AzureCliCredential()
         );
+#endif
 
     if (!regions.Any())
         return new CosmosClientBuilder(accountEndpoint: endpoint,

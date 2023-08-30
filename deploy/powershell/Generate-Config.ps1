@@ -134,12 +134,20 @@ $accountGeneratorSettingsPath=$(./Join-Path-Recursively -pathParts $accountGener
 & ./Token-Replace.ps1 -inputFile $accountGeneratorSettingsTemplatePath -outputFile $accountGeneratorSettingsPath -tokens $tokens
 Pop-Location
 
-$functionappSettingsTemplate="..,..,src,CorePayments.FunctionApp,local.settings.template.json"
-$functionappSettings="..,..,src,CorePayments.FunctionApp,local.settings.json"
+$webapiSettingsTemplate="..,..,src,CorePayments.WebAPI,appsettings.Development.template.json"
+$webapiSettings="..,..,src,CorePayments.WebAPI,appsettings.Development.json"
 Push-Location $($MyInvocation.InvocationName | Split-Path)
-$functionappSettingsTemplatePath=$(./Join-Path-Recursively -pathParts $functionappSettingsTemplate.Split(","))
-$functionappSettingsPath=$(./Join-Path-Recursively -pathParts $functionappSettings.Split(","))
-& ./Token-Replace.ps1 -inputFile $functionappSettingsTemplatePath -outputFile $functionappSettingsPath -tokens $tokens
+$webapiSettingsTemplatePath=$(./Join-Path-Recursively -pathParts $webapiSettingsTemplate.Split(","))
+$webapiSettingsPath=$(./Join-Path-Recursively -pathParts $webapiSettings.Split(","))
+& ./Token-Replace.ps1 -inputFile $webapiSettingsTemplatePath -outputFile $webapiSettingsPath -tokens $tokens
+Pop-Location
+
+$workerserviceSettingsTemplate="..,..,src,CorePayments.WorkerService,appsettings.Development.template.json"
+$workerserviceSettings="..,..,src,CorePayments.WorkerService,appsettings.Development.json"
+Push-Location $($MyInvocation.InvocationName | Split-Path)
+$workerserviceSettingsTemplatePath=$(./Join-Path-Recursively -pathParts $workerserviceSettingsTemplate.Split(","))
+$workerserviceSettingsPath=$(./Join-Path-Recursively -pathParts $workerserviceSettings.Split(","))
+& ./Token-Replace.ps1 -inputFile $workerserviceSettingsTemplatePath -outputFile $workerserviceSettingsPath -tokens $tokens
 Pop-Location
 
 $siteSettingsTemplate="..,..,ui,env.template"
