@@ -19,5 +19,5 @@ data:
   DatabaseSettings__PreferredRegions: {{ .Values.databaseSettings.preferredRegions }}
   DatabaseSettings__TransactionsContainer: {{ .Values.databaseSettings.transactionsContainer }}
   AnalyticsEngine__OpenAIEndpoint: {{ .Values.analyticsEngine.openAiEndpoint }}
-  AnalyticsEngine__OpenAICompletionsEndpoint: {{ .Values.analyticsEngine.openAiCompletionsDeployment }}
+  AnalyticsEngine__OpenAICompletionsDeployment: {{ .Values.analyticsEngine.openAiCompletionsDeployment }}
   ClientId: {{ .Values.azureWorkloadIdentity.apiClientId }}
