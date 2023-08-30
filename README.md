@@ -28,11 +28,13 @@ The solution architecture is represented by this diagram:
 
 - Powershell
 - Azure CLI 2.49.0 or greater
+- Azure Subscription
+- Subscription access to Azure OpenAI service. Start here to [Request Access to Azure OpenAI Service](https://customervoice.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR7en2Ais5pxKtso_Pz4b1_xUOFA5Qk1UWDRBMjg0WFhPMkIzTzhKQ1dWNyQlQCN0PWcu)
 
 ### Prerequisites for running/debugging locally
 
-- Backend (Function App, Console Apps, etc.)
-  - Visual Studio Code or Visual Studio 2022
+- Backend (Web API, Console Apps, etc.)
+  - Visual Studio 2022 17.6 or later (required for passthrough Visual Studio authentication for the Docker container)
   - .NET 7 SDK
 - Frontend (React web app)
   - Visual Studio Code
@@ -51,21 +53,27 @@ To start the React web app:
 
 #### Running the backend locally
 
-- Since the app uses role-based access control (RBAC), if you want to run the Function App locally, you have to assign yourself to the "Cosmos DB Built-in Data Contributor" role via the Azure Cloud Shell or Azure CLI with the following:
+- Since the app uses role-based access control (RBAC), if you want to run the Web API and Worker Service locally, you have to assign yourself to the "Cosmos DB Built-in Data Contributor" role via the Azure Cloud Shell or Azure CLI with the following:
 
     ```bash
     az cosmosdb sql role assignment create --account-name YOUR_COSMOS_DB_ACCOUNT_NAME --resource-group YOUR_RESOURCE_GROUP_NAME --scope "/" --principal-id YOUR_AZURE_AD_PRINCIPAL_ID --role-definition-id 00000000-0000-0000-0000-000000000002
     ```
 
-- Event Hubs is also using RBAC. The Member Repository sends an Event Hubs event when patching members. The `CorePayments.EventMonitor` monitor listens for Event Hub events and displays the output. For the events to work, you need to add yourself to the "Azure Event Hubs Data Owner" role via the Azure Cloud Shell or Azure CLI with the following:
-
-    ```bash
-    az role assignment create --assignee "YOUR_EMAIL_ADDRESS" --role "Azure Event Hubs Data Owner" --scope "/subscriptions/YOUR_AZURE_SUBSCRIPTION_ID/resourceGroups/YOUR_RESOURCE_GROUP_NAME/providers/Microsoft.EventHub/namespaces/YOUR_EVENT_HUBS_NAMESPACE"
-    ```
-
-    > Make sure you're signed in to Azure from the Visual Studio or VS Code terminal before running the Function App locally. You need to run `az login` and `az account set --subscription YOUR_AZURE_SUBSCRIPTION_ID` first.
+    > Make sure you're signed in to Azure from the Visual Studio before running the backend applications locally.
 
 ### Standard Deployments
+
+#### Clone the Repo
+
+You will need the files locally when performing standard deployments. To start, clone the repo.
+
+> **Important:** Do not forget the `--recurse-submodules` parameter. This loads the `AKS-Construction` submodule that contains AKS-specific Bicep templates.
+
+```bash
+git clone --recurse-submodules https://github.com/AzureCosmosDB/RealTimeTransactions.git
+```
+
+#### Execute PowerShell Script
 
 From the `deploy/powershell` folder, run the following command. This should provision all of the necessary infrastructure, deploy builds to the function apps, deploy the frontend, and deploy necessary artifacts to the Synapse workspace.
 
@@ -128,26 +136,47 @@ The following flags can be used to enable/disable specific deployment steps in t
 | Parameter Name | Description |
 |----------------|-------------|
 | stepDeployBicep | Enables or disables the provisioning of resources in Azure via Bicep templates (located in `./infrastructure`). Valid values are 0 (Disabled) and 1 (Enabled). See the `deploy/powershell/Deploy-Bicep.ps1` script.
-| stepPublishFunctionApp | Enables or disables the publish and zip deployment of the `CorePayments.FunctionApp` project to the regional function apps present in the target resource group. Valid values are 0 (Disabled) and 1 (Enabled). See the `deploy/infrastructure/Publish-FunctionApp.ps1` script.
-| stepDeployOpenAi | Enables or disables the provisioning of (or detection of an existing) Azure OpenAI service. If an explicit OpenAi resource group is not defined in the `openAiRg` parameter, the target resource group defaults to that passed in the `resourceGroup` parameter. Valid values are 0 (Disabled) and 1 (Enabled). See the `deploy/infrastructure/Deploy-OpenAi.ps1` script.
+| stepBuildPush | Enables or disables the build and push of Docker images into the Azure Container Registry (ACR). Valid values are 0 (Disabled) and 1 (Enabled). See the `deploy/infrastructure/BuildPush.ps1` script.
+| stepDeployFD | Enables or disables deploying Azure Front Door. Valid values are 0 (Disabled) and 1 (Enabled). See the `deploy/infrastructure/Deploy-FDOrigins.ps1` script.
+| stepDeployImages | Enables or disables deploying the Docker images from the `CoreClaims.WebAPI` and `CoreClaims.WorkerService` projects to AKS. Valid values are 0 (Disabled) and 1 (Enabled). See the `deploy/infrastructure/Deploy-Images-Aks.ps1` script.
 | stepPublishSite | Enables or disables the build and deployment of the static HTML site to the hosting storage account in the target resource group. Valid values are 0 (Disabled) and 1 (Enabled). See the `deploy/infrastructure/Publish-Site.ps1` script.
-| stepLoginAzure | Enables or disables interactive Azure login. If disabled, the deployment assumes that the current Azure CLI session is valid. Valid values are 0 (Disabled). 
+| stepLoginAzure | Enables or disables interactive Azure login. If disabled, the deployment assumes that the current Azure CLI session is valid. Valid values are 0 (Disabled).
 
 Example command:
 ```pwsh
 cd deploy/powershell
 ./Unified-Deploy.ps1 -resourceGroup myRg `
                      -subscription 0000... `
-                     -openAiName myOpenAi `
-                     -openAiRg myOpenAiRg `
-                     -openAiDeployment completions `
                      -stepLoginAzure 0 `
                      -stepDeployBicep 0 `
-                     -stepPublishFunctionApp 1 `
+                     -stepDeployFD 0 `
+                     -stepBuildPush 1 `
+                     -stepDeployImages 1 `
                      -stepPublishSite 1
 ```
 
 ### Quickstart
+
+#### Generate sample data
+
+1. After deployment is complete, navigate to where you cloned the repo and open the `\src\CorePayments.sln` solution file in Visual Studio.
+   1. If you did not deploy from your machine, go to the resource group for your deployment and open the Azure Cosmos DB account.
+   1. Select `Keys` in the left-hand navigation pane and copy the `PRIMARY CONNECTION STRING` value.
+1. On your local machine, navigate to where you cloned the repo and open the `\src\CorePayments.sln` solution file in Visual Studio.
+1. Expand the **account-generator** project and open the `local.settings.json` file to verify that the `CosmosDbConnectionString` value is populated. If the file does not exist, copy the `local.settings.template.json` file and rename it to `local.settings.json`. Paste the connection string value into the `CosmosDbConnectionString` field.
+1. Right-click on the **account-generator** project and select `Debug` > `Start new instance` to run the project.
+1. It will take several minutes to generate the sample data. You can monitor the progress in the console window.
+
+Please note that you can modify the generator options within the `local.settings.json` file. The following options are available:
+
+| Option | Value(s) | Description |
+|--------|-------------|----------|
+| `RunMode` | `OneTime` or `Continuous` | If set to `OneTime` (default), the generator will generate the number of transactions specified by the BatchSize value. The `Continuous` mode will run until the console application is closed or interrupted with a Ctrl+C command. |
+| `BatchSize` | Any integer value (default is `100`) | Refers to how many account summaries to generate within each series of 5 batches (eg. 5 batches * 200 batch size = 1000 new records) when RunModeOption is set to `OneTime`. |
+| `SleepTime` | Any integer value (default is `10000`) | Refers to the delay in milliseconds between each batch of transactions. |
+| `Verbose` | `true` or `false` (default is `true`) | Sets the console logging level. |
+
+#### Access the web app
 
 1. After deployment is complete, go to the resource group for your deployment and open the Azure Storage Account prefixed with `web`.  This is the storage account hosting the static web app.
 1. Select the `Static website` blade in the left-hand navigation pane and copy the site URL from the `Primary endpoint` field in the detail view.
