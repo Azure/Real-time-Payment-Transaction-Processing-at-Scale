@@ -45,7 +45,7 @@ env:
     - name: DatabaseSettings__PreferredRegions
     - name: DatabaseSettings__TransactionsContainer
     - name: AnalyticsEngine__OpenAIEndpoint
-    - name: AnalyticsEngine__OpenAICompletionsEndpoint
+    - name: AnalyticsEngine__OpenAICompletionsDeployment
     - name: ClientId
   secret:
     - name: AnalyticsEngine__OpenAIKey
