@@ -68,7 +68,7 @@ module openAi 'openai.bicep' = {
       {
         name: 'completions'
         model: 'gpt-35-turbo'
-        version: '2'
+        version: '0301'
         sku: {
           name: 'Standard'
           capacity: 60
