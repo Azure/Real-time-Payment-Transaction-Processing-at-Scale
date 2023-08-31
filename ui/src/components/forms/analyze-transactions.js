@@ -9,12 +9,12 @@ const AnalyzeTransactionsForm = ({ accountId, setOpenModal }) => {
   const ref = useRef(null);
   const [form, setForm] = useState({
     accountId,
-    query: 'How many transactions are there?'
+    query: 'Could you categorize each transaction into tax categories? Show results in a bulleted list.'
   });
   const { trigger } = useAnalyzeTransactions(accountId, form.query);
   const [isLoading, setIsLoading] = useState(false);
   const onClickCancel = () => {
-    setForm({ accountId: '', query:'How many transactions are there?'});
+    setForm({ accountId: '', query:'Could you categorize each transaction into tax categories? Show results in a bulleted list.'});
     ref.current.value = '';
     setIsLoading(false);
     setOpenModal(false);
@@ -43,7 +43,7 @@ const AnalyzeTransactionsForm = ({ accountId, setOpenModal }) => {
         <TextInput
           id="query"
           onChange={onChangeQuery}
-          placeholder="How many transactions are there?"
+          placeholder="Could you categorize each transaction into tax categories? Show results in a bulleted list."
           required
           value={form.query}
         />

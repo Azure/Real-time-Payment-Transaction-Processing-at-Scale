@@ -93,13 +93,23 @@ namespace CorePayments.SemanticKernel
                 ReadCommentHandling = JsonCommentHandling.Skip,
             };
 
-            string transactionData = JsonSerializer.Serialize(transactions, ser_options);
+            // Optimize the transaction data we send as context to the semantic function.
+            var contextData = transactions.Select(t => new
+            {
+                t.description,
+                t.merchant,
+                t.type,
+                t.amount,
+                t.timestamp
+            });
+
+            var transactionData = JsonSerializer.Serialize(contextData, ser_options);
 
             var context = kernel.CreateNewContext();
             context["transactionData"] = transactionData;
             context["query"] = query;
 
-            string result = (await reviewer.InvokeAsync(context)).Result;
+            var result = (await reviewer.InvokeAsync(context)).Result;
 
             return result;
         }
