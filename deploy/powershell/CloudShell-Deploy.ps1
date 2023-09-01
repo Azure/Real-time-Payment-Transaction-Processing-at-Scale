@@ -4,7 +4,7 @@ Param(
     [parameter(Mandatory=$false)][string]$acrName="bydtochatgptcr",
     [parameter(Mandatory=$false)][string]$acrResourceGroup="ms-byd-to-chatgpt",
     [parameter(Mandatory=$true)][string]$resourceGroup,
-    [parameter(Mandatory=$true)][string]$location,
+    [parameter(Mandatory=$false)][string]$locations="SouthCentralUS,NorthCentralUS,EastUS",
     [parameter(Mandatory=$true)][string]$subscription,
     [parameter(Mandatory=$false)][string]$suffix,
     [parameter(Mandatory=$false)][bool]$stepDeployBicep=$true,
@@ -43,7 +43,7 @@ if ($stepLoginAzure) {
 az account set --subscription $subscription
 
 if ($stepDeployBicep) {
-    & ./Deploy-Bicep.ps1 -resourceGroup $resourceGroup -location $location -suffix $suffix
+    & ./Deploy-Bicep.ps1 -resourceGroup $resourceGroup -locations $locations -suffix $suffix
 }
 
 # Connecting kubectl to AKS
