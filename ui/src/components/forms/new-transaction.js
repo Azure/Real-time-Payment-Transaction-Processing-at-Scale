@@ -4,7 +4,7 @@ import { Button, Label, Spinner, Textarea, TextInput } from 'flowbite-react';
 import useAddTransaction from '~/hooks/add-transaction';
 import { useQueryClient } from 'react-query';
 
-const NewTransactionForm = ({ accountId, setOpenModal }) => {
+const NewTransactionForm = ({ accountId, setOpenModal, setSubmittedData }) => {
   const { mutate } = useAddTransaction();
   const client = useQueryClient();
 
@@ -28,6 +28,7 @@ const NewTransactionForm = ({ accountId, setOpenModal }) => {
     setError('');
     mutate(form, {
       onSuccess: async () => {
+        setSubmittedData(form);
         setOpenModal(false);
         setIsLoading(false);
         setForm({ accountId, type: 'Credit', description: '', merchant: '', amount: '' });
@@ -68,7 +69,7 @@ const NewTransactionForm = ({ accountId, setOpenModal }) => {
           <Label htmlFor="type" value="Transaction Type:" />
         </div>
         <select onChange={onChangeType} label="Select" id="type" required>
-          <option>Credit</option>
+          <option selected>Credit</option>
           <option>Debit</option>
         </select>
       </div>
