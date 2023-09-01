@@ -2,8 +2,7 @@
 
 Param(
     [parameter(Mandatory=$true)][string]$resourceGroup,
-    [parameter(Mandatory=$true)][string]$acrName,
-    [parameter(Mandatory=$true)][string]$subscription,
+    [parameter(Mandatory=$true)][string]$locations="SouthCentralUS,NorthCentralUS,EastUS",
     [parameter(Mandatory=$false)][string]$dockerTag="latest"
 )
 
@@ -17,6 +16,6 @@ az login
 # Write-Host "Choosing your subscription" -ForegroundColor Yellow
 az account set --subscription $subscription
 
-& ./BuildPush.ps1 -resourceGroup $resourceGroup -acrName $acrName -dockerTag $dockerTag -dockerBuild 1 -dockerPush 1
+& ./BuildPush.ps1 -resourceGroup $resourceGroup -locations $locations -dockerTag $dockerTag -dockerBuild 1 -dockerPush 1
 
 Pop-Location
