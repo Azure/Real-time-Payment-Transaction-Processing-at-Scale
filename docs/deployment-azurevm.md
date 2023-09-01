@@ -15,7 +15,7 @@ Follow the steps below to deploy the solution to your Azure subscription.
     .\deploy\powershell\Deploy-Vm.ps1 -resourceGroup <rg_name> -location <location> -password <password>
     ```
 
-    `<password`> is the password for the `BYDtoChatGPTUser` account that will be created on the VM. It must be at least 12 characters long and meet the complexity requirements of Azure VMs.
+    `<password>` is the password for the `BYDtoChatGPTUser` account that will be created on the VM. It must be at least 12 characters long and meet the complexity requirements of Azure VMs.
 
     When the script completes, the console output should display the name of the provisioned VM similar to the following:
 
@@ -34,6 +34,8 @@ Follow the steps below to deploy the solution to your Azure subscription.
     wsl --install
     ```
 
+    > If the above command returns "Windows Subsystem for Linux is already installed.", then execute the following command to update WSL: `wsl --update`. You do not need to restart if you are only updating WSL.
+
 1. Restart the VM to complete the setup.
 
 1. Log back in with the `BYDtoChatGPTUser` account and start `Docker Desktop`. Ensure the Docker engine is up and running. Keep `Docker Desktop` running in the background.
@@ -44,10 +46,10 @@ Follow the steps below to deploy the solution to your Azure subscription.
     git clone --recurse-submodules https://github.com/AzureCosmosDB/RealTimeTransactions.git
     ```
 
-1. Run the following script to provision the infrastructure and deploy the API and frontend. This will provision all of the required infrastructure, deploy the API and web app services into AKS, and provision and load artifacts into a Synapse Analytics workspace.
+1. Open PowerShell, navigate to the `RealTimeTransactions` folder, and run the following script to provision the infrastructure and deploy the API and frontend. This will provision all of the required infrastructure, deploy the API and web app services into AKS, and provision and load artifacts into a Synapse Analytics workspace.
 
     ```pwsh
-    ./scripts/Unified-Deploy.ps1 -resourceGroup <rg_name> -location <location> -subscription <target_subscription_id>
+    ./deploy/powershell/Unified-Deploy.ps1 -resourceGroup <rg_name> -location <location> -subscription <target_subscription_id>
     ```
 
 >**NOTE**: Make sure to set the `<location>` value to a region that supports Azure OpenAI services.  See [Azure OpenAI service regions](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/?products=cognitive-services&regions=all) for more information.
