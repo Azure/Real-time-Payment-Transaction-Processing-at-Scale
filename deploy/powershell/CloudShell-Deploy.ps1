@@ -12,7 +12,6 @@ Param(
     [parameter(Mandatory=$false)][bool]$stepDeployCertManager=$true,
     [parameter(Mandatory=$false)][bool]$stepDeployTls=$true,
     [parameter(Mandatory=$false)][bool]$stepDeployImages=$true,
-    [parameter(Mandatory=$false)][bool]$stepSetupSynapse=$true,
     [parameter(Mandatory=$false)][bool]$stepPublishSite=$true,
     [parameter(Mandatory=$false)][bool]$stepLoginAzure=$false
 )
@@ -91,10 +90,6 @@ if ($stepDeployImages) {
     $gValuesLocation=$(./Join-Path-Recursively.ps1 -pathParts ..,..,__values,$gValuesFile)
     $chartsToDeploy = "*"
     & ./Deploy-Images-Aks.ps1 -aksName $aksName -resourceGroup $resourceGroup -charts $chartsToDeploy -acrName $acrName -valuesFile $gValuesLocation
-}
-
-if ($stepSetupSynapse) {
-    & ./Setup-Synapse.ps1 -resourceGroup $resourceGroup
 }
 
 if ($stepPublishSite) {
