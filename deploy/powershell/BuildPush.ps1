@@ -28,7 +28,7 @@ foreach($location in $locArray)
     $acrCredentials=$(az acr credential show -g $resourceGroup -n $acrName -o json | ConvertFrom-Json)
     $acrPwd=$acrCredentials.passwords[0].value
     $acrUser=$acrCredentials.username
-    $dockerComposeFile="../../docker-compose.yml"
+    $dockerComposeFile="../docker/docker-compose.yml"
 
     if ($dockerBuild) {
         Write-Host "---------------------------------------------------" -ForegroundColor Yellow
