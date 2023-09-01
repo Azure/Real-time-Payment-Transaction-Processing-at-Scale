@@ -2,6 +2,7 @@
 
 Param(
     [parameter(Mandatory=$true)][string]$resourceGroup,
+    [parameter(Mandatory=$true)][string]$subscription,
     [parameter(Mandatory=$false)][string]$locations="SouthCentralUS,NorthCentralUS,EastUS",
     [parameter(Mandatory=$false)][string]$dockerTag="latest"
 )

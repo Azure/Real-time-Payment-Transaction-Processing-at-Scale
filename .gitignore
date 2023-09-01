@@ -372,4 +372,3 @@ local.settings.json
 /src/CorePayments.WorkerService/appsettings.Development.json
 
 __values
-docker-compose.yml
