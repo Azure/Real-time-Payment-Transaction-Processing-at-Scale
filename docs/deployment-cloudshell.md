@@ -22,7 +22,7 @@ Follow the steps below to deploy the solution to your Azure subscription.
 
     ```cmd
     cd ./RealTimeTransactions/
-    chmod +x ./scripts/*
+    chmod +x ./deploy/*
     ```
 
 1. Execute the `CloudShell-Deploy.ps1` script. This will provision all of the required infrastructure, deploy the API and web app services into AKS, and provision and load artifacts into a Synapse Analytics workspace.
