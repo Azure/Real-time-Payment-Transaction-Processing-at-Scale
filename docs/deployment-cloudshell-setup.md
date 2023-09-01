@@ -22,15 +22,17 @@ Before users in your team can deploy the solution using Cloud Shell, you need to
 1. Execute the `Prepare-CloudShell-Deploy.ps1` script. This will build the portal and API Docker images and push them to the ACR instance created in step 1.
 
     ```pwsh
-    ./deploy/powershell/Prepare-CloudShell-Deploy.ps1 -resourceGroup <rg_name>
+    ./deploy/powershell/Prepare-CloudShell-Deploy.ps1 -resourceGroup <rg_name> -subscription <target_subscription_id>
     ```
 
     `<rg_name>` is the name of the resource group where the ACR instance was created in step 1.
 
+    `<target_subscription_id>` is the ID of the target subscription.
+
     This is an example of the command above:
 
     ```pwsh
-    ./deploy/powershell/Prepare-CloudShell-Deploy.ps1 -resourceGroup "ms-byd-to-chatgpt"
+    ./deploy/powershell/Prepare-CloudShell-Deploy.ps1 -resourceGroup "ms-byd-to-chatgpt" -subscription "00000000-0000-0000-0000-000000000000"
     ```
 
 >**NOTE**:
