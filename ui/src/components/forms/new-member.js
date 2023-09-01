@@ -102,11 +102,11 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <div className="mb-2 block">
+        <div className="mb-2 block flex-1">
           <Label htmlFor="firstName" value="First Name:" />
         </div>
         <TextInput
-          className="flex-1 ml-6"
+          className="flex-1"
           id="firstName"
           placeholder="First Name"
           onChange={onChangeFirstName}
@@ -115,11 +115,11 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
         />
       </div>
       <div className="flex justify-between items-center mb-4">
-        <div className="mb-2 block">
+        <div className="mb-2 block flex-1">
           <Label htmlFor="lastName" value="Last Name:" />
         </div>
         <TextInput
-          className="flex-1 ml-6"
+          className="flex-1  flex-1"
           id="lastName"
           onChange={onChangeLastName}
           placeholder="Last Name"
@@ -128,11 +128,11 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
         />
       </div>
       <div className="flex justify-between items-center mb-4">
-        <div className="mb-2 block">
+        <div className="mb-2 block flex-1">
           <Label htmlFor="email" value="Email:" />
         </div>
         <TextInput
-          className="flex-1 ml-6"
+          className="flex-1 "
           id="email"
           type="email"
           onChange={onChangeEmail}
@@ -142,11 +142,11 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
         />
       </div>
       <div className="flex justify-between items-center mb-4">
-        <div className="mb-2 block">
+        <div className="mb-2 block flex-1">
           <Label htmlFor="phone" value="Phone:" />
         </div>
         <TextInput
-          className="flex-1 ml-6"
+          className="flex-1"
           id="phone"
           onChange={onChangePhone}
           placeholder="Phone"
@@ -155,11 +155,12 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
         />
       </div>
       <div className="flex justify-between items-center mb-4">
-        <div className="mb-2 block">
+        <div className="mb-2 block flex-1">
           <Label htmlFor="address" value="Address:" />
         </div>
         <Textarea
           id="address"
+          className="flex-1"
           onChange={onChangeAddress}
           placeholder="Address"
           value={form.address}
@@ -167,11 +168,11 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
         />
       </div>
       <div className="flex justify-between items-center mb-4">
-        <div className="mb-2 block">
+        <div className="mb-2 block flex-1">
           <Label htmlFor="city" value="City:" />
         </div>
         <TextInput
-          className="flex-1 ml-6"
+          className="flex-1"
           id="city"
           onChange={onChangeCity}
           placeholder="City"
@@ -180,11 +181,11 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
         />
       </div>
       <div className="flex justify-between items-center mb-4">
-        <div className="mb-2 block">
-          <Label htmlFor="state" value="State/Porvince:" />
+        <div className="mb-2 block flex-1">
+          <Label htmlFor="state" value="State/Province:" />
         </div>
         <TextInput
-          className="flex-1 ml-6"
+          className="flex-1  flex-1"
           id="state"
           onChange={onChangeState}
           placeholder="State/Province"
@@ -193,11 +194,11 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
         />
       </div>
       <div className="flex justify-between items-center mb-4">
-        <div className="mb-2 block">
+        <div className="mb-2 block flex-1">
           <Label htmlFor="zipcode" value="Zipcode:" />
         </div>
         <TextInput
-          className="flex-1 ml-6"
+          className="flex-1"
           id="zipcode"
           type="number"
           onChange={onChangeZipcode}
@@ -206,12 +207,12 @@ const NewMemberForm = ({ setOpenModal, member = null, setMember }) => {
           required
         />
       </div>
-      <div className="flex items-center mb-4">
-        <div className="mb-2 block mr-3">
+      <div className="flex justify-between items-center mb-4">
+        <div className="mb-2 block flex-1">
           <Label htmlFor="country" value="Country:" />
         </div>
         <select
-          className="rounded-md"
+          className="rounded-md flex-1"
           onChange={onChangeAccountType}
           label="Select"
           id="type"

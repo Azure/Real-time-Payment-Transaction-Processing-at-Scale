@@ -41,7 +41,7 @@ const Datatable = ({
         <Table.Row>
           <Table.Cell className="text-center" colSpan={headers.length}>
             {continuationToken && (
-              <button onClick={onClickLoadMore} className="p-2 rounded border">
+              <button onClick={onClickLoadMore} className="p-2 rounded border mr-3">
                 Load more...
               </button>
             )}
