@@ -27,13 +27,13 @@ Follow the steps below to deploy the solution to your Azure subscription.
 1. Execute the `CloudShell-Deploy.ps1` script. This will provision all of the required infrastructure, deploy the API and web app services into AKS, and provision and load artifacts into a Synapse Analytics workspace.
 
     ```pwsh
-    ./scripts/CloudShell-Deploy.ps1 -resourceGroup <rg_name> -location <location> -subscription <target_subscription_id>
+    ./scripts/CloudShell-Deploy.ps1 -resourceGroup <rg_name> -subscription <target_subscription_id>
     ```
 
     This is an example of the command above:
 
     ```pwsh
-    ./scripts/CloudShell-Deploy.ps1 -resourceGroup "ms-claims-openai" -location eastus -subscription "00000000-0000-0000-0000-000000000000"
+    ./scripts/CloudShell-Deploy.ps1 -resourceGroup "ms-claims-openai" -subscription "00000000-0000-0000-0000-000000000000"
     ```
 
 >**NOTE**: The `<location>` specified must point to a region that supports the Azure OpenAI service. You can find the list of supported regions [here](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/?products=cognitive-services).
