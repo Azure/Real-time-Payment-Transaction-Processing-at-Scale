@@ -14,6 +14,7 @@ const TransactionsSection = ({ accountId }) => {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isAnalyzeModalOpen, setIsAnalyzeModalOpen] = useState(false);
+  const [submittedData, setSubmittedData] = useState({});
 
   const onClickAdd = () => setIsOpenModal(true);
   const onClickAnalyze = () => setIsAnalyzeModalOpen(true);
@@ -48,7 +49,14 @@ const TransactionsSection = ({ accountId }) => {
             <div className="flex text-sm w-full">
               <div className="flex flex-1 items-center mr-3">
                 <p className="font-bold mr-2">Balance:</p>
-                <p>{USDollar.format(data?.balance)}</p>
+                {
+                  submittedData.amount ? (
+                    <p>{USDollar.format((data?.balance + parseInt(submittedData.amount)))}</p>
+                  ) : (
+                    <p>{USDollar.format(data?.balance)}</p>
+                  )
+                }
+                {/* <p>{USDollar.format(data?.balance + (submittedData.amount ?? 0))}</p> */}
               </div>
               <div className="flex flex-1 items-center">
                 <p className="font-bold mr-2">Overdraft Limit:</p>
@@ -88,7 +96,7 @@ const TransactionsSection = ({ accountId }) => {
       </div>
 
       <FormModal header={modalHeader} openModal={isOpenModal} setOpenModal={setIsOpenModal}>
-        <NewTransactionForm accountId={accountId} setOpenModal={setIsOpenModal} />
+        <NewTransactionForm accountId={accountId} setOpenModal={setIsOpenModal} setSubmittedData={setSubmittedData} />
       </FormModal>
     </div>
   );
