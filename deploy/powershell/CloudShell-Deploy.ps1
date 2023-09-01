@@ -1,7 +1,6 @@
 #!/usr/bin/pwsh
 
 Param(
-    [parameter(Mandatory=$false)][string]$acrName="bydtochatgptcr",
     [parameter(Mandatory=$false)][string]$acrResourceGroup="ms-byd-to-chatgpt",
     [parameter(Mandatory=$true)][string]$resourceGroup,
     [parameter(Mandatory=$false)][string]$locations="SouthCentralUS,NorthCentralUS,EastUS",
@@ -61,15 +60,6 @@ New-Item -ItemType Directory -Force -Path $(./Join-Path-Recursively.ps1 -pathPar
 $gValuesLocation=$(./Join-Path-Recursively.ps1 -pathParts ..,..,__values,$gValuesFile)
 & ./Generate-Config.ps1 -resourceGroup $resourceGroup -suffix $suffix -outputFile $gValuesLocation
 
-# Create Secrets
-if ([string]::IsNullOrEmpty($acrName))
-{
-    $acrName = $(az acr list --resource-group $resourceGroup -o json | ConvertFrom-Json).name
-    $acrResourceGroup = $resourceGroup
-}
-
-Write-Host "The Name of your ACR: $acrName" -ForegroundColor Yellow
-
 if ($stepDeployCertManager) {
     # Deploy Cert Manager
     & ./DeployCertManager.ps1
@@ -82,14 +72,14 @@ if ($stepDeployTls) {
 
 if ($stepBuildPush) {
     # Build an Push
-    & ./BuildPush.ps1 -resourceGroup $acrResourceGroup -acrName $acrName
+    & ./BuildPush.ps1 -resourceGroup $acrResourceGroup -locations $locations
 }
 
 if ($stepDeployImages) {
     # Deploy images in AKS
     $gValuesLocation=$(./Join-Path-Recursively.ps1 -pathParts ..,..,__values,$gValuesFile)
     $chartsToDeploy = "*"
-    & ./Deploy-Images-Aks.ps1 -aksName $aksName -resourceGroup $resourceGroup -charts $chartsToDeploy -acrName $acrName -valuesFile $gValuesLocation
+    & ./Deploy-Images-Aks.ps1 -resourceGroup $resourceGroup -locations $locations -charts $chartsToDeploy -valuesFile $gValuesLocation
 }
 
 if ($stepPublishSite) {

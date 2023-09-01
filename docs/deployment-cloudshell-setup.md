@@ -2,24 +2,24 @@
 
 Before users in your team can deploy the solution using Cloud Shell, you need to perform the following steps:
 
-1. Create an Azure Container Registry (ACR) instance in the target subscription. Ensure anonymous pull access is enabled on the ACR instance (see [here](https://learn.microsoft.com/en-us/azure/container-registry/anonymous-pull-access) for more information).
+1. Create three Azure Container Registry (ACR) instances in the target subscription, one in each of the following regions: `South Central US`, `North Central US`, and `East US`. Ensure anonymous pull access is enabled on the ACR instance (see [here](https://learn.microsoft.com/en-us/azure/container-registry/anonymous-pull-access) for more information).
 
-1. Clone the repository:
+2. Clone the repository:
 
     ```cmd
     git clone --recurse-submodules https://github.com/AzureCosmosDB/RealTimeTransactions.git
     ```
 
-1. Open the `CloudShell-Deploy.ps1` script from the `deploy\powershell` folder with the text editor of your choice. In lines 4 and 5, update the default values for the parameters `acrName` and `acrResourceGroup` with the values corresponding to the ACR instance created in step 1.
+3. Open the `CloudShell-Deploy.ps1` script from the `deploy\powershell` folder with the text editor of your choice. In line 4, update the default values for the parameter `acrResourceGroup` with the value corresponding to the ACR instances created in step 1.
 
-1. Save the changes to the `CloudShell-Deploy.ps1` script, commit them to the `main` branch, and push the changes to the remote repository.
+4. Save the changes to the `CloudShell-Deploy.ps1` script, commit them to the `main` branch, and push the changes to the remote repository.
 
     ```cmd
     git commit -m "Updated ACR details for Cloud Shell deployment"
     git push
     ```
 
-1. Execute the `Prepare-CloudShell-Deploy.ps1` script. This will build the portal and API Docker images and push them to the ACR instance created in step 1.
+5. Execute the `Prepare-CloudShell-Deploy.ps1` script. This will build the portal and API Docker images and push them to the ACR instance created in step 1.
 
     ```pwsh
     ./deploy/powershell/Prepare-CloudShell-Deploy.ps1 -resourceGroup <rg_name> -subscription <target_subscription_id>
