@@ -32,6 +32,8 @@ if (-not $suffix) {
 
 Write-Host "Resource suffix is $suffix" -ForegroundColor Yellow
 
+az account set --subscription $subscription
+
 $rg = $(az group show -g $resourceGroup -o json | ConvertFrom-Json)
 if (-not $rg) {
     $rg=$(az group create -g $resourceGroup -l $locations.Split(',')[0] --subscription $subscription)
