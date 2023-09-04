@@ -1,18 +1,16 @@
 #!/usr/bin/pwsh
 
 Param(
-    [parameter(Mandatory=$false)][string]$acrResourceGroup="ms-byd-to-chatgpt",
     [parameter(Mandatory=$true)][string]$resourceGroup,
     [parameter(Mandatory=$false)][string]$locations="SouthCentralUS,NorthCentralUS,EastUS",
     [parameter(Mandatory=$true)][string]$subscription,
-    [parameter(Mandatory=$false)][string]$suffix,
+    [parameter(Mandatory=$false)][string]$template="main.bicep",
+    [parameter(Mandatory=$false)][string]$suffix=$null,
     [parameter(Mandatory=$false)][bool]$stepDeployBicep=$true,
-    [parameter(Mandatory=$false)][bool]$stepBuildPush=$false,
-    [parameter(Mandatory=$false)][bool]$stepDeployCertManager=$true,
-    [parameter(Mandatory=$false)][bool]$stepDeployTls=$true,
+    [parameter(Mandatory=$false)][bool]$stepDeployFD=$true,
     [parameter(Mandatory=$false)][bool]$stepDeployImages=$true,
     [parameter(Mandatory=$false)][bool]$stepPublishSite=$true,
-    [parameter(Mandatory=$false)][bool]$stepLoginAzure=$false
+    [parameter(Mandatory=$false)][bool]$stepLoginAzure=$true
 )
 
 az extension add --name  application-insights
@@ -21,7 +19,10 @@ az extension update --name  application-insights
 az extension add --name storage-preview
 az extension update --name storage-preview
 
-$gValuesFile="configFile.yaml"
+winget install --id=Kubernetes.kubectl  -e --accept-package-agreements --accept-source-agreements --silent
+winget install --id=Microsoft.Azure.Kubelogin  -e --accept-package-agreements --accept-source-agreements --silent
+
+$gValuesFile="configFile"
 
 Push-Location $($MyInvocation.InvocationName | Split-Path)
 
@@ -41,38 +42,31 @@ if ($stepLoginAzure) {
 
 az account set --subscription $subscription
 
+$rg = $(az group show -g $resourceGroup -o json | ConvertFrom-Json)
+if (-not $rg) {
+    $rg=$(az group create -g $resourceGroup -l $locations.Split(',')[0] --subscription $subscription)
+}
+
+# Waiting to make sure resource group is available
+Start-Sleep -Seconds 10
+
 if ($stepDeployBicep) {
-    & ./Deploy-Bicep.ps1 -resourceGroup $resourceGroup -locations $locations -suffix $suffix
+    & ./Deploy-Bicep.ps1 -resourceGroup $resourceGroup -locations $locations -template $template -suffix $suffix
 }
 
 # Connecting kubectl to AKS
-Write-Host "Retrieving Aks Name" -ForegroundColor Yellow
-$aksName = $(az aks list -g $resourceGroup -o json | ConvertFrom-Json).name
-Write-Host "The name of your AKS: $aksName" -ForegroundColor Yellow
-
-az aks enable-addons -g $resourceGroup -n $aksName --addons http_application_routing
-
-# Write-Host "Retrieving credentials" -ForegroundColor Yellow
-az aks get-credentials -n $aksName -g $resourceGroup --overwrite-existing --admin
+Write-Host "Retrieving Aks Names" -ForegroundColor Yellow
+$aksNames = $(az aks list -g $resourceGroup -o json | ConvertFrom-Json).name
+Write-Host "The names of your AKS instances: $aksNames" -ForegroundColor Yellow
 
 # Generate Config
 New-Item -ItemType Directory -Force -Path $(./Join-Path-Recursively.ps1 -pathParts ..,..,__values)
 $gValuesLocation=$(./Join-Path-Recursively.ps1 -pathParts ..,..,__values,$gValuesFile)
-& ./Generate-Config.ps1 -resourceGroup $resourceGroup -suffix $suffix -outputFile $gValuesLocation
+& ./Generate-Config.ps1 -resourceGroup $resourceGroup -locations $locations -suffix $suffix -outputFile $gValuesLocation
 
-if ($stepDeployCertManager) {
-    # Deploy Cert Manager
-    & ./DeployCertManager.ps1
-}
-
-if ($stepDeployTls) {
-    # Deploy TLS
-    & ./DeployTlsSupport.ps1 -sslSupport prod -resourceGroup $resourceGroup -aksName $aksName
-}
-
-if ($stepBuildPush) {
-    # Build an Push
-    & ./BuildPush.ps1 -resourceGroup $acrResourceGroup -locations $locations
+if ($stepDeployFD)
+{
+    & ./Deploy-FDOrigins.ps1 -resourceGroup $resourceGroup -locations $locations
 }
 
 if ($stepDeployImages) {
@@ -83,7 +77,7 @@ if ($stepDeployImages) {
 }
 
 if ($stepPublishSite) {
-    & ./Publish-Site.ps1 -resourceGroup $resourceGroup -storageAccount "webcorepayments$suffix"
+    & ./Publish-Site.ps1 -resourceGroup $resourceGroup -storageAccount "webpaysa$suffix"
 }
 
 Pop-Location
