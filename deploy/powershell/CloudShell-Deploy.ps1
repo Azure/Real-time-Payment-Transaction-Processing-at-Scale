@@ -9,8 +9,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$stepDeployBicep=$true,
     [parameter(Mandatory=$false)][bool]$stepDeployFD=$true,
     [parameter(Mandatory=$false)][bool]$stepDeployImages=$true,
-    [parameter(Mandatory=$false)][bool]$stepPublishSite=$true,
-    [parameter(Mandatory=$false)][bool]$stepLoginAzure=$true
+    [parameter(Mandatory=$false)][bool]$stepPublishSite=$true
 )
 
 az extension add --name  application-insights
@@ -35,12 +34,6 @@ if (-not $suffix) {
 }
 
 Write-Host "Resource suffix is $suffix" -ForegroundColor Yellow
-
-if ($stepLoginAzure) {
-    az login
-}
-
-az account set --subscription $subscription
 
 $rg = $(az group show -g $resourceGroup -o json | ConvertFrom-Json)
 if (-not $rg) {
