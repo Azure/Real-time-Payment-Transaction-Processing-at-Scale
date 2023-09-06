@@ -8,7 +8,6 @@ Param(
     [parameter(Mandatory=$false)][string]$suffix=$null,
     [parameter(Mandatory=$false)][bool]$stepDeployBicep=$true,
     [parameter(Mandatory=$false)][bool]$stepDeployFD=$true,
-    [parameter(Mandatory=$false)][bool]$stepBuildPush=$true,
     [parameter(Mandatory=$false)][bool]$stepDeployImages=$true,
     [parameter(Mandatory=$false)][bool]$stepPublishSite=$true
 )
@@ -60,11 +59,6 @@ $gValuesLocation=$(./Join-Path-Recursively.ps1 -pathParts ..,..,__values,$gValue
 if ($stepDeployFD)
 {
     & ./Deploy-FDOrigins.ps1 -resourceGroup $resourceGroup -locations $locations
-}
-
-if ($stepBuildPush) {
-    # Build an Push
-    & ./BuildPush.ps1 -resourceGroup $resourceGroup -locations $locations
 }
 
 if ($stepDeployImages) {
