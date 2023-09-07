@@ -19,7 +19,7 @@ An AI powered co-pilot enables agents to analyze transactions using natural lang
 The solution architecture is represented by this diagram:
 
 <p align="center">
-    <img src="img/architecture.png" width="100%">
+    <img src="img/architecture.png" width="100%" alt="Solution architecture diagram shows components deployed to Azure.">
 </p>
 
 ## Deployment
