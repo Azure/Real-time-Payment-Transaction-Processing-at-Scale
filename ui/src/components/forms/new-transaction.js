@@ -43,7 +43,7 @@ const NewTransactionForm = ({ accountId, setOpenModal, setSubmittedData }) => {
 
   const onChangeMerchant = (e) => setForm({ ...form, merchant: e.target.value });
   const onChangeType = (e) => setForm({ ...form, type: e.target.value });
-  const onChangeAmount = (e) => setForm({ ...form, amount: e.target.value });
+  const onChangeAmount = (e) => setForm({ ...form, amount: Math.abs(e.target.value) });
   const onChangeDescription = (e) => setForm({ ...form, description: e.target.value });
 
   useEffect(() => {
@@ -68,9 +68,9 @@ const NewTransactionForm = ({ accountId, setOpenModal, setSubmittedData }) => {
         <div className="mb-2 block">
           <Label htmlFor="type" value="Transaction Type:" />
         </div>
-        <select onChange={onChangeType} label="Select" id="type" required>
-          <option selected>Credit</option>
-          <option>Debit</option>
+        <select onChange={onChangeType} label="Select" id="type" required value={form.type}>
+          <option value="Credit">Credit</option>
+          <option value="Debit">Debit</option>
         </select>
       </div>
       <div className="mb-4">
@@ -84,6 +84,8 @@ const NewTransactionForm = ({ accountId, setOpenModal, setSubmittedData }) => {
           placeholder="Amount"
           required
           value={form.amount}
+          step="0.01"
+          min="0.01"
         />
       </div>
       <div className="mb-4">
