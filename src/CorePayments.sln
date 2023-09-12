@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cosmos", "Cosmos", "{1A3148D7-982F-4947-BA71-A9FCFC387776}"
+	ProjectSection(SolutionItems) = preProject
+		processTransaction.js = processTransaction.js
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.SemanticKernel", "CorePayments.SemanticKernel\CorePayments.SemanticKernel.csproj", "{06739374-6C6F-4622-9251-FB0735EB9D56}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.Infrastructure", "CorePayments.Infrastructure\CorePayments.Infrastructure.csproj", "{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "account-generator", "account-generator\account-generator.csproj", "{B376FFE8-A936-4310-B14C-29A79CE340B0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.WebAPI", "CorePayments.WebAPI\CorePayments.WebAPI.csproj", "{B43ACA3A-1D70-4A3E-8A8A-905870A4AB7A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorePayments.WorkerService", "CorePayments.WorkerService\CorePayments.WorkerService.csproj", "{FD0EAAE5-2832-4AB3-AC4E-2B867BCC2DCD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{06739374-6C6F-4622-9251-FB0735EB9D56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06739374-6C6F-4622-9251-FB0735EB9D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06739374-6C6F-4622-9251-FB0735EB9D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06739374-6C6F-4622-9251-FB0735EB9D56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F41EAB8-6934-4F14-855B-0F2BC3DA7214}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B376FFE8-A936-4310-B14C-29A79CE340B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B43ACA3A-1D70-4A3E-8A8A-905870A4AB7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B43ACA3A-1D70-4A3E-8A8A-905870A4AB7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B43ACA3A-1D70-4A3E-8A8A-905870A4AB7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B43ACA3A-1D70-4A3E-8A8A-905870A4AB7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD0EAAE5-2832-4AB3-AC4E-2B867BCC2DCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD0EAAE5-2832-4AB3-AC4E-2B867BCC2DCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD0EAAE5-2832-4AB3-AC4E-2B867BCC2DCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD0EAAE5-2832-4AB3-AC4E-2B867BCC2DCD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6A7F5709-D391-4145-91FF-461D969EC33C}
+	EndGlobalSection
+EndGlobal

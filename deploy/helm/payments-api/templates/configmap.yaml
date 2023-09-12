@@ -1,0 +1,23 @@
+{{- $name := include "payments-api.fullname" . -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "cfg-{{ $name }}"
+  labels:
+    app: {{ template "payments-api.name" . }}
+    chart: {{ template "payments-api.chart" .}}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  CosmosDBConnection__accountEndpoint: {{ .Values.cosmosDbConnection.accountEndpoint }}
+  DatabaseSettings__CustomerContainer: {{ .Values.databaseSettings.customerContainer }}
+  DatabaseSettings__GlobalIndexContainer: {{ .Values.databaseSettings.globalIndexContainer }}
+  DatabaseSettings__IsMasterRegion: {{ .Values.databaseSettings.isMasterRegion | quote }}
+  DatabaseSettings__MemberContainer: {{ .Values.databaseSettings.memberContainer }}
+  DatabaseSettings__PaymentsDatabase: {{ .Values.databaseSettings.paymentsDatabase }}
+  DatabaseSettings__PreferredRegions: {{ .Values.databaseSettings.preferredRegions }}
+  DatabaseSettings__TransactionsContainer: {{ .Values.databaseSettings.transactionsContainer }}
+  AnalyticsEngine__OpenAIEndpoint: {{ .Values.analyticsEngine.openAiEndpoint }}
+  AnalyticsEngine__OpenAICompletionsDeployment: {{ .Values.analyticsEngine.openAiCompletionsDeployment }}
+  ClientId: {{ .Values.azureWorkloadIdentity.apiClientId }}
