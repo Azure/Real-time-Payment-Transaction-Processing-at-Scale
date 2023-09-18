@@ -15,7 +15,7 @@ Follow the steps below to deploy the solution to your Azure subscription.
 1. Clone the repository:
 
     ```cmd
-    git clone --recurse-submodules https://github.com/AzureCosmosDB/RealTimeTransactions.git
+    git clone --recurse-submodules https://github.com/Azure/Real-time-Payment-Transaction-Processing-at-Scale.git
     ```
 
 1. Set the proper folder permissions on the `scripts` folder:

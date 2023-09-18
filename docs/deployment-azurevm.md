@@ -43,7 +43,7 @@ Follow the steps below to deploy the solution to your Azure subscription.
 1. Clone the repository:
 
     ```cmd
-    git clone --recurse-submodules https://github.com/AzureCosmosDB/RealTimeTransactions.git
+    git clone --recurse-submodules https://github.com/Azure/Real-time-Payment-Transaction-Processing-at-Scale.git
     ```
 
 1. Open PowerShell, navigate to the `RealTimeTransactions` folder, and run the following script to provision the infrastructure and deploy the API and frontend. This will provision all of the required infrastructure, deploy the API and web app services into AKS, and provision and load artifacts into a Synapse Analytics workspace.
