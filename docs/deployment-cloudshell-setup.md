@@ -7,7 +7,7 @@ Before users in your team can deploy the solution using Cloud Shell, you need to
 2. Clone the repository:
 
     ```cmd
-    git clone --recurse-submodules https://github.com/AzureCosmosDB/RealTimeTransactions.git
+    git clone --recurse-submodules https://github.com/Azure/Real-time-Payment-Transaction-Processing-at-Scale.git
     ```
 
 3. Open the `CloudShell-Deploy.ps1` script from the `deploy\powershell` folder with the text editor of your choice. In line 4, update the default values for the parameter `acrResourceGroup` with the value corresponding to the ACR instances created in step 1.
