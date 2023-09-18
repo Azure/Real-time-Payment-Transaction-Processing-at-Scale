@@ -9,7 +9,7 @@ Before users in your team can deploy the solution using Azure VM, you need to pe
 1. Clone the repository:
 
     ```cmd
-    git clone --recurse-submodules https://github.com/AzureCosmosDB/RealTimeTransactions.git
+    git clone --recurse-submodules https://github.com/Azure/Real-time-Payment-Transaction-Processing-at-Scale.git
     ```
 
 1. Upload the `VMScriptExtension.ps1` script from the `deploy\powershell` folder to the `vmscripts` container created in step 2. This script is used by the Azure VM deployment script to install the required software on the VM.
