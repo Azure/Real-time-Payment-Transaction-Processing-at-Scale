@@ -149,6 +149,7 @@ resource workerRoleAssignmentCosmos 'Microsoft.DocumentDB/databaseAccounts/sqlRo
 
 output cosmosAccountName string = account.name
 output cosmosDatabaseName string = database.name
+output cosmosAccountEndpoint string = account.properties.documentEndpoint
 output cosmosTransactionsContainerName string = container[0].name
 output cosmosCustomerContainerName string = container[1].name
 output cosmosMemberContainerName string = container[2].name

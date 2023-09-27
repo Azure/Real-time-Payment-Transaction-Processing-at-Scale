@@ -190,7 +190,7 @@ module frontdoor 'frontdoor.bicep' = {
   params: {
     enableMultiMaster: enableCosmosMultiMaster
     frontDoorName: frontDoorName
-    aksNames: [for i in range(0, length(locArray)): aks[i].outputs.aksClusterName]
+    fqdns: [for i in range(0, length(locArray)): aks[i].outputs.ingressFqdn]
   }
 }
 

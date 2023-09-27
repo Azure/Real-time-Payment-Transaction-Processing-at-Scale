@@ -149,7 +149,7 @@ foreach($location in $locArray)
 
     if ($charts.Contains("web") -or  $charts.Contains("*")) {
         Write-Host "Webapp chart - web" -ForegroundColor Yellow
-        $command = "helm upgrade --install $name-worker ./payments-worker -f ${valuesFile}${i}.yml --set image.repository=$acrLogin/payments-worker-service --set image.tag=$tag  --set hpa.activated=$autoscale"
+        $command = "helm upgrade --install $name-worker ./payments-worker -f ${valuesFile}${i}.yml --set image.repository=$acrLogin/payments-worker --set image.tag=$tag  --set hpa.activated=$autoscale"
         $command = createHelmCommand $command
         Invoke-Expression "$command"
     }

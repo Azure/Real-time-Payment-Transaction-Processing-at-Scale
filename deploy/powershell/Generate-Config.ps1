@@ -5,7 +5,8 @@ Param(
     [parameter(Mandatory=$false)][string[]]$outputFile=$null,
     [parameter(Mandatory=$false)][string[]]$gvaluesTemplate="..,..,gvalues.template.yml",
     [parameter(Mandatory=$false)][string]$ingressClass="addon-http-application-routing",
-    [parameter(Mandatory=$false)][string]$domain
+    [parameter(Mandatory=$false)][string]$domain,
+    [parameter(Mandatory=$true)][bool]$deployAks
 )
 
 $locArray = $locations.Split(',')
