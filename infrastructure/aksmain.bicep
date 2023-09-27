@@ -28,6 +28,9 @@ param websiteStorageAccountName string = 'webpaysa${suffix}'
 @description('OpenAI service name')
 param openAiName string = 'openaipayments${suffix}'
 
+@description('OpenAi Deployment')
+param openAiDeployment string = 'completions'
+
 @description('API Managed Identity name')
 param apiMiName string = 'miapi${suffix}'
 
