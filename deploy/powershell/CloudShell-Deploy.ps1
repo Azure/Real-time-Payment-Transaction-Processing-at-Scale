@@ -56,11 +56,6 @@ New-Item -ItemType Directory -Force -Path $(./Join-Path-Recursively.ps1 -pathPar
 $gValuesLocation=$(./Join-Path-Recursively.ps1 -pathParts ..,..,__values,$gValuesFile)
 & ./Generate-Config.ps1 -resourceGroup $resourceGroup -locations $locations -suffix $suffix -outputFile $gValuesLocation
 
-if ($stepDeployFD)
-{
-    & ./Deploy-FDOrigins.ps1 -resourceGroup $resourceGroup -locations $locations
-}
-
 if ($stepDeployImages) {
     # Deploy images in AKS
     $gValuesLocation=$(./Join-Path-Recursively.ps1 -pathParts ..,..,__values,$gValuesFile)
