@@ -6,6 +6,7 @@ Param(
     [parameter(Mandatory=$true)][string]$suffix,
     [parameter(Mandatory=$true)][string]$openAiName,
     [parameter(Mandatory=$true)][string]$openAiCompletionsDeployment,
+    [parameter(Mandatory=$true)][string]$openAiRg,
     [parameter(Mandatory=$true)][bool]$deployAks
 )
 
@@ -33,6 +34,6 @@ if (-not $rg) {
 
 Write-Host "Beginning the Bicep deployment..." -ForegroundColor Yellow
 Push-Location $sourceFolder
-$deploymentState = $(az deployment group create -g $resourceGroup --template-file $script --parameters suffix=$suffix --parameters locations=$locations --parameters openAiName=$openAiName --parameters openAiDeployment=$openAiCompletionsDeployment --query "properties.provisioningState" -o tsv)
+$deploymentState = $(az deployment group create -g $resourceGroup --template-file $script --parameters suffix=$suffix --parameters locations=$locations --parameters openAiName=$openAiName --parameters openAiDeployment=$openAiCompletionsDeployment --parameters openAiRg=$openAiRg --query "properties.provisioningState" -o tsv)
 Pop-Location
 Pop-Location

@@ -22,6 +22,9 @@ param openAiName string = 'openaipayments${suffix}'
 @description('OpenAi Deployment')
 param openAiDeployment string = 'completions'
 
+@description('OpenAI Resource Group')
+param openAiRg string = resourceGroup().name
+
 @description('API Managed Identity name')
 param apiMiName string = 'miapi${suffix}'
 
@@ -57,6 +60,7 @@ module logAnalytics 'loganalytics.bicep' = {
 
 resource openAi 'Microsoft.CognitiveServices/accounts@2023-05-01' existing = {
   name: openAiName
+  scope: resourceGroup(openAiRg)
 }
 
 @batchSize(1)

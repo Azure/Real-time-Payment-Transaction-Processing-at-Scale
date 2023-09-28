@@ -31,6 +31,9 @@ param openAiName string = 'openaipayments${suffix}'
 @description('OpenAi Deployment')
 param openAiDeployment string = 'completions'
 
+@description('OpenAI Resource Group')
+param openAiRg string = resourceGroup().name
+
 @description('API Managed Identity name')
 param apiMiName string = 'miapi${suffix}'
 
