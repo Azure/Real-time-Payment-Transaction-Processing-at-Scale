@@ -89,8 +89,8 @@ for ($i = 0; $i -lt 3; $i++)
     $tokens.workerClientId=$workerIdentityClientId
     $tokens.tenantId=$tenantId
     $tokens.aiConnectionString=$appinsightsConnectionString
-    $tokens.aksName=$aksInstances[$i].name
-    $tokens.aksEndpoint=$aksInstances[$i].endpoint
+    #$tokens.aksName=$aksInstances[$i].name
+    #$tokens.aksEndpoint=$aksInstances[$i].endpoint
 
     $indices = 0..($locArray.length-1) | ForEach-Object {($_ + $i) % $locArray.Length}
 

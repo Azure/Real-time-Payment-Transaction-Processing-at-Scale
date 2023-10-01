@@ -24,5 +24,11 @@ Write-Host " Deploying the website" -ForegroundColor Yellow
 Write-Host "===========================================================" -ForegroundColor Yellow
 az storage azcopy blob upload -c `$web --account-name $storageAccount -s "./out/*" --recursive
 
+$webUri=(az storage account show --name $storageAccount --resource-group $resourceGroup --query "primaryEndpoints.web" -o tsv)
+
+Write-Host "===========================================================" -ForegroundColor Yellow
+Write-Host " Website Uri: $webUri" -ForegroundColor Yellow
+Write-Host "===========================================================" -ForegroundColor Yellow
+
 Pop-Location
 Pop-Location
