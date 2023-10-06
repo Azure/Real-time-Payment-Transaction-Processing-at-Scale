@@ -21,7 +21,7 @@ Follow the steps below to deploy the solution to your Azure subscription.
 1. Set the proper folder permissions on the `scripts` folder:
 
     ```cmd
-    cd ./RealTimeTransactions/
+    cd ./Real-time-Payment-Transaction-Processing-at-Scale/
     chmod +x ./deploy/*
     ```
 
