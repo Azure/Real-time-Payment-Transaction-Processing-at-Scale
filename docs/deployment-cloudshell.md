@@ -39,4 +39,4 @@ Follow the steps below to deploy the solution to your Azure subscription.
 
 >**NOTE**: The `<location>` specified must point to a region that supports the Azure OpenAI service. You can find the list of supported regions [here](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/?products=cognitive-services).
 
->**NOTE**: If you already used the Cloud Shell in the target subscription, it is recommended to remove the `RealTimeTransactions` folder from the home directory before cloning the repository again. You can do this by running `rm ./RealTimeTransactions -r -f` in the Cloud Shell.
+>**NOTE**: If you already used the Cloud Shell in the target subscription, it is recommended to remove the `Real-time-Payment-Transaction-Processing-at-Scale` folder from the home directory before cloning the repository again. You can do this by running `rm ./Real-time-Payment-Transaction-Processing-at-Scale -r -f` in the Cloud Shell.
