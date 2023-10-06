@@ -223,8 +223,8 @@ namespace account_generator
                                 u.description = selectedTransaction.Description;
                                 u.merchant = selectedTransaction.CompanyName;
 
-                                var minAmount = u.type == "Debit" ? -5000 : 5;
-                                var maxAmount = u.type == "Debit" ? -5 : 5000;
+                                var minAmount = 5; //u.type == "Debit" ? -5000 : 5;
+                                var maxAmount = 5000; //u.type == "Debit" ? -5 : 5000;
                                 u.amount = Convert.ToDouble(f.Finance.Amount(minAmount, maxAmount, 2));
                             });
 

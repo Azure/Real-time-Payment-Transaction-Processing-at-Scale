@@ -1,4 +1,5 @@
 @description('Common name of resources')
+@minLength(1)
 param name string
 
 @description('Location of resource')
