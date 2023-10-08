@@ -10,9 +10,8 @@ import TransactionsStatementTable from '~/components/tables/transactions-stateme
 import useAccountSummary from '~/hooks/account-summary';
 
 const TransactionsSection = ({ accountId }) => {
-  const { data, isLoading, isValidating } = useAccountSummary(accountId);
+  const { data, isLoading } = useAccountSummary(accountId);
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [isAnalyzeModalOpen, setIsAnalyzeModalOpen] = useState(false);
   const [submittedData, setSubmittedData] = useState({});
 
@@ -22,14 +21,10 @@ const TransactionsSection = ({ accountId }) => {
   const modalHeader = <div className="text-xl p-4">New Transaction</div>;
   const analyzeModalHeader = <div className="text-xl p-4">Analyze Transactions</div>;
 
-  useEffect(() => {
-    setLoading(isLoading || isValidating);
-  }, [isLoading, isValidating]);
-
   return (
     <div className="w-full mt-6">
       <h1 className="my-6">Transactions for Account Id {accountId}</h1>
-      {loading ? (
+      {isLoading ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />
         </div>
@@ -66,12 +61,12 @@ const TransactionsSection = ({ accountId }) => {
         </div>
       )}
 
-      {loading ? (
+      {isLoading ? (
         <div className="text-center p-6">
           <Spinner aria-label="Loading..." />
         </div>
       ) : (
-        <TransactionsStatementTable accountId={accountId} />
+        <TransactionsStatementTable accountId={accountId} submittedData={submittedData} />
       )}
 
       <FormModal
