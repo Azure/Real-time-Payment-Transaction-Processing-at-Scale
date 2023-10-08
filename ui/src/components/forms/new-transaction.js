@@ -28,7 +28,7 @@ const NewTransactionForm = ({ accountId, setOpenModal, setSubmittedData }) => {
     setError('');
     mutate(form, {
       onSuccess: async () => {
-        const serverSyncDelayMS = 5000;
+        const serverSyncDelayMS = 6500;
         setTimeout(() => {
           setSubmittedData(form);
           setOpenModal(false);
