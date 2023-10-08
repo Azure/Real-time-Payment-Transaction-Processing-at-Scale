@@ -10,13 +10,18 @@ import TransactionsStatementTable from '~/components/tables/transactions-stateme
 import useAccountSummary from '~/hooks/account-summary';
 
 const TransactionsSection = ({ accountId }) => {
-  const { data, isLoading } = useAccountSummary(accountId);
+  const { data, isLoading, mutate } = useAccountSummary(accountId);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isAnalyzeModalOpen, setIsAnalyzeModalOpen] = useState(false);
-  const [submittedData, setSubmittedData] = useState({});
 
   const onClickAdd = () => setIsOpenModal(true);
   const onClickAnalyze = () => setIsAnalyzeModalOpen(true);
+
+  const [newTransaction, setNewTransaction] = useState({});
+  
+  useEffect(() => {
+    mutate();
+  }, [newTransaction]);
 
   const modalHeader = <div className="text-xl p-4">New Transaction</div>;
   const analyzeModalHeader = <div className="text-xl p-4">Analyze Transactions</div>;
@@ -66,7 +71,7 @@ const TransactionsSection = ({ accountId }) => {
           <Spinner aria-label="Loading..." />
         </div>
       ) : (
-        <TransactionsStatementTable accountId={accountId} submittedData={submittedData} />
+        <TransactionsStatementTable accountId={accountId} newTransaction={newTransaction} />
       )}
 
       <FormModal
@@ -84,7 +89,7 @@ const TransactionsSection = ({ accountId }) => {
       </div>
 
       <FormModal header={modalHeader} openModal={isOpenModal} setOpenModal={setIsOpenModal}>
-        <NewTransactionForm accountId={accountId} setOpenModal={setIsOpenModal} setSubmittedData={setSubmittedData} />
+        <NewTransactionForm accountId={accountId} setOpenModal={setIsOpenModal} setNewTransaction={setNewTransaction} />
       </FormModal>
     </div>
   );
