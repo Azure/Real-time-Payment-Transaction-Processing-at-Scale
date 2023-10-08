@@ -30,12 +30,12 @@ const headers = [
   }
 ];
 
-const TransactionsStatementTable = ({ accountId }) => {
+const TransactionsStatementTable = ({ accountId, submittedData }) => {
   const [continuationToken, setContinuationToken] = useState('');
   const [nextToken, setNextToken] = useState('');
   const [rows, setRows] = useState([]);
   const [page, setPage] = useState(0);
-  const { data, isLoading, isRefetching } = useTransactionsStatement(accountId, continuationToken);
+  const { data, isLoading, mutate } = useTransactionsStatement(accountId, continuationToken);
 
   const onClickLoadMore = useCallback(() => {
     setPage(page + 1);
@@ -56,6 +56,10 @@ const TransactionsStatementTable = ({ accountId }) => {
       setNextToken(data.continuationToken);
     }
   }, [data]);
+
+  useEffect(() => {
+    mutate();
+  }, [submittedData]);
 
   const formattedData = rows.map((row) => {
     return {
