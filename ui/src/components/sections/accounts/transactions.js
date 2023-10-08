@@ -17,11 +17,11 @@ const TransactionsSection = ({ accountId }) => {
   const onClickAdd = () => setIsOpenModal(true);
   const onClickAnalyze = () => setIsAnalyzeModalOpen(true);
 
-  const [submittedData, setSubmittedData] = useState({});
+  const [newTransaction, setNewTransaction] = useState({});
   
   useEffect(() => {
     mutate();
-  }, [submittedData]);
+  }, [newTransaction]);
 
   const modalHeader = <div className="text-xl p-4">New Transaction</div>;
   const analyzeModalHeader = <div className="text-xl p-4">Analyze Transactions</div>;
@@ -71,7 +71,7 @@ const TransactionsSection = ({ accountId }) => {
           <Spinner aria-label="Loading..." />
         </div>
       ) : (
-        <TransactionsStatementTable accountId={accountId} submittedData={submittedData} />
+        <TransactionsStatementTable accountId={accountId} newTransaction={newTransaction} />
       )}
 
       <FormModal
@@ -89,7 +89,7 @@ const TransactionsSection = ({ accountId }) => {
       </div>
 
       <FormModal header={modalHeader} openModal={isOpenModal} setOpenModal={setIsOpenModal}>
-        <NewTransactionForm accountId={accountId} setOpenModal={setIsOpenModal} setSubmittedData={setSubmittedData} />
+        <NewTransactionForm accountId={accountId} setOpenModal={setIsOpenModal} setNewTransaction={setNewTransaction} />
       </FormModal>
     </div>
   );

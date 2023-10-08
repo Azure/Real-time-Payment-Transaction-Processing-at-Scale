@@ -30,7 +30,7 @@ const headers = [
   }
 ];
 
-const TransactionsStatementTable = ({ accountId, submittedData }) => {
+const TransactionsStatementTable = ({ accountId, newTransaction }) => {
   const [continuationToken, setContinuationToken] = useState('');
   const [nextToken, setNextToken] = useState('');
   const [rows, setRows] = useState([]);
@@ -59,7 +59,7 @@ const TransactionsStatementTable = ({ accountId, submittedData }) => {
 
   useEffect(() => {
     mutate();
-  }, [submittedData]);
+  }, [newTransaction]);
 
   const formattedData = rows.map((row) => {
     return {

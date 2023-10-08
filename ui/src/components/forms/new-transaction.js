@@ -4,7 +4,7 @@ import { Button, Label, Spinner, Textarea, TextInput } from 'flowbite-react';
 import useAddTransaction from '~/hooks/add-transaction';
 import { useQueryClient } from 'react-query';
 
-const NewTransactionForm = ({ accountId, setOpenModal, setSubmittedData }) => {
+const NewTransactionForm = ({ accountId, setOpenModal, setNewTransaction }) => {
   const { mutate } = useAddTransaction();
   const client = useQueryClient();
 
@@ -30,7 +30,7 @@ const NewTransactionForm = ({ accountId, setOpenModal, setSubmittedData }) => {
       onSuccess: async () => {
         const serverSyncDelayMS = 6500;
         setTimeout(() => {
-          setSubmittedData(form);
+          setNewTransaction(form);
           setOpenModal(false);
           setIsLoading(false);
           setForm({ accountId, type: 'Credit', description: '', merchant: '', amount: '' });
