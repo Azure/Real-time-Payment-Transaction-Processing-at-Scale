@@ -22,7 +22,7 @@ namespace CorePayments.Infrastructure.Repository
 
         public async Task<(IEnumerable<Member>? members, string? continuationToken)> GetPagedMembers(int pageSize, string continuationToken)
         {
-            QueryDefinition query = new QueryDefinition("select * from c order by c.lastName desc");
+            QueryDefinition query = new QueryDefinition("select * from c order by c._ts desc");
 
             return await PagedQuery<Member>(query, pageSize, null, continuationToken);
         }
