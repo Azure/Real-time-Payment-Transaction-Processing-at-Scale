@@ -10,13 +10,18 @@ import TransactionsStatementTable from '~/components/tables/transactions-stateme
 import useAccountSummary from '~/hooks/account-summary';
 
 const TransactionsSection = ({ accountId }) => {
-  const { data, isLoading } = useAccountSummary(accountId);
+  const { data, isLoading, mutate } = useAccountSummary(accountId);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isAnalyzeModalOpen, setIsAnalyzeModalOpen] = useState(false);
-  const [submittedData, setSubmittedData] = useState({});
 
   const onClickAdd = () => setIsOpenModal(true);
   const onClickAnalyze = () => setIsAnalyzeModalOpen(true);
+
+  const [submittedData, setSubmittedData] = useState({});
+  
+  useEffect(() => {
+    mutate();
+  }, [submittedData]);
 
   const modalHeader = <div className="text-xl p-4">New Transaction</div>;
   const analyzeModalHeader = <div className="text-xl p-4">Analyze Transactions</div>;
