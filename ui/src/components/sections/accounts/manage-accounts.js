@@ -6,7 +6,7 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 
 import AccountsTable from '~/components/tables/accounts';
 
-const ManageAccountsSection = ({ setAccountId }) => {
+const ManageAccountsSection = ({ setAccountId, newTransaction }) => {
   const [showFormModal, setShowFormModal] = useState(false);
 
   const onClickAdd = () => setShowFormModal(true);
@@ -26,6 +26,7 @@ const ManageAccountsSection = ({ setAccountId }) => {
         showFormModal={showFormModal}
         setShowFormModal={setShowFormModal}
         setAccountId={setAccountId}
+        newTransaction={newTransaction}
       />
     </div>
   );

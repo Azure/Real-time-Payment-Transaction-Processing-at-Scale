@@ -43,7 +43,7 @@ const headers = [
   }
 ];
 
-const AccountsTable = ({ setAccountId, setRemoveAccountId, showFormModal, setShowFormModal, setShowRemoveAccountModal, memberId, setMember, reload, setReload, setViewTransactions = null }) => {
+const AccountsTable = ({ setAccountId, setRemoveAccountId, showFormModal, setShowFormModal, setShowRemoveAccountModal, memberId, setMember, reload, setReload, setViewTransactions = null, newTransaction }) => {
   const [continuationToken, setContinuationToken] = useState('');
   const [nextToken, setNextToken] = useState('');
   const [rows, setRows] = useState([]);
@@ -52,11 +52,11 @@ const AccountsTable = ({ setAccountId, setRemoveAccountId, showFormModal, setSho
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showLoadMore, setShowLoadMore] = useState(true);
 
-  let x = useAccounts(continuationToken);
+  let hook = useAccounts(continuationToken);
   if (memberId) {
-    x = MembersAccounts(memberId);
+    hook = MembersAccounts(memberId);
   }
-  const { data, isLoading } = x;
+  const { data, isLoading, mutate } = hook;
 
   const onClickDetails = useCallback(
     (accountId) => {
@@ -123,9 +123,13 @@ const AccountsTable = ({ setAccountId, setRemoveAccountId, showFormModal, setSho
           _.orderBy(_.unionBy([...currRows, ...data], 'id'), ['timestamp'], ['desc'])
         );
       } else {
-        setRows((currRows) =>
-          _.orderBy(_.unionBy([...currRows, ...data.page], 'id'), ['timestamp'], ['desc'])
-        );
+        setRows((currRows) => {
+          const updatedData = _.orderBy(_.unionBy([...currRows, ...data.page], 'id'), ['timestamp'], ['desc']);
+          return _.map(updatedData, (item) => {
+            const updatedItem = _.find(data.page, { 'id': item.id });
+            return updatedItem ? updatedItem : item;
+          });
+        });
         setNextToken(data.continuationToken);
       }
     }
@@ -136,6 +140,12 @@ const AccountsTable = ({ setAccountId, setRemoveAccountId, showFormModal, setSho
       window.reload;
     }
   }, [reload, memberId]);
+
+  useEffect(() => {
+    if(!memberId) {
+      mutate();
+    }
+  }, [newTransaction]);
 
   const formattedData = rows.map((row) => {
     return {
