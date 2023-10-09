@@ -9,15 +9,13 @@ import AnalyzeTransactionsForm from '~/components/forms/analyze-transactions';
 import TransactionsStatementTable from '~/components/tables/transactions-statement';
 import useAccountSummary from '~/hooks/account-summary';
 
-const TransactionsSection = ({ accountId }) => {
+const TransactionsSection = ({ accountId, newTransaction, setNewTransaction }) => {
   const { data, isLoading, mutate } = useAccountSummary(accountId);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isAnalyzeModalOpen, setIsAnalyzeModalOpen] = useState(false);
 
   const onClickAdd = () => setIsOpenModal(true);
   const onClickAnalyze = () => setIsAnalyzeModalOpen(true);
-
-  const [newTransaction, setNewTransaction] = useState({});
   
   useEffect(() => {
     mutate();
