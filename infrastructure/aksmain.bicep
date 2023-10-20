@@ -16,9 +16,6 @@ param suffix string = uniqueString(resourceGroup().id)
 @description('Static website storage account name, max length 24 characters, lowercase')
 param websiteStorageAccountName string = 'webpaysa${suffix}'
 
-@description('OpenAI service name')
-param openAiName string = 'openaipayments${suffix}'
-
 @description('API Managed Identity name')
 param apiMiName string = 'miapi${suffix}'
 
@@ -43,25 +40,6 @@ module cosmosdb 'cosmos.bicep' = {
     enableCosmosMultiMaster: enableCosmosMultiMaster
     apiPrincipalId: apiIdentity.properties.principalId
     workerPrincipalId: workerIdentity.properties.principalId
-  }
-}
-
-module openAi 'openai.bicep' = {
-  name: 'openAiDeploy'
-  params: {
-    openAiName: openAiName
-    location: locArray[2]
-    deployments: [
-      {
-        name: 'completions'
-        model: 'gpt-35-turbo'
-        version: '0301'
-        sku: {
-          name: 'Standard'
-          capacity: 60
-        }
-      }
-    ]
   }
 }
 

@@ -101,7 +101,7 @@ if ($deployAks)
 # Generate Config
 New-Item -ItemType Directory -Force -Path $(./Join-Path-Recursively.ps1 -pathParts ..,..,__values)
 $gValuesLocation=$(./Join-Path-Recursively.ps1 -pathParts ..,..,__values,$gValuesFile)
-& ./Generate-Config.ps1 -resourceGroup $resourceGroup -locations $locations -suffix $suffix -outputFile $gValuesLocation -deployAks $deployAks
+& ./Generate-Config.ps1 -resourceGroup $resourceGroup -locations $locations -suffix $suffix -outputFile $gValuesLocation -openAiName $openAiName -openAiCompletionsDeployment $openAiCompletionsDeployment -openAiRg $openAiRg -deployAks $deployAks
 
 # Create Secrets
 if ([string]::IsNullOrEmpty($acrName))

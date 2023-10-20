@@ -4,9 +4,9 @@ Param(
     [parameter(Mandatory=$true)][string]$resourceGroup,
     [parameter(Mandatory=$true)][string]$locations,
     [parameter(Mandatory=$true)][string]$suffix,
-    [parameter(Mandatory=$true)][string]$openAiName,
-    [parameter(Mandatory=$true)][string]$openAiCompletionsDeployment,
-    [parameter(Mandatory=$true)][string]$openAiRg,
+    [parameter(Mandatory={-not $deployAks})][string]$openAiName,
+    [parameter(Mandatory={-not $deployAks})][string]$openAiCompletionsDeployment,
+    [parameter(Mandatory={-not $deployAks})][string]$openAiRg,
     [parameter(Mandatory=$true)][bool]$deployAks
 )
 
@@ -31,7 +31,7 @@ Push-Location $sourceFolder
 
 if ($deployAks) {
     $script="aksmain.bicep"
-    $deploymentState = $(az deployment group create -g $resourceGroup --template-file $script --parameters suffix=$suffix --parameters locations=$locations --parameters openAiName=$openAiName --query "properties.provisioningState" -o tsv)
+    $deploymentState = $(az deployment group create -g $resourceGroup --template-file $script --parameters suffix=$suffix --parameters locations=$locations --query "properties.provisioningState" -o tsv)
 } else {
     $script="acamain.bicep"
     $deploymentState = $(az deployment group create -g $resourceGroup --template-file $script --parameters suffix=$suffix --parameters locations=$locations --parameters openAiName=$openAiName --parameters openAiDeployment=$openAiCompletionsDeployment --parameters openAiRg=$openAiRg --query "properties.provisioningState" -o tsv)
