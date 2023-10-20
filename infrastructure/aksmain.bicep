@@ -1,15 +1,6 @@
 @description('Cosmos DB account name, max length 44 characters, lowercase')
 param cosmosAccountName string = 'cosmospay${suffix}'
 
-@description('EventHub namespace, max length 44 characters, lowercase')
-param eventHubNamespace string = 'eventhubpay${suffix}'
-
-@description('Function App name')
-param functionAppName string = 'functionpay${suffix}'
-
-@description('Storage account name, max length 24 characters, lowercase')
-param storageAccountName string = 'blobpay${suffix}'
-
 @description('Front Door name')
 param frontDoorName string = 'apipaymentsfd${suffix}'
 
@@ -28,12 +19,6 @@ param websiteStorageAccountName string = 'webpaysa${suffix}'
 @description('OpenAI service name')
 param openAiName string = 'openaipayments${suffix}'
 
-@description('OpenAi Deployment')
-param openAiDeployment string = 'completions'
-
-@description('OpenAI Resource Group')
-param openAiRg string = resourceGroup().name
-
 @description('API Managed Identity name')
 param apiMiName string = 'miapi${suffix}'
 
@@ -43,15 +28,11 @@ param workerMiName string = 'miworker${suffix}'
 @description('App Insights name')
 param aiName string = 'ai${suffix}'
 
+@minLength(3)
 @description('AKS name')
 param aksName string = 'aks${suffix}'
 
 var locArray = split(toLower(replace(locations, ' ', '')), ',')
-var regionNames = {
-  eastus: 'East US'
-  northcentralus: 'North Central US'
-  southcentralus: 'South Central US'
-}
 
 module cosmosdb 'cosmos.bicep' = {
   scope: resourceGroup()
@@ -84,41 +65,6 @@ module openAi 'openai.bicep' = {
   }
 }
 
-// module blob 'blob.bicep' = [for (location, i) in locArray: {
-//   name: 'blobDeploy-${location}'
-//   params: {
-//     storageAccountName: '${storageAccountName}${i}'
-//     location: location
-//     apiPrincipalId: apiIdentity.properties.principalId
-//     workerPrincipalId: workerIdentity.properties.principalId
-//   }
-// }]
-
-// @batchSize(1)
-// module function 'functions.bicep' = [for (location, i) in locArray: {
-//   name: 'functionDeploy-${location}'
-//   params: {
-//     cosmosAccountName: cosmosdb.outputs.cosmosAccountName
-//     eventHubNamespaceName: eventHubNamespace
-//     functionAppName: '${functionAppName}${i}'
-//     storageAccountName: '${storageAccountName}${i}'
-//     paymentsDatabase: cosmosdb.outputs.cosmosDatabaseName
-//     transactionsContainer: cosmosdb.outputs.cosmosTransactionsContainerName
-//     customerContainer: cosmosdb.outputs.cosmosCustomerContainerName
-//     memberContainer: cosmosdb.outputs.cosmosMemberContainerName
-//     preferredRegions: join(concat(array(regionNames[location]), map(filter(locArray, l => l != location), l => regionNames[l])), ',')
-//     isMasterRegion: i == 0 || enableCosmosMultiMaster ? true : false
-//     location: location
-//     openAiName: openAiName
-//     openAiDeployment: openAiDeployment
-//     openAiResourceGroup: openAiResourceGroup
-//   }
-//   dependsOn: [
-//     blob
-//   ]
-// }]
-
-@batchSize(1)
 module aks 'AKS-Construction/bicep/main.bicep' = [for (location, i) in locArray: {
   name: 'aksconstruction${i}'
   params: {
@@ -144,10 +90,8 @@ module aks 'AKS-Construction/bicep/main.bicep' = [for (location, i) in locArray:
 
     httpApplicationRouting: true
   }
-  dependsOn: [cosmosdb, openAi]
 }]
 
-@batchSize(1)
 resource ai 'Microsoft.Insights/components@2020-02-02' = [for (location, i) in locArray: {
   name: '${aiName}${i}'
   location: location
