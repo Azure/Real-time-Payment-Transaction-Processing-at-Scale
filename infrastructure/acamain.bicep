@@ -63,7 +63,6 @@ resource openAi 'Microsoft.CognitiveServices/accounts@2023-05-01' existing = {
   scope: resourceGroup(openAiRg)
 }
 
-@batchSize(1)
 module containerApps 'containerapp.bicep' = [ for (location, i) in locArray: {
   name: 'conatinerApps${i}'
   params: {
