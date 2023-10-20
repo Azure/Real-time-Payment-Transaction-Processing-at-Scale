@@ -90,14 +90,6 @@ if ($stepDeployBicep) {
     & ./Deploy-Bicep.ps1 -resourceGroup $resourceGroup -locations $locations -suffix $suffix -openAiName $openAiName -openAiCompletionsDeployment $openAiCompletionsDeployment -openAiRg $openAiRg -deployAks $deployAks
 }
 
-if ($deployAks)
-{
-    # Connecting kubectl to AKS
-    Write-Host "Retrieving Aks Names" -ForegroundColor Yellow
-    $aksNames = $(az aks list -g $resourceGroup -o json | ConvertFrom-Json).name
-    Write-Host "The names of your AKS instances: $aksNames" -ForegroundColor Yellow
-}
-
 # Generate Config
 New-Item -ItemType Directory -Force -Path $(./Join-Path-Recursively.ps1 -pathParts ..,..,__values)
 $gValuesLocation=$(./Join-Path-Recursively.ps1 -pathParts ..,..,__values,$gValuesFile)
