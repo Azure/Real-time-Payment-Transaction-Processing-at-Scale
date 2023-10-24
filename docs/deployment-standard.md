@@ -47,7 +47,25 @@ Follow the steps below to deploy the solution to your Azure subscription.
     ./deploy/powershell/Unified-Deploy.ps1 -resourceGroup <rg_name> -subscription <target_subscription_id>
     ```
 
->**NOTE**: Make sure to set the `<location>` value to a region that supports Azure OpenAI services.  See [Azure OpenAI service regions](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/?products=cognitive-services&regions=all) for more information.
+>**NOTE**: Make sure to set the `-openAiLocation` value or the first region of `-locations` list to a region that supports Azure OpenAI services.  See [Azure OpenAI service regions](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/?products=cognitive-services&regions=all) for more information.
+
+### Deployment samples
+
+1. Default deployment using Azure Container Apps in 3 regions `SouthCentralUS, NorthCentralUS and EastUS` and Azure Open AI Service in `EastUS`. 
+    ```pwsh
+    cd .\Real-time-Payment-Transaction-Processing-at-Scale
+    ./deploy/powershell/Unified-Deploy.ps1 -resourceGroup <rg_name> -subscription <target_subscription_id>
+    ```
+1. Deployment using Azure Kubernetes Service in 2 regions `SouthCentralUS, NorthCentralUS` and Azure Open AI Service in `EastUS`. 
+    ```pwsh
+    cd .\Real-time-Payment-Transaction-Processing-at-Scale
+    ./deploy/powershell/Unified-Deploy.ps1 -resourceGroup <rg_name> -subscription <target_subscription_id> -locations 'SouthCentralUS,NorthCentralUS' -openAiLocation 'EastUS' -deployAks $true
+    ```
+1. Deployment using an existing Azure Open AI Service. 
+    ```pwsh
+    cd .\Real-time-Payment-Transaction-Processing-at-Scale
+    ./deploy/powershell/Unified-Deploy.ps1 -resourceGroup <rg_name> -subscription <target_subscription_id> -openAiRg <openai_rg_name> -openAiName <openai_service_name> -openAiCompletionsDeployment <openai_deployment>
+    ```
 
 ### Enabling/Disabling Deployment Steps
 
