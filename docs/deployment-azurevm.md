@@ -49,6 +49,7 @@ Follow the steps below to deploy the solution to your Azure subscription.
 1. Open PowerShell, navigate to the `Real-time-Payment-Transaction-Processing-at-Scale` folder, and run the following script to provision the infrastructure and deploy the API and frontend. This will provision all of the required infrastructure, deploy the API and web app services into AKS, and provision and load artifacts into a Synapse Analytics workspace.
 
     ```pwsh
+    cd .\Real-time-Payment-Transaction-Processing-at-Scale
     ./deploy/powershell/Unified-Deploy.ps1 -resourceGroup <rg_name> -subscription <target_subscription_id>
     ```
 
