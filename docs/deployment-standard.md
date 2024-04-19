@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - Azure Subscription
-- Subscription access to Azure OpenAI service. Start here to [Request Access to Azure OpenAI Service](https://customervoice.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR7en2Ais5pxKtso_Pz4b1_xUOFA5Qk1UWDRBMjg0WFhPMkIzTzhKQ1dWNyQlQCN0PWcu)
+- Subscription access to Azure OpenAI service. Start here to [Request Access to Azure OpenAI Service](https://aka.ms/oaiapply)
 
 - Backend (Web API, Worker Service, Console Apps, etc.)
   - Visual Studio 2022 17.6 or later (required for passthrough Visual Studio authentication for the Docker container)
