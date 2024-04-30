@@ -88,30 +88,40 @@ resource ai 'Microsoft.Insights/components@2020-02-02' = [for (location, i) in l
 resource apiIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2022-01-31-preview' = {
   name: apiMiName
   location: locArray[0]
+}
 
-  resource fedCreds 'federatedIdentityCredentials' = [for (location, i) in locArray: {
+@batchSize(1)
+resource apiFedCreds 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2023-07-31-preview' = [
+  for (location, i) in locArray: {
     name: '${apiMiName}-fed${i}'
+    parent: apiIdentity
     properties: {
-      audiences: aks[i].outputs.aksOidcFedIdentityProperties.audiences
+      audiences: ['api://AzureADTokenExchange']
       issuer: aks[i].outputs.aksOidcFedIdentityProperties.issuer
       subject: 'system:serviceaccount:default:payments-api-sa'
     }
-  }]
-}
+    dependsOn: aks
+  }
+]
 
 resource workerIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2022-01-31-preview' = {
   name: workerMiName
   location: locArray[0]
+}
 
-  resource fedCreds 'federatedIdentityCredentials' = [for (location,i) in locArray: {
+@batchSize(1)
+resource workerFedCreds 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2023-07-31-preview' = [
+  for (location, i) in locArray: {
     name: '${workerMiName}-fed${i}'
+    parent: workerIdentity
     properties: {
-      audiences: aks[i].outputs.aksOidcFedIdentityProperties.audiences
+      audiences: ['api://AzureADTokenExchange']
       issuer: aks[i].outputs.aksOidcFedIdentityProperties.issuer
       subject: 'system:serviceaccount:default:payments-worker-sa'
     }
-  }]
-}
+    dependsOn: aks
+  }
+]
 
 module frontdoor 'frontdoor.bicep' = {
   name: 'frontdoorDeploy'
